@@ -3,6 +3,8 @@ import path from 'path'
 import express from 'express'
 import dotenv from 'dotenv'
 
+import userRouter from './routes/user'
+
 dotenv.config({ path: path.join(__dirname, '.env') })
 const { SERVER_PORT_DEV } = process.env
 
@@ -18,6 +20,8 @@ app.get('/api', (req, res) => {
 app.use((req, res) => {
   res.status(200).sendFile(path.join(__dirname, '..', '..', 'client', 'build', 'index.html'))
 })
+
+app.use('/api/user', userRouter)
 
 init()
 
