@@ -1,0 +1,43 @@
+{
+  "name": "app-budget-server",
+  "version": "0.1.0",
+  "description": "App for log yours expenses and income. Based TS, NodeJS, PostgreSQL.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./build/index.js",
+    "dev": "NODE_ENV=development webpack",
+    "build": "NODE_ENV=production webpack",
+    "nodemon": "NODE_ENV=development nodemon ./build/index.js",
+    "lint": "eslint --ext .js,.ts src/",
+    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yehorDorosh/budget.git"
+  },
+  "keywords": [
+    "budget"
+  ],
+  "author": "Egor Dorosh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yehorDorosh/budget/issues"
+  },
+  "homepage": "https://github.com/yehorDorosh/budget#readme",
+  "devDependencies": {
+    "@types/node": "^20.5.0",
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@typescript-eslint/parser": "^6.4.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "eslint": "^8.47.0",
+    "eslint-config-prettier": "^9.0.0",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.1",
+    "ts-loader": "^9.4.4",
+    "typescript": "^5.1.6",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0",
+    "webpack-shell-plugin-next": "^2.3.1"
+  }
+}
