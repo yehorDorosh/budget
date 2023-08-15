@@ -6,15 +6,15 @@ const path = require('path')
 
 const nodeExternals = require('webpack-node-externals')
 const WebpackShellPluginNext = require('webpack-shell-plugin-next')
-const CopyPlugin = require("copy-webpack-plugin")
+const CopyPlugin = require('copy-webpack-plugin')
 
 const { NODE_ENV } = process.env
-const isDev = NODE_ENV === 'development';
+const isDev = NODE_ENV === 'development'
 
 module.exports = {
   target: 'node',
   // externalsPresets: { node: true }, // in order to ignore built-in modules like path, fs, etc.
-  externals: [ nodeExternals() ], // in order to ignore all modules in node_modules folder
+  externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
 
   entry: './src/index.ts',
 
@@ -33,23 +33,23 @@ module.exports = {
       {
         test: /\.ts$/,
         use: 'ts-loader',
-        exclude: /node_modules/,
+        exclude: /node_modules/
       }
     ]
   },
 
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.js']
   },
 
   plugins: [
     new WebpackShellPluginNext({
-      onBuildStart:{
+      onBuildStart: {
         scripts: ['echo "===> Starting packing with WEBPACK 5"'],
         blocking: true,
         parallel: false
       },
-      onBuildEnd:{
+      onBuildEnd: {
         scripts: isDev ? ['npm run nodemon'] : ['echo "===> Finished packing with WEBPACK 5"'],
         blocking: false,
         parallel: true
@@ -60,8 +60,12 @@ module.exports = {
         {
           from: './src/public',
           to: 'public'
+        },
+        {
+          from: './src/.env',
+          to: '[path][name]'
         }
-      ],
-    }),
+      ]
+    })
   ]
 }
