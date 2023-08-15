@@ -9,9 +9,14 @@ const { SERVER_PORT_DEV } = process.env
 const app = express()
 
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, '..', '..', 'client', 'build')))
 
-app.get('/', (req, res) => {
-  res.send('Hello World')
+app.get('/api', (req, res) => {
+  res.status(200).json({ message: 'Hello World form api' })
+})
+
+app.use((req, res) => {
+  res.status(200).sendFile(path.join(__dirname, '..', '..', 'client', 'build', 'index.html'))
 })
 
 init()
