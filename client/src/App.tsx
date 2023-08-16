@@ -1,21 +1,11 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment } from 'react';
+
+import SignupForm from './components/auth/SignupForm';
 
 function App() {
-  const [data, setData] = useState({ message: 'Loading...' });
-
-  useEffect(() => {
-    fetch('/api')
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data);
-        console.log(data);
-      });
-  }, []);
-
   return (
     <Fragment>
-      <h1>Hello World!</h1>
-      <p>{data.message}</p>
+      <SignupForm />
     </Fragment>
   );
 }

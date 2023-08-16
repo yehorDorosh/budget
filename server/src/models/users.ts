@@ -1,11 +1,11 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 
 @Entity()
-export class User {
+export class Users {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column('varchar', { length: 64 })
+  @Column({ type: 'varchar', length: 64, unique: true })
   email: string
 
   @Column('varchar', { length: 128 })
