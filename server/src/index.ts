@@ -1,12 +1,10 @@
 import path from 'path'
 
 import express from 'express'
-import dotenv from 'dotenv'
 
+import { SERVER_PORT, SERVER_PORT_DEV, isDev } from './utils/config'
 import userRouter from './routes/user'
-
-dotenv.config({ path: path.join(__dirname, '.env') })
-const { SERVER_PORT_DEV } = process.env
+import { budgetDataSource } from './db/data-source'
 
 const app = express()
 
@@ -26,5 +24,11 @@ app.use('/api/user', userRouter)
 init()
 
 async function init() {
-  app.listen(SERVER_PORT_DEV)
+  try {
+    await budgetDataSource.initialize()
+    console.log('Database initialized')
+    app.listen(isDev ? SERVER_PORT_DEV : SERVER_PORT)
+  } catch (err) {
+    console.error('Database failed to initialize', err)
+  }
 }
