@@ -1,6 +1,6 @@
 import path from 'path'
 
-import express from 'express'
+import express, { ErrorRequestHandler, NextFunction, Request, Response } from 'express'
 import bodyParser from 'body-parser'
 
 import { SERVER_PORT, SERVER_PORT_DEV, isDev } from './utils/config'
@@ -22,6 +22,18 @@ app.use('/api/user', userRouter)
 
 app.use((req, res) => {
   res.status(200).sendFile(path.join(__dirname, '..', '..', 'client', 'build', 'index.html'))
+})
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.use(((err: Error, req: Request, res: Response, _next: NextFunction) => {
+  res.status(500).json({ message: 'Internal server error' })
+}) as ErrorRequestHandler)
+
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION\n', err.stack)
+  // close DB connection
+  // log error
+  process.exit(1)
 })
 
 init()
