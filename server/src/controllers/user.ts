@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express'
 import { validationResult } from 'express-validator'
 
+import { ProjectError } from '../utils/errors'
 import { BudgetDataSource } from '../db/data-source'
 import { Users } from '../models/users'
 
@@ -17,9 +18,11 @@ export const signup: RequestHandler = async (req, res, next) => {
   user.email = email
   user.password = password
   try {
-    const dbRes = await BudgetDataSource.manager.save(user)
-    res.status(201).json({ message: 'Create new user', user: dbRes })
-  } catch (e) {
-    next(e)
+    await BudgetDataSource.manager.save(user)
+    res.status(201).json({ message: 'Create new user' })
+  } catch (err) {
+    const error = new ProjectError('Create new user failed')
+    error.details = err
+    next(error)
   }
 }

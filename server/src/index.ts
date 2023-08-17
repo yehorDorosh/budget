@@ -4,6 +4,7 @@ import express, { ErrorRequestHandler, NextFunction, Request, Response } from 'e
 import bodyParser from 'body-parser'
 
 import { SERVER_PORT, SERVER_PORT_DEV, isDev } from './utils/config'
+import { ProjectError } from './utils/errors'
 import userRouter from './routes/user'
 import { BudgetDataSource } from './db/data-source'
 
@@ -26,7 +27,11 @@ app.use((req, res) => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use(((err: Error, req: Request, res: Response, _next: NextFunction) => {
-  res.status(500).json({ message: 'Internal server error' })
+  if (err instanceof ProjectError) {
+    res.status(err.statusCode).json({ message: 'Internal server error', cause: err.message, details: err.details })
+  } else {
+    res.status(500).json({ message: 'Internal server error', cause: err.message })
+  }
 }) as ErrorRequestHandler)
 
 process.on('uncaughtException', (err) => {
