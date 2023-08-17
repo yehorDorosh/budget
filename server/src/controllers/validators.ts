@@ -18,5 +18,5 @@ export const emailValidator = () => {
 }
 
 export const passwordValidator = () => {
-  return body('password').trim().isLength({ min: 6 }).isAlphanumeric()
+  return body('password').trim().isLength({ min: 6 })
 }
