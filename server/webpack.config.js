@@ -5,7 +5,7 @@
 const path = require('path')
 
 const nodeExternals = require('webpack-node-externals')
-const WebpackShellPluginNext = require('webpack-shell-plugin-next')
+// const WebpackShellPluginNext = require('webpack-shell-plugin-next')
 const CopyPlugin = require('copy-webpack-plugin')
 
 const { NODE_ENV } = process.env
@@ -43,18 +43,18 @@ module.exports = {
   },
 
   plugins: [
-    new WebpackShellPluginNext({
-      onBuildStart: {
-        scripts: ['echo "===> Starting packing with WEBPACK 5"'],
-        blocking: true,
-        parallel: false
-      },
-      onBuildEnd: {
-        scripts: isDev ? ['npm run nodemon'] : ['echo "===> Finished packing with WEBPACK 5"'],
-        blocking: false,
-        parallel: true
-      }
-    }),
+    // new WebpackShellPluginNext({
+    //   onBuildStart: {
+    //     scripts: ['echo "===> Starting packing with WEBPACK 5"'],
+    //     blocking: true,
+    //     parallel: false
+    //   },
+    //   onBuildEnd: {
+    //     scripts: isDev ? ['npm run nodemon'] : ['echo "===> Finished packing with WEBPACK 5"'],
+    //     blocking: false,
+    //     parallel: true
+    //   }
+    // }),
     new CopyPlugin({
       patterns: [
         {
