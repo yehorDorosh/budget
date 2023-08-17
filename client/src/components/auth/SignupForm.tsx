@@ -37,7 +37,7 @@ const SignupForm = () => {
   }
 
   return (
-    <form onSubmit={submitHandler}>
+    <form onSubmit={submitHandler} noValidate>
       <input
         type="email"
         placeholder="email"
