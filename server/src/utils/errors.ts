@@ -1,4 +1,5 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from 'express'
+import { validationResult } from 'express-validator'
 
 type ErrorDetails = string | object | unknown
 type ErrorHandler = {
@@ -20,6 +21,16 @@ export const errorHandler: ErrorHandler = ({ message, details, statusCode }, nex
   error.details = details ?? undefined
   if (next) next(error)
   else throw error
+}
+
+export const validationErrorsHandler = (message = 'Validation failed') => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const validationErrors = validationResult(req)
+    if (!validationErrors.isEmpty()) {
+      return res.status(422).json({ message, errors: validationErrors.array() })
+    }
+    next()
+  }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
