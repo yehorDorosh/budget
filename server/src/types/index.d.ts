@@ -1,1 +1,1 @@
-declare global {}
+export type UserId = number

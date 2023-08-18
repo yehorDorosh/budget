@@ -7,6 +7,7 @@ dotenv.config({ path: path.join(__dirname, '.env') })
 export const {
   SERVER_PORT_DEV,
   SERVER_PORT,
+  SERVER_JWT_SECRET,
   NODE_ENV,
   DB_HOST_DEV,
   DB_HOST,
