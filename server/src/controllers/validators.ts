@@ -1,7 +1,7 @@
 import { body } from 'express-validator'
 import { BudgetDataSource } from '../db/data-source'
 
-import { Users } from '../models/users'
+import { User } from '../models/user'
 
 export const emailValidator = () => {
   return body('email')
@@ -9,7 +9,7 @@ export const emailValidator = () => {
     .normalizeEmail({ gmail_remove_dots: false })
     .isEmail()
     .custom((value) => {
-      return BudgetDataSource.manager.findOneBy(Users, { email: value }).then((user) => {
+      return BudgetDataSource.manager.findOneBy(User, { email: value }).then((user) => {
         if (user) {
           return Promise.reject('E-mail address already exists!')
         }

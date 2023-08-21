@@ -6,13 +6,13 @@ import { RequestHandler } from 'express'
 import { SERVER_JWT_SECRET } from '../utils/config'
 import { errorHandler } from '../utils/errors'
 import { BudgetDataSource } from '../db/data-source'
-import { Users } from '../models/users'
+import { User } from '../models/user'
 import { getUser } from '../db/crud'
 
 export const signup: RequestHandler = async (req, res, next) => {
   const email = req.body.email
   const password = req.body.password
-  const user = new Users()
+  const user = new User()
   user.email = email
 
   try {
