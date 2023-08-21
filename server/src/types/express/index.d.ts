@@ -1,4 +1,4 @@
-import { UserId } from '../index'
+export {}
 
 declare global {
   namespace Express {

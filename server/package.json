@@ -10,7 +10,9 @@
     "watch:build": "NODE_ENV=development webpack",
     "watch:server": "NODE_ENV=development nodemon ./build/index.js",
     "lint": "eslint --ext .js,.ts src/",
-    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\""
+    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
+    "db:up": "docker-compose up -d",
+    "db:down": "docker-compose down"
   },
   "repository": {
     "type": "git",
