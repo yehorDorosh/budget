@@ -1,15 +1,9 @@
-import React, { Fragment } from 'react';
+import { RouterProvider } from 'react-router-dom';
 
-import SignupForm from './components/auth/SignupForm';
-import LoginForm from './components/auth/LoginForm';
+import router from './routers';
 
 function App() {
-  return (
-    <Fragment>
-      <SignupForm />
-      <LoginForm />
-    </Fragment>
-  );
+  return <RouterProvider router={router} />
 }
 
 export default App;
