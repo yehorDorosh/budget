@@ -7,6 +7,7 @@ import { SERVER_JWT_SECRET } from '../utils/config'
 import { errorHandler } from '../utils/errors'
 import { BudgetDataSource } from '../db/data-source'
 import { Users } from '../models/users'
+import { getUser } from '../db/crud'
 
 export const signup: RequestHandler = async (req, res, next) => {
   const email = req.body.email
@@ -24,14 +25,12 @@ export const signup: RequestHandler = async (req, res, next) => {
 }
 
 export const login: RequestHandler = async (req, res, next) => {
-  const email = req.body.email
-  const password = req.body.password
+  const email: string = req.body.email
+  const password: string = req.body.password
 
   try {
-    const user = await BudgetDataSource.manager.findOneBy(Users, { email })
-    if (!user) {
-      return errorHandler({ message: 'User not found', statusCode: 403 }, next)
-    }
+    const user = await getUser({ email }, next)
+    if (!user) return
     const isEqual = await bcrypt.compare(password, user.password)
     if (!isEqual) {
       return errorHandler({ message: 'Wrong password', statusCode: 403 }, next)
@@ -40,7 +39,6 @@ export const login: RequestHandler = async (req, res, next) => {
     const token = jwt.sign({ userId: user.id }, SERVER_JWT_SECRET!, { expiresIn: '1h' })
     res.status(200).json({ message: 'Login success', token, userId: user.id })
   } catch (err) {
-    console.log(err)
     errorHandler({ message: 'Failed to login', details: err }, next)
   }
 }
