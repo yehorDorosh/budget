@@ -23,7 +23,11 @@ const auth: RequestHandler = async (req, res, next) => {
   if (!decodedToken) {
     return errorHandler({ message: 'Not authenticated', statusCode: 401, details: 'Invalid token' }, next)
   }
-  if (typeof decodedToken === 'object') req.userId = decodedToken.userId
+  if (typeof decodedToken === 'object') {
+    req.userId = decodedToken.userId
+  } else {
+    errorHandler({ message: 'Not authenticated', statusCode: 401, details: 'Invalid token' }, next)
+  }
 
   try {
     const user = await getUser({ userId: req.userId }, next)

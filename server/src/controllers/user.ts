@@ -3,7 +3,8 @@ import jwt from 'jsonwebtoken'
 
 import { RequestHandler } from 'express'
 
-import { SERVER_JWT_SECRET } from '../utils/config'
+import { transport } from '../utils/email'
+import { SERVER_JWT_SECRET, SERVER_EMAIL_USER } from '../utils/config'
 import { errorHandler } from '../utils/errors'
 import { BudgetDataSource } from '../db/data-source'
 import { User } from '../models/user'
@@ -40,5 +41,56 @@ export const login: RequestHandler = async (req, res, next) => {
     res.status(200).json({ message: 'Login success', token, userId: user.id })
   } catch (err) {
     errorHandler({ message: 'Failed to login', details: err }, next)
+  }
+}
+
+export const sendRestorePasswordEmail: RequestHandler = async (req, res, next) => {
+  const email = req.body.email
+
+  try {
+    const user = await getUser({ email }, next)
+    if (!user) return
+    const token = jwt.sign({ userId: user.id }, SERVER_JWT_SECRET!, { expiresIn: '1h' })
+
+    await transport.sendMail({
+      from: `"Egor" <${SERVER_EMAIL_USER}>`,
+      to: email,
+      subject: 'Restore password',
+      html: `<p>
+              To restore your password follow by this 
+              <a href="${req.protocol}://${req.headers.host}/api/user/restore-password/${token}">
+                link
+              </a>
+            </p> `
+    })
+
+    res.status(200).json({ message: 'Restore password email was sent' })
+  } catch (err) {
+    errorHandler({ message: 'Failed to send email to restore password', details: err }, next)
+  }
+}
+
+export const restorePassword: RequestHandler = async (req, res, next) => {
+  const token: string = req.params.token
+  const newPassword: string = req.body.newPassword
+  let decodedToken: string | jwt.JwtPayload
+  let user: User | null
+
+  try {
+    decodedToken = await jwt.verify(token, SERVER_JWT_SECRET!)
+    if (!decodedToken) {
+      return errorHandler({ message: 'Not authenticated', statusCode: 401, details: 'Invalid token' }, next)
+    }
+    if (typeof decodedToken === 'object') {
+      user = await getUser({ userId: decodedToken.userId }, next)
+      if (!user) return
+      user.password = await bcrypt.hash(newPassword, 12)
+      await BudgetDataSource.manager.save(user)
+      res.status(200).json({ message: 'Password was restored' })
+    } else {
+      errorHandler({ message: 'Invalid token when password restoring', details: decodedToken }, next)
+    }
+  } catch (err) {
+    errorHandler({ message: 'Failed to restore password', details: err }, next)
   }
 }
