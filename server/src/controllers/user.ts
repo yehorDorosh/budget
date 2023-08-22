@@ -50,7 +50,7 @@ export const sendRestorePasswordEmail: RequestHandler = async (req, res, next) =
   try {
     const user = await getUser({ email }, next)
     if (!user) return
-    const token = jwt.sign({ userId: user.id }, SERVER_JWT_SECRET!, { expiresIn: '1h' })
+    const token = jwt.sign({ userId: user.id }, SERVER_JWT_SECRET!, { expiresIn: '15m' })
 
     await transport.sendMail({
       from: `"Egor" <${SERVER_EMAIL_USER}>`,
@@ -58,7 +58,7 @@ export const sendRestorePasswordEmail: RequestHandler = async (req, res, next) =
       subject: 'Restore password',
       html: `<p>
               To restore your password follow by this 
-              <a href="${req.protocol}://${req.headers.host}/api/user/restore-password/${token}">
+              <a href="${req.protocol}://${req.headers.host}/restore-password/${token}">
                 link
               </a>
             </p> `
