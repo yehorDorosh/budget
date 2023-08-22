@@ -1,26 +1,28 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from 'react-router-dom'
 
-import DefaultTemplate from "../components/templates/DefaultTemplate";
-import SignupPage from "../components/pages/SignupPage";
-import LoginPage from "../components/pages/LoginPage";
-import HomePage from "../components/pages/HomePage";
+import DefaultTemplate from '../components/templates/DefaultTemplate'
+import SignupPage from '../components/pages/SignupPage'
+import LoginPage from '../components/pages/LoginPage'
+import HomePage from '../components/pages/HomePage'
+import ErrorPage from '../components/pages/ErrorPage'
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <DefaultTemplate />,
+    errorElement: <ErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
       {
-        path: "/signup",
-        element: <SignupPage />,
+        path: '/signup',
+        element: <SignupPage />
       },
       {
         path: '/login',
-        element: <LoginPage />,
+        element: <LoginPage />
       }
     ]
   }
 ])
 
-export default router;
+export default router
