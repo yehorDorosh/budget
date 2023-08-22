@@ -10,6 +10,10 @@ import { BudgetDataSource } from '../db/data-source'
 import { User } from '../models/user'
 import { getUser } from '../db/crud'
 
+function generateToken(userId: number) {
+  return jwt.sign({ userId }, SERVER_JWT_SECRET!, { expiresIn: '1h' })
+}
+
 export const signup: RequestHandler = async (req, res, next) => {
   const email = req.body.email
   const password = req.body.password
@@ -19,7 +23,8 @@ export const signup: RequestHandler = async (req, res, next) => {
   try {
     user.password = await bcrypt.hash(password, 12)
     await BudgetDataSource.manager.save(user)
-    res.status(201).json({ message: 'Create new user' })
+    const token = generateToken(user.id)
+    res.status(201).json({ message: 'Create new user', user: { id: user.id, email: user.email, token } })
   } catch (err) {
     errorHandler({ message: 'Failed to create new user', details: err }, next)
   }
@@ -37,8 +42,8 @@ export const login: RequestHandler = async (req, res, next) => {
       return errorHandler({ message: 'Wrong password', statusCode: 403 }, next)
     }
 
-    const token = jwt.sign({ userId: user.id }, SERVER_JWT_SECRET!, { expiresIn: '1h' })
-    res.status(200).json({ message: 'Login success', token, userId: user.id })
+    const token = generateToken(user.id)
+    res.status(200).json({ message: 'Login success', user: { id: user.id, email: user.email, token } })
   } catch (err) {
     errorHandler({ message: 'Failed to login', details: err }, next)
   }
