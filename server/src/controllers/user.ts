@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
 import { RequestHandler } from 'express'
+import { AppRes, ResCodes } from '../types/express/custom-response'
 
 import { transport } from '../utils/email'
 import { SERVER_JWT_SECRET, SERVER_EMAIL_USER } from '../utils/config'
@@ -14,7 +15,7 @@ function generateToken(userId: number) {
   return jwt.sign({ userId }, SERVER_JWT_SECRET!, { expiresIn: '1h' })
 }
 
-export const signup: RequestHandler = async (req, res, next) => {
+export const signup: RequestHandler = async (req, res: AppRes<UserPayload>, next) => {
   const email = req.body.email
   const password = req.body.password
   const user = new User()
@@ -24,13 +25,14 @@ export const signup: RequestHandler = async (req, res, next) => {
     user.password = await bcrypt.hash(password, 12)
     await BudgetDataSource.manager.save(user)
     const token = generateToken(user.id)
-    res.status(201).json({ message: 'Create new user', user: { id: user.id, email: user.email, token } })
+    const userState: UserState = { id: user.id, email: user.email, token }
+    res.status(201).json({ message: 'Create new user', code: ResCodes.CREATE_USER, payload: { user: userState } })
   } catch (err) {
     errorHandler({ message: 'Failed to create new user', details: err }, next)
   }
 }
 
-export const login: RequestHandler = async (req, res, next) => {
+export const login: RequestHandler = async (req, res: AppRes<UserPayload>, next) => {
   const email: string = req.body.email
   const password: string = req.body.password
 
@@ -43,13 +45,14 @@ export const login: RequestHandler = async (req, res, next) => {
     }
 
     const token = generateToken(user.id)
-    res.status(200).json({ message: 'Login success', user: { id: user.id, email: user.email, token } })
+    const userState: UserState = { id: user.id, email: user.email, token }
+    res.status(200).json({ message: 'Login success', code: ResCodes.LOGIN, payload: { user: userState } })
   } catch (err) {
     errorHandler({ message: 'Failed to login', details: err }, next)
   }
 }
 
-export const sendRestorePasswordEmail: RequestHandler = async (req, res, next) => {
+export const sendRestorePasswordEmail: RequestHandler = async (req, res: AppRes, next) => {
   const email = req.body.email
 
   try {
@@ -69,13 +72,13 @@ export const sendRestorePasswordEmail: RequestHandler = async (req, res, next) =
             </p> `
     })
 
-    res.status(200).json({ message: 'Restore password email was sent' })
+    res.status(200).json({ message: 'Restore password email was sent', code: ResCodes.SEND_RESTORE_PASSWORD_EMAIL })
   } catch (err) {
     errorHandler({ message: 'Failed to send email to restore password', details: err }, next)
   }
 }
 
-export const restorePassword: RequestHandler = async (req, res, next) => {
+export const restorePassword: RequestHandler = async (req, res: AppRes, next) => {
   const token: string = req.params.token
   const newPassword: string = req.body.newPassword
   let decodedToken: string | jwt.JwtPayload
@@ -91,7 +94,7 @@ export const restorePassword: RequestHandler = async (req, res, next) => {
       if (!user) return
       user.password = await bcrypt.hash(newPassword, 12)
       await BudgetDataSource.manager.save(user)
-      res.status(200).json({ message: 'Password was restored' })
+      res.status(200).json({ message: 'Password was restored', code: ResCodes.RESET_PASSWORD })
     } else {
       errorHandler({ message: 'Invalid token when password restoring', details: decodedToken }, next)
     }

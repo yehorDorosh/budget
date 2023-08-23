@@ -1,5 +1,6 @@
-import { ErrorRequestHandler, NextFunction, Request, Response } from 'express'
+import { ErrorRequestHandler, NextFunction, Request } from 'express'
 import { validationResult } from 'express-validator'
+import { AppRes, ResCodes } from '../types/express/custom-response'
 
 type ErrorDetails = string | object | unknown
 type ErrorHandler = {
@@ -24,21 +25,23 @@ export const errorHandler: ErrorHandler = ({ message, details, statusCode }, nex
 }
 
 export const validationErrorsHandler = (message = 'Validation failed') => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: AppRes, next: NextFunction) => {
     const validationErrors = validationResult(req)
     if (!validationErrors.isEmpty()) {
-      return res.status(422).json({ message, errors: validationErrors.array() })
+      return res.status(422).json({ message, validationErrors: validationErrors.array(), code: ResCodes.VALIDATION_ERROR })
     }
     next()
   }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const expressErrorHandler: ErrorRequestHandler = (err: Error, req: Request, res: Response, _next: NextFunction) => {
+export const expressErrorHandler: ErrorRequestHandler = (err: Error, req: Request, res: AppRes, _next: NextFunction) => {
   if (err instanceof ProjectError) {
-    res.status(err.statusCode).json({ message: 'Internal server error', cause: err.message, details: err.details })
+    res
+      .status(err.statusCode)
+      .json({ message: 'Internal server error', code: ResCodes.ERORR, error: { cause: err.message, details: err.details } })
   } else {
-    res.status(500).json({ message: 'Internal server error', cause: err.message })
+    res.status(500).json({ message: 'Internal server error', code: ResCodes.ERORR, error: { cause: err.message } })
   }
 }
 
