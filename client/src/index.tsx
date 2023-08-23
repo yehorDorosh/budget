@@ -5,7 +5,7 @@ import { Provider } from 'react-redux'
 import reportWebVitals from './reportWebVitals'
 
 import './styles/normalize.css'
-import './styles/main.scss'
+import './styles/index.scss'
 
 import App from './App'
 import store from './store'

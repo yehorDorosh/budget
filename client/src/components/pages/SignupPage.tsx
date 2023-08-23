@@ -5,7 +5,7 @@ import SignupForm from '../auth/SignupForm/SignupForm'
 const SugnupPage = () => {
   return (
     <Fragment>
-      <h1>Sign Up</h1>
+      <h1 className="center">Sign Up</h1>
       <SignupForm />
     </Fragment>
   )

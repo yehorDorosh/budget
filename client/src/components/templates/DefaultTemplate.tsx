@@ -3,9 +3,11 @@ import { Outlet } from 'react-router-dom'
 
 const DefaultTemplate = () => {
   return (
-    <main className="main">
+    <main>
       <PageHeader />
-      <Outlet />
+      <div className="content">
+        <Outlet />
+      </div>
     </main>
   )
 }
