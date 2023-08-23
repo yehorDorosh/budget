@@ -1,7 +1,9 @@
 import { useState } from 'react'
-import { useAppDispatch } from '../../hooks/useReduxTS'
+import { useAppDispatch } from '../../../hooks/useReduxTS'
 
-import { signUp } from '../../store/user/user-actions'
+import classes from './SignupForm.module.scss'
+
+import { signUp } from '../../../store/user/user-actions'
 
 const SignupForm = () => {
   const [email, setEmail] = useState('')
@@ -24,7 +26,7 @@ const SignupForm = () => {
   }
 
   return (
-    <form onSubmit={submitHandler} noValidate>
+    <form onSubmit={submitHandler} className={classes.form} noValidate>
       <input type="email" placeholder="email" name="email" onChange={emailHandler} value={email} />
       <input type="password" placeholder="password" name="password" onChange={passwordHandler} value={password} />
       <button type="submit">Sign Up</button>

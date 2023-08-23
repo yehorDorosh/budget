@@ -1,10 +1,9 @@
-import PageHeader from "../layout/PageHeader"
-import { Outlet } from "react-router-dom"
-
+import PageHeader from '../layout/PageHeader'
+import { Outlet } from 'react-router-dom'
 
 const DefaultTemplate = () => {
   return (
-    <main>
+    <main className="main">
       <PageHeader />
       <Outlet />
     </main>

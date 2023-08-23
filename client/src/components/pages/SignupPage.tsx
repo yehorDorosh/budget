@@ -1,6 +1,6 @@
-import { Fragment } from "react";
+import { Fragment } from 'react'
 
-import SignupForm from "../auth/SignupForm";
+import SignupForm from '../auth/SignupForm/SignupForm'
 
 const SugnupPage = () => {
   return (
@@ -8,7 +8,7 @@ const SugnupPage = () => {
       <h1>Sign Up</h1>
       <SignupForm />
     </Fragment>
-  );
+  )
 }
 
-export default SugnupPage;
+export default SugnupPage
