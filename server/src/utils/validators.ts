@@ -19,5 +19,5 @@ export const emailValidator = (fieldName: string = 'email', checkIsExisted: bool
 }
 
 export const passwordValidator = (fieldName: string = 'password') => {
-  return body(fieldName).trim().isLength({ min: 6 })
+  return body(fieldName).trim().isStrongPassword({ minSymbols: 0 })
 }

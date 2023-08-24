@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { emailValidator, passwordValidator } from '../controllers/validators'
+import { emailValidator, passwordValidator } from '../utils/validators'
 
 import { login, signup, sendRestorePasswordEmail, restorePassword } from '../controllers/user'
 import { validationErrorsHandler } from '../utils/errors'

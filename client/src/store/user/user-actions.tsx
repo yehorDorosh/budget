@@ -11,8 +11,12 @@ export const signUp = (email: string, password: string) => {
         dispatch(userActions.setUserData(data.payload.user))
         if (data.payload.user.token) localStorage.setItem('token', data.payload.user.token)
       }
-    } catch (error) {
-      console.error(error)
+      return { data, status }
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response) {
+        return { error: err, data: err.response.data, status: err.response.status }
+      }
+      return { error: err }
     }
   }
 }
