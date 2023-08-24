@@ -1,13 +1,17 @@
 import React, { FC } from 'react'
 import PageHeader from '../layout/PageHeader'
-import { Outlet } from 'react-router-dom'
+import ErrorBoundary from '../errors/ErrorBoundary'
 
-const DefaultTemplate: FC = () => {
+interface Props {
+  children?: React.ReactNode
+}
+
+const DefaultTemplate: FC<Props> = ({ children }) => {
   return (
     <main>
       <PageHeader />
       <div className="content">
-        <Outlet />
+        <ErrorBoundary>{children}</ErrorBoundary>
       </div>
     </main>
   )

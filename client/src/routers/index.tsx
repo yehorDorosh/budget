@@ -4,7 +4,7 @@ import DefaultTemplate from '../components/templates/DefaultTemplate'
 import SignupPage from '../components/pages/SignupPage'
 import LoginPage from '../components/pages/LoginPage'
 import HomePage from '../components/pages/HomePage'
-import ErrorPage from '../components/pages/ErrorPage'
+import RouterErrorBoundary from '../components/errors/RouterErrorBoundary'
 import RestorePassSendEmailPage from '../components/pages/RestorePassSendEmailPage'
 import RestorePassPage from '../components/pages/RestorePassPage'
 
@@ -12,7 +12,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <DefaultTemplate />,
-    errorElement: <ErrorPage />,
+    errorElement: <RouterErrorBoundary />,
     children: [
       { index: true, element: <HomePage /> },
       {

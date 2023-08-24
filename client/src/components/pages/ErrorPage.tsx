@@ -1,15 +1,17 @@
-import { Fragment } from 'react'
-import { useRouteError } from 'react-router-dom'
+import React, { FC } from 'react'
 
-const ErrorPage = () => {
-  const error = useRouteError()
-  // console.error(error)
-  const message = (error as Error)?.message
-  const routerError = error as { statusText: string; status: number }
+import ErrorTemplate from '../templates/ErrorTemplate'
+
+interface Props {
+  message?: string
+  routerError?: { statusText: string; status: number }
+}
+
+const ErrorPage: FC<Props> = ({ message, routerError }) => {
   return (
-    <Fragment>
+    <ErrorTemplate>
       <h1>Error.</h1>
-      {routerError.status === 404 ? (
+      {routerError && routerError.status === 404 ? (
         <p>Sorry, the page you were looking for could not be found.</p>
       ) : (
         <p>Sorry, an unexpected error has occurred.</p>
@@ -22,7 +24,7 @@ const ErrorPage = () => {
           </i>
         )}
       </p>
-    </Fragment>
+    </ErrorTemplate>
   )
 }
 
