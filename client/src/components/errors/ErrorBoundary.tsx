@@ -1,6 +1,5 @@
 import { Component, ReactNode, ErrorInfo } from 'react'
 import ErrorPage from '../pages/ErrorPage'
-import { error } from 'console'
 
 interface Props {
   children?: ReactNode

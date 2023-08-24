@@ -50,8 +50,6 @@ const SignupForm = () => {
     }
   }
 
-  throw new Error('SignupForm.tsx: Something went wrong.')
-
   return (
     <BaseForm onSubmit={submitHandler} noValidate>
       <BaseInput
