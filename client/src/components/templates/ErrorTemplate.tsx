@@ -10,9 +10,7 @@ const DefaultTemplate: FC<Props> = ({ children }) => {
   return (
     <main>
       <PageHeader />
-      <div className="content">
-        <ErrorBoundary>{children}</ErrorBoundary>
-      </div>
+      <div className="content">{children}</div>
     </main>
   )
 }
