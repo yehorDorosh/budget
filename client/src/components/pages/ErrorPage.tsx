@@ -1,5 +1,7 @@
 import React, { FC } from 'react'
+import { useLocation } from 'react-router-dom'
 
+import { ActionResult, determineAxiosErrorPayload } from '../../types/actions/actions'
 import ErrorTemplate from '../templates/ErrorTemplate'
 
 interface Props {
@@ -8,6 +10,8 @@ interface Props {
 }
 
 const ErrorPage: FC<Props> = ({ message, routerError }) => {
+  const location = useLocation()
+  const dataFromAction = location.state.data as ActionResult<unknown>
   return (
     <ErrorTemplate>
       <h1>Error.</h1>
@@ -23,7 +27,15 @@ const ErrorPage: FC<Props> = ({ message, routerError }) => {
             {routerError.status} {routerError.statusText}
           </i>
         )}
+        {determineAxiosErrorPayload(dataFromAction) && <i>{dataFromAction.errorMsg}</i>}
       </p>
+      {determineAxiosErrorPayload(dataFromAction) && dataFromAction.data.validationErrors?.length && (
+        <ul>
+          {dataFromAction.data.validationErrors.map((item, i) => {
+            return <li key={i}>{item.msg}</li>
+          })}
+        </ul>
+      )}
     </ErrorTemplate>
   )
 }

@@ -26,4 +26,12 @@ declare global {
   interface UserPayload {
     user: UserState
   }
+
+  interface ValidationError {
+    location: string
+    msg: string
+    path: string
+    type: string
+    value: string
+  }
 }

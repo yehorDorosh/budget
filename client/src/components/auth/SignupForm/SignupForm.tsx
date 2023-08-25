@@ -3,6 +3,7 @@ import { useAppDispatch } from '../../../hooks/useReduxTS'
 
 // import classes from './SignupForm.module.scss'
 
+import { determineAxiosErrorPayload } from '../../../types/actions/actions'
 import { emailValidator, passwordValidator, shouldMatchValidator } from '../../../utils/validators'
 import useField from '../../../hooks/useField'
 import { signUp } from '../../../store/user/user-actions'
@@ -42,7 +43,10 @@ const SignupForm = () => {
     const isTouched = emailState.touched && passwordState.touched && confirmPasswordState.touched
     if (isValid && isTouched) {
       const res = await dispatch(signUp(emailState.value, passwordState.value))
-      if (res.error) return
+      if (determineAxiosErrorPayload(res)) {
+        if (res.status && res.status >= 300) navigate('/500', { state: { data: res } })
+        return
+      }
       emailDispatch({ type: 'clear' })
       passwordDispatch({ type: 'clear' })
       confirmPasswordDispatch({ type: 'clear' })

@@ -5,6 +5,7 @@ import SignupPage from '../components/pages/SignupPage'
 import LoginPage from '../components/pages/LoginPage'
 import HomePage from '../components/pages/HomePage'
 import RouterErrorBoundary from '../components/errors/RouterErrorBoundary'
+import ErrorPage from '../components/pages/ErrorPage'
 import RestorePassSendEmailPage from '../components/pages/RestorePassSendEmailPage'
 import RestorePassPage from '../components/pages/RestorePassPage'
 
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
         element: <RestorePassPage />
       }
     ]
+  },
+  {
+    path: '/500',
+    element: <ErrorPage />
   }
 ])
 
