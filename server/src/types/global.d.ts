@@ -7,6 +7,7 @@ declare global {
     id: number | null
     email: string | null
     token: string | null
+    isLogin?: boolean | null
   }
 
   interface UserPayload {

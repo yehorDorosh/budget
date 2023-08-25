@@ -2,7 +2,8 @@ import express from 'express'
 
 import { emailValidator, passwordValidator } from '../utils/validators'
 
-import { login, signup, sendRestorePasswordEmail, restorePassword } from '../controllers/user'
+import { login, signup, sendRestorePasswordEmail, restorePassword, getUserInfo } from '../controllers/user'
+import auth from '../middleware/auth'
 import { validationErrorsHandler } from '../utils/errors'
 
 const router = express.Router()
@@ -18,5 +19,7 @@ router.post(
   validationErrorsHandler('Restore password validation failed'),
   restorePassword
 )
+
+router.get('/get-user', auth, getUserInfo)
 
 export default router

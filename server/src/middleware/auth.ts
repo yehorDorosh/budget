@@ -1,4 +1,4 @@
-import jwt, { JwtPayload } from 'jsonwebtoken'
+import * as jose from 'jose'
 
 import { RequestHandler } from 'express'
 
@@ -12,22 +12,18 @@ const auth: RequestHandler = async (req, res, next) => {
     return errorHandler({ message: 'Not authenticated', statusCode: 401 }, next)
   }
   const token = authHeader.split(' ')[1]
-  let decodedToken: string | JwtPayload
+  let decodedToken: jose.JWTVerifyResult
 
   try {
-    decodedToken = jwt.verify(token, SERVER_JWT_SECRET!)
+    decodedToken = await jose.jwtVerify(token, new TextEncoder().encode(SERVER_JWT_SECRET!))
   } catch (err) {
     return errorHandler({ message: 'Not authenticated', statusCode: 401, details: err }, next)
   }
 
-  if (!decodedToken) {
+  if (!decodedToken || !decodedToken.payload || !decodedToken.payload.userId) {
     return errorHandler({ message: 'Not authenticated', statusCode: 401, details: 'Invalid token' }, next)
   }
-  if (typeof decodedToken === 'object') {
-    req.userId = decodedToken.userId
-  } else {
-    errorHandler({ message: 'Not authenticated', statusCode: 401, details: 'Invalid token' }, next)
-  }
+  req.userId = decodedToken.payload.userId as number
 
   try {
     const user = await getUser({ userId: req.userId }, next)
