@@ -1,15 +1,17 @@
-import React, { FC } from 'react'
-import PageHeader from '../layout/PageHeader'
+import React, { FC, Fragment } from 'react'
+import PageHeader from '../layout/PageHeader/PageHeader'
 import { Outlet } from 'react-router-dom'
 
 const DefaultTemplate: FC = () => {
   return (
-    <main>
+    <Fragment>
       <PageHeader />
-      <div className="content">
-        <Outlet />
-      </div>
-    </main>
+      <main>
+        <div className="content">
+          <Outlet />
+        </div>
+      </main>
+    </Fragment>
   )
 }
 

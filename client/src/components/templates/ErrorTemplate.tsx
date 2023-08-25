@@ -1,5 +1,5 @@
-import React, { FC } from 'react'
-import PageHeader from '../layout/PageHeader'
+import React, { FC, Fragment } from 'react'
+import PageHeader from '../layout/PageHeader/PageHeader'
 
 interface Props {
   children?: React.ReactNode
@@ -7,10 +7,12 @@ interface Props {
 
 const DefaultTemplate: FC<Props> = ({ children }) => {
   return (
-    <main>
+    <Fragment>
       <PageHeader />
-      <div className="content">{children}</div>
-    </main>
+      <main>
+        <div className="content">{children}</div>
+      </main>
+    </Fragment>
   )
 }
 

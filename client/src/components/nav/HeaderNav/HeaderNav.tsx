@@ -1,8 +1,10 @@
-import { NavLink } from "react-router-dom"
+import { NavLink } from 'react-router-dom'
+
+import classes from './HeaderNav.module.scss'
 
 const HeaderNav = () => {
   return (
-    <nav>
+    <nav className={classes.nav}>
       <ul>
         <li>
           <NavLink to="/signup">Sign Up</NavLink>
