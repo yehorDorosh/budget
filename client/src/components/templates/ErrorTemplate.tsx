@@ -1,6 +1,5 @@
 import React, { FC } from 'react'
 import PageHeader from '../layout/PageHeader'
-import ErrorBoundary from '../errors/ErrorBoundary'
 
 interface Props {
   children?: React.ReactNode
