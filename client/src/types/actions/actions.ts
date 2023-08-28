@@ -1,5 +1,5 @@
 export function determineAxiosErrorPayload<T>(toBeDetermined: ActionResult<T>): toBeDetermined is AxiosErrorPayload {
-  return (toBeDetermined as AxiosErrorPayload).status !== undefined
+  return (toBeDetermined as AxiosErrorPayload).errorMsg !== undefined
 }
 
 export type AxiosErrorPayload = {
