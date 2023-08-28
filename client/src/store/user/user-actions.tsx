@@ -1,7 +1,6 @@
 import axios from 'axios'
-import { AppDispatch } from '..'
 
-import { ActionResult } from '../../types/actions/actions'
+import { StoreAction } from '../../types/actions/actions'
 
 import { userActions } from './user-slice'
 
@@ -12,8 +11,8 @@ function errorHandler(err: any) {
   return { error: err }
 }
 
-export const signUp = (email: string, password: string) => {
-  return async (dispatch: AppDispatch): Promise<ActionResult<UserPayload>> => {
+export const signUp: StoreAction<UserPayload> = (email: string, password: string) => {
+  return async (dispatch) => {
     try {
       const { data, status } = await axios.post<JSONResponse<UserPayload>>('/api/user/signup', { email, password })
       if (data.payload && data.payload.user) {
@@ -28,8 +27,8 @@ export const signUp = (email: string, password: string) => {
   }
 }
 
-export const getUserData = (token: string) => {
-  return async (dispatch: AppDispatch): Promise<ActionResult<UserPayload>> => {
+export const getUserData: StoreAction<UserPayload> = (token: string) => {
+  return async (dispatch) => {
     try {
       const { data, status } = await axios.get<JSONResponse<UserPayload>>('/api/user/get-user', {
         headers: { Authorization: `Bearer ${token}` }

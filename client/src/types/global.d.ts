@@ -35,4 +35,6 @@ declare global {
     type: string
     value: string
   }
+
+  type ValidationFunction = (value: string, matchValue?: string) => boolean
 }

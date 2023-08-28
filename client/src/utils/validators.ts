@@ -1,4 +1,4 @@
-export const emailValidator = (value: string): boolean => {
+export const emailValidator: ValidationFunction = (value) => {
   const isValid = String(value)
     .trim()
     .toLowerCase()
@@ -8,19 +8,22 @@ export const emailValidator = (value: string): boolean => {
   return !!isValid
 }
 
-export const passwordValidator = (value: string): boolean => {
+export const passwordValidator: ValidationFunction = (value) => {
   const isValid = String(value)
     .trim()
     .match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)
   return !!isValid
 }
 
-export const notEmptyValidator = (value: string): boolean => {
+export const notEmptyValidator: ValidationFunction = (value) => {
   const isValid = String(value).trim().length > 0
   return isValid
 }
 
-export const shouldMatchValidator = (value: string, matchValue: string): boolean => {
+export const shouldMatchValidator: ValidationFunction = (value, matchValue) => {
+  if (matchValue === undefined) {
+    throw new Error('client/src/utils/validators.ts: shouldMatchValidator requires a matchValue')
+  }
   const isValid = String(value).trim() === String(matchValue).trim() && String(value).trim().length > 0
   return isValid
 }

@@ -1,3 +1,5 @@
+import { AppDispatch } from '../../store'
+
 export function determineAxiosErrorPayload<T>(toBeDetermined: ActionResult<T>): toBeDetermined is AxiosErrorPayload {
   return (toBeDetermined as AxiosErrorPayload).errorMsg !== undefined
 }
@@ -16,3 +18,5 @@ export type ActionPayload<T> = {
 }
 
 export type ActionResult<T> = AxiosErrorPayload | RegularErrorObject | ActionPayload<T>
+
+export type StoreAction<T> = (...arg: any) => (dispatch: AppDispatch) => Promise<ActionResult<T>>

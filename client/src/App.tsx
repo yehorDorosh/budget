@@ -21,7 +21,6 @@ function App() {
         if (expiryDate && Date.now() >= expiryDate * 1000) {
           dispatch(userActions.logout())
         } else {
-          console.log('Fetching user data')
           dispatch(getUserData(token))
         }
       } else {

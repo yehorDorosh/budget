@@ -1,22 +1,20 @@
 import { useNavigate } from 'react-router-dom'
-import { useAppDispatch } from '../../../hooks/useReduxTS'
 
 // import classes from './SignupForm.module.scss'
 
-import { determineAxiosErrorPayload } from '../../../types/actions/actions'
 import { emailValidator, passwordValidator, shouldMatchValidator } from '../../../utils/validators'
 import useField from '../../../hooks/useField'
+import useFormSubmit from '../../../hooks/useFormSubmit'
 import { signUp } from '../../../store/user/user-actions'
 import BaseForm from '../../ui/BaseForm/BaseForm'
 import BaseInput from '../../ui/BaseInput/BaseInput'
 
 const SignupForm = () => {
   const navigate = useNavigate()
+  const submit = useFormSubmit()
   const { fieldState: emailState, filedDispatch: emailDispatch } = useField()
   const { fieldState: passwordState, filedDispatch: passwordDispatch } = useField()
   const { fieldState: confirmPasswordState, filedDispatch: confirmPasswordDispatch } = useField()
-
-  const dispatch = useAppDispatch()
 
   function emailHandler(e: React.ChangeEvent<HTMLInputElement>) {
     emailDispatch({ type: 'set', payload: { value: e.target.value, touched: true }, validation: emailValidator })
@@ -34,24 +32,19 @@ const SignupForm = () => {
     })
   }
 
-  async function submitHandler(e: React.FormEvent<HTMLFormElement>) {
+  function submitHandler(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    emailDispatch({ type: 'validate', validation: emailValidator })
-    passwordDispatch({ type: 'validate', validation: passwordValidator })
-    confirmPasswordDispatch({ type: 'validate', validation: shouldMatchValidator.bind(null, passwordState.value) })
-    const isValid = emailState.isValid && passwordState.isValid && confirmPasswordState.isValid
-    const isTouched = emailState.touched && passwordState.touched && confirmPasswordState.touched
-    if (isValid && isTouched) {
-      const res = await dispatch(signUp(emailState.value, passwordState.value))
-      if (determineAxiosErrorPayload(res)) {
-        if (res.status && res.status >= 300) navigate('/500', { state: { data: res } })
-        return
-      }
-      emailDispatch({ type: 'clear' })
-      passwordDispatch({ type: 'clear' })
-      confirmPasswordDispatch({ type: 'clear' })
-      navigate('/', { replace: true })
-    }
+    submit<UserPayload>(
+      [emailState, passwordState, confirmPasswordState],
+      new Map([
+        [emailDispatch, emailValidator],
+        [passwordDispatch, passwordValidator],
+        [confirmPasswordDispatch, shouldMatchValidator.bind(null, passwordState.value)]
+      ]),
+      signUp,
+      [emailState.value, passwordState.value],
+      () => navigate('/', { replace: true })
+    )
   }
 
   return (
