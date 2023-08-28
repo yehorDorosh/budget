@@ -14,20 +14,22 @@ import { Action as UseFieldActions } from './useField'
  * @param action - action to dispatch. The action is dispatched if the form is valid. The action is expected to return a promise. Usually send a request to the server.
  * @param actionParams - action parameters.
  * @param callback - callback function. Called after a successful submit.
- * @returns void
+ * @returns - if the action returns an axios error, return the error. If the action returns a status code of 403, return the status code. If the action returns a status code of 300 or higher, navigate to the 500 page. Otherwise, return nothing.
  */
 
-const useSubmit = () => {
+export type FormSubmitHook = <T>(
+  fields: FieldState[],
+  fieldsDispatch: Map<React.Dispatch<UseFieldActions>, ValidationFunction | null>,
+  action: StoreAction<T>,
+  actionParams: any[],
+  callback: () => void
+) => Promise<{ status: number } | void>
+
+const useSubmit = (): FormSubmitHook => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
-  return async <T,>(
-    fields: FieldState[],
-    fieldsDispatch: Map<React.Dispatch<UseFieldActions>, ValidationFunction>,
-    action: StoreAction<T>,
-    actionParams: any[],
-    callback: () => void
-  ) => {
+  return async (fields, fieldsDispatch, action, actionParams, callback) => {
     for (let [fieldDispatch, validator] of fieldsDispatch) {
       if (!validator) continue
       fieldDispatch({ type: 'validate', validation: validator })
@@ -40,6 +42,7 @@ const useSubmit = () => {
       const res = await dispatch(action(...actionParams))
 
       if (determineAxiosErrorPayload(res)) {
+        if (res.status && res.status === 403) return { status: res.status }
         if (res.status && res.status >= 300) navigate('/500', { state: { data: res } })
         return
       }

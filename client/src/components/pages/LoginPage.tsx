@@ -1,6 +1,6 @@
-import { Fragment } from "react";
+import { Fragment } from 'react'
 
-import LoginForm from "../auth/LoginForm";
+import LoginForm from '../auth/LoginForm/LoginForm'
 
 const SugnupPage = () => {
   return (
@@ -8,7 +8,7 @@ const SugnupPage = () => {
       <h1>Login</h1>
       <LoginForm />
     </Fragment>
-  );
+  )
 }
 
-export default SugnupPage;
+export default SugnupPage

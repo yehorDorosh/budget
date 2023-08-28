@@ -8,7 +8,8 @@ export interface FieldState {
 
 export type Action =
   | { type: 'clear' }
-  | { type: 'set'; payload: FieldState; validation: ValidationFunction }
+  | { type: 'set&check'; payload: FieldState; validation: ValidationFunction }
+  | { type: 'set'; payload: FieldState }
   | { type: 'validate'; validation: ValidationFunction }
 
 const fieldInitialState: FieldState = {
@@ -20,8 +21,10 @@ const fieldInitialState: FieldState = {
 const useField = () => {
   const fieldReducer: Reducer<FieldState, Action> = (state, action) => {
     switch (action.type) {
-      case 'set':
+      case 'set&check':
         return { ...state, value: action.payload.value, touched: action.payload.touched, isValid: action.validation(action.payload.value) }
+      case 'set':
+        return { ...state, value: action.payload.value, touched: action.payload.touched }
       case 'clear':
         return { ...state, value: '', touched: false, isValid: true }
       case 'validate':

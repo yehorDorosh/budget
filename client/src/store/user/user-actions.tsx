@@ -46,3 +46,19 @@ export const getUserData: StoreAction<UserPayload> = (token: string) => {
     }
   }
 }
+
+export const login: StoreAction<UserPayload> = (email: string, password: string) => {
+  return async (dispatch) => {
+    try {
+      const { data, status } = await axios.post<JSONResponse<UserPayload>>('/api/user/login', { email, password })
+      if (data.payload && data.payload.user) {
+        dispatch(userActions.setUserData(data.payload.user))
+        dispatch(userActions.login())
+        if (data.payload.user.token) localStorage.setItem('token', data.payload.user.token)
+      }
+      return { data, status }
+    } catch (err) {
+      return errorHandler(err)
+    }
+  }
+}

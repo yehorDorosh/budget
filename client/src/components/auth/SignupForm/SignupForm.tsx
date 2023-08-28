@@ -17,16 +17,16 @@ const SignupForm = () => {
   const { fieldState: confirmPasswordState, filedDispatch: confirmPasswordDispatch } = useField()
 
   function emailHandler(e: React.ChangeEvent<HTMLInputElement>) {
-    emailDispatch({ type: 'set', payload: { value: e.target.value, touched: true }, validation: emailValidator })
+    emailDispatch({ type: 'set&check', payload: { value: e.target.value, touched: true }, validation: emailValidator })
   }
 
   function passwordHandler(e: React.ChangeEvent<HTMLInputElement>) {
-    passwordDispatch({ type: 'set', payload: { value: e.target.value, touched: true }, validation: passwordValidator })
+    passwordDispatch({ type: 'set&check', payload: { value: e.target.value, touched: true }, validation: passwordValidator })
   }
 
   function confirmPasswordHandler(e: React.ChangeEvent<HTMLInputElement>) {
     confirmPasswordDispatch({
-      type: 'set',
+      type: 'set&check',
       payload: { value: e.target.value, touched: true },
       validation: shouldMatchValidator.bind(null, passwordState.value)
     })
