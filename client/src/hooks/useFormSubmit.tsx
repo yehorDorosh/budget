@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { StoreAction, determineAxiosErrorPayload } from '../types/actions/actions'
+import { AxiosErrorPayload, StoreAction, determineAxiosErrorPayload } from '../types/actions/actions'
 import { FieldState } from './useField'
 import { useAppDispatch } from './useReduxTS'
 import { Action as UseFieldActions } from './useField'
@@ -24,7 +24,7 @@ export type FormSubmit = <T>(
   action: StoreAction<T>,
   actionParams: any[],
   callback: () => void
-) => Promise<{ status: number } | void>
+) => Promise<AxiosErrorPayload | void>
 
 const useSubmit = () => {
   const dispatch = useAppDispatch()
@@ -45,7 +45,8 @@ const useSubmit = () => {
       const res = await dispatch(action(...actionParams))
       setIsLoading(false)
       if (determineAxiosErrorPayload(res)) {
-        if (res.status && res.status === 403) return { status: res.status }
+        if (res.status && res.status === 403) return res
+        if (res.status && res.status === 422) return res
         if (res.status && res.status >= 300) navigate('/500', { state: { data: res } })
         return
       }

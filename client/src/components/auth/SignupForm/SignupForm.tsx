@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 // import classes from './SignupForm.module.scss'
@@ -15,6 +16,7 @@ const SignupForm = () => {
   const { fieldState: emailState, filedDispatch: emailDispatch } = useField()
   const { fieldState: passwordState, filedDispatch: passwordDispatch } = useField()
   const { fieldState: confirmPasswordState, filedDispatch: confirmPasswordDispatch } = useField()
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([])
 
   function emailHandler(e: React.ChangeEvent<HTMLInputElement>) {
     emailDispatch({ type: 'set&check', payload: { value: e.target.value, touched: true }, validation: emailValidator })
@@ -32,9 +34,9 @@ const SignupForm = () => {
     })
   }
 
-  function submitHandler(e: React.FormEvent<HTMLFormElement>) {
+  async function submitHandler(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    submit<UserPayload>(
+    const res = await submit<UserPayload>(
       [emailState, passwordState, confirmPasswordState],
       new Map([
         [emailDispatch, emailValidator],
@@ -45,10 +47,14 @@ const SignupForm = () => {
       [emailState.value, passwordState.value],
       () => navigate('/', { replace: true })
     )
+
+    if (res && res.data && res.data.validationErrors) {
+      setValidationErrors(res.data.validationErrors)
+    }
   }
 
   return (
-    <BaseForm onSubmit={submitHandler} isLoading={isLoading} noValidate>
+    <BaseForm onSubmit={submitHandler} isLoading={isLoading} errors={validationErrors} noValidate>
       <BaseInput
         label="Email"
         isValid={emailState.isValid}

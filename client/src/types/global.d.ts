@@ -3,7 +3,7 @@ import { UserState } from '../store/user/user-slice'
 export {}
 
 declare global {
-  interface JSONResponse<T> {
+  interface JSONResponse<T = void> {
     message: string
     code: ResCodes
     payload?: T

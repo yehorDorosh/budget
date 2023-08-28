@@ -41,8 +41,7 @@ const LoginForm = () => {
 
   return (
     <Fragment>
-      {wrongCredentials && <p className="center error">Wrong credentials</p>}
-      <BaseForm onSubmit={submitHandler} isLoading={isLoading} noValidate>
+      <BaseForm onSubmit={submitHandler} isLoading={isLoading} errors={wrongCredentials ? 'Wrong credentials' : undefined} noValidate>
         <BaseInput
           label="Email"
           isValid={emailState.isValid}

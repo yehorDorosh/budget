@@ -28,7 +28,7 @@ export const validationErrorsHandler = (message = 'Validation failed') => {
   return (req: Request, res: AppRes, next: NextFunction) => {
     const validationErrors = validationResult(req)
     if (!validationErrors.isEmpty()) {
-      return res.status(422).json({ message, validationErrors: validationErrors.array(), code: ResCodes.VALIDATION_ERROR })
+      return res.status(422).json({ message, code: ResCodes.VALIDATION_ERROR, validationErrors: validationErrors.array() })
     }
     next()
   }

@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 
 import { ActionResult, determineAxiosErrorPayload } from '../../types/actions/actions'
 import ErrorTemplate from '../templates/ErrorTemplate'
+import ErrorList from '../ui/ErrorList/ErrorList'
 
 interface Props {
   message?: string
@@ -30,11 +31,7 @@ const ErrorPage: FC<Props> = ({ message, routerError }) => {
         {determineAxiosErrorPayload(dataFromAction) && <i>{dataFromAction.errorMsg}</i>}
       </p>
       {determineAxiosErrorPayload(dataFromAction) && dataFromAction.data.validationErrors?.length && (
-        <ul>
-          {dataFromAction.data.validationErrors.map((item, i) => {
-            return <li key={i}>{item.msg}</li>
-          })}
-        </ul>
+        <ErrorList errors={dataFromAction.data.validationErrors} />
       )}
     </ErrorTemplate>
   )
