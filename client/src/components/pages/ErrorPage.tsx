@@ -11,7 +11,7 @@ interface Props {
 
 const ErrorPage: FC<Props> = ({ message, routerError }) => {
   const location = useLocation()
-  const dataFromAction = location.state.data as ActionResult<unknown>
+  const dataFromAction = location.state?.data as ActionResult<unknown>
   return (
     <ErrorTemplate>
       <h1>Error.</h1>

@@ -64,6 +64,9 @@ const LoginForm = () => {
         />
         <button type="submit">Login</button>
       </BaseForm>
+      <p className="center">
+        <a href="/restore-password">Forgot password?</a>
+      </p>
     </Fragment>
   )
 }

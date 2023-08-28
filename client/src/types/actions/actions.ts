@@ -1,7 +1,7 @@
 import { AppDispatch } from '../../store'
 
 export function determineAxiosErrorPayload<T>(toBeDetermined: ActionResult<T>): toBeDetermined is AxiosErrorPayload {
-  return (toBeDetermined as AxiosErrorPayload).errorMsg !== undefined
+  return toBeDetermined && (toBeDetermined as AxiosErrorPayload).errorMsg !== undefined
 }
 
 export type AxiosErrorPayload = {
