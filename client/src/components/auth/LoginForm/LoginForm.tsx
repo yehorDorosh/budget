@@ -6,10 +6,11 @@ import useSubmit from '../../../hooks/useFormSubmit'
 import useField from '../../../hooks/useField'
 import BaseForm from '../../ui/BaseForm/BaseForm'
 import BaseInput from '../../ui/BaseInput/BaseInput'
+import { notEmpty } from '../../../utils/validators'
 
 const LoginForm = () => {
   const navigate = useNavigate()
-  const submit = useSubmit()
+  const { submit, isLoading } = useSubmit()
   const [wrongCredentials, setWrongCredentials] = useState(false)
   const { fieldState: emailState, filedDispatch: emailDispatch } = useField()
   const { fieldState: passwordState, filedDispatch: passwordDispatch } = useField()
@@ -26,10 +27,10 @@ const LoginForm = () => {
     setWrongCredentials(false)
     e.preventDefault()
     const res = await submit<UserPayload>(
-      [],
+      [emailState, passwordState],
       new Map([
-        [emailDispatch, null],
-        [passwordDispatch, null]
+        [emailDispatch, notEmpty],
+        [passwordDispatch, notEmpty]
       ]),
       login,
       [emailState.value, passwordState.value],
@@ -41,11 +42,11 @@ const LoginForm = () => {
   return (
     <Fragment>
       {wrongCredentials && <p className="center error">Wrong credentials</p>}
-      <BaseForm onSubmit={submitHandler} noValidate>
+      <BaseForm onSubmit={submitHandler} isLoading={isLoading} noValidate>
         <BaseInput
           label="Email"
           isValid={emailState.isValid}
-          msg="Please enter a valid email."
+          msg="Please enter a email."
           type="email"
           placeholder="email"
           name="email"
@@ -55,7 +56,7 @@ const LoginForm = () => {
         <BaseInput
           label="Password"
           isValid={passwordState.isValid}
-          msg="Please enter a valid password."
+          msg="Please enter a password."
           type="password"
           placeholder="password"
           name="password"

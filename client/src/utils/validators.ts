@@ -27,3 +27,8 @@ export const shouldMatchValidator: ValidationFunction = (value, matchValue) => {
   const isValid = String(value).trim() === String(matchValue).trim() && String(value).trim().length > 0
   return isValid
 }
+
+export const notEmpty: ValidationFunction = (value) => {
+  const isValid = String(value).trim().length > 0
+  return isValid
+}

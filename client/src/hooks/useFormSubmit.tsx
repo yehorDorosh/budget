@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { StoreAction, determineAxiosErrorPayload } from '../types/actions/actions'
@@ -17,7 +18,7 @@ import { Action as UseFieldActions } from './useField'
  * @returns - if the action returns an axios error, return the error. If the action returns a status code of 403, return the status code. If the action returns a status code of 300 or higher, navigate to the 500 page. Otherwise, return nothing.
  */
 
-export type FormSubmitHook = <T>(
+export type FormSubmit = <T>(
   fields: FieldState[],
   fieldsDispatch: Map<React.Dispatch<UseFieldActions>, ValidationFunction | null>,
   action: StoreAction<T>,
@@ -25,11 +26,12 @@ export type FormSubmitHook = <T>(
   callback: () => void
 ) => Promise<{ status: number } | void>
 
-const useSubmit = (): FormSubmitHook => {
+const useSubmit = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(false)
 
-  return async (fields, fieldsDispatch, action, actionParams, callback) => {
+  const submit: FormSubmit = async (fields, fieldsDispatch, action, actionParams, callback) => {
     for (let [fieldDispatch, validator] of fieldsDispatch) {
       if (!validator) continue
       fieldDispatch({ type: 'validate', validation: validator })
@@ -39,8 +41,9 @@ const useSubmit = (): FormSubmitHook => {
     const isTouched = fields.every((field) => field.touched)
 
     if (isValid && isTouched) {
+      setIsLoading(true)
       const res = await dispatch(action(...actionParams))
-
+      setIsLoading(false)
       if (determineAxiosErrorPayload(res)) {
         if (res.status && res.status === 403) return { status: res.status }
         if (res.status && res.status >= 300) navigate('/500', { state: { data: res } })
@@ -53,6 +56,11 @@ const useSubmit = (): FormSubmitHook => {
 
       callback()
     }
+  }
+
+  return {
+    submit,
+    isLoading
   }
 }
 

@@ -11,7 +11,7 @@ import BaseInput from '../../ui/BaseInput/BaseInput'
 
 const SignupForm = () => {
   const navigate = useNavigate()
-  const submit = useFormSubmit()
+  const { submit, isLoading } = useFormSubmit()
   const { fieldState: emailState, filedDispatch: emailDispatch } = useField()
   const { fieldState: passwordState, filedDispatch: passwordDispatch } = useField()
   const { fieldState: confirmPasswordState, filedDispatch: confirmPasswordDispatch } = useField()
@@ -48,7 +48,7 @@ const SignupForm = () => {
   }
 
   return (
-    <BaseForm onSubmit={submitHandler} noValidate>
+    <BaseForm onSubmit={submitHandler} isLoading={isLoading} noValidate>
       <BaseInput
         label="Email"
         isValid={emailState.isValid}
