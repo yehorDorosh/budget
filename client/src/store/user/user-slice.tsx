@@ -27,6 +27,7 @@ const userSlice = createSlice({
       state.isLogin = true
     },
     logout(state) {
+      localStorage.removeItem('token')
       state.isLogin = false
       state.id = null
       state.email = null

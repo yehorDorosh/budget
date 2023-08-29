@@ -1,17 +1,35 @@
+import { Fragment } from 'react'
 import { NavLink } from 'react-router-dom'
+import { useAppSelector, useAppDispatch } from '../../../hooks/useReduxTS'
 
 import classes from './HeaderNav.module.scss'
+import { userActions } from '../../../store/user/user-slice'
 
 const HeaderNav = () => {
+  const isLogin = useAppSelector((state) => state.user.isLogin)
+  const dispatch = useAppDispatch()
+
+  const logoutHandler = () => {
+    dispatch(userActions.logout())
+  }
+
   return (
     <nav className={classes.nav}>
       <ul>
-        <li>
-          <NavLink to="/signup">Sign Up</NavLink>
-        </li>
-        <li>
-          <NavLink to="/login">Log In</NavLink>
-        </li>
+        {isLogin ? (
+          <li>
+            <button onClick={logoutHandler}>Log Out</button>
+          </li>
+        ) : (
+          <Fragment>
+            <li>
+              <NavLink to="/signup">Sign Up</NavLink>
+            </li>
+            <li>
+              <NavLink to="/login">Log In</NavLink>
+            </li>
+          </Fragment>
+        )}
       </ul>
     </nav>
   )
