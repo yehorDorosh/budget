@@ -10,8 +10,8 @@ const HeaderNav = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
-  const logoutHandler = async () => {
-    await dispatch(userActions.logout())
+  const logoutHandler = () => {
+    dispatch(userActions.logout())
     navigate('/', { replace: true })
   }
 
