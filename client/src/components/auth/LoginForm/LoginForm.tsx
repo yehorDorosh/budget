@@ -13,8 +13,8 @@ const LoginForm = () => {
   const navigate = useNavigate()
   const { submit, isLoading } = useSubmit()
   const [wrongCredentials, setWrongCredentials] = useState(false)
-  const { fieldState: emailState, filedDispatch: emailDispatch } = useField()
-  const { fieldState: passwordState, filedDispatch: passwordDispatch } = useField()
+  const { fieldState: emailState, fieldDispatch: emailDispatch } = useField()
+  const { fieldState: passwordState, fieldDispatch: passwordDispatch } = useField()
 
   function emailHandler(e: React.ChangeEvent<HTMLInputElement>) {
     emailDispatch({ type: 'set', payload: { value: e.target.value, touched: true } })

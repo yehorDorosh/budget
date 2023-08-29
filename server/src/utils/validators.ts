@@ -1,4 +1,4 @@
-import { body } from 'express-validator'
+import { body, oneOf } from 'express-validator'
 import { BudgetDataSource } from '../db/data-source'
 
 import { User } from '../models/user'
@@ -24,4 +24,11 @@ export const passwordValidator = (fieldName: string = 'password') => {
 
 export const notEmptyValidator = (fieldName: string = 'password') => {
   return body(fieldName).trim().notEmpty()
+}
+
+export const atLeastOneNotEmptyValidator = (...fields: string[]) => {
+  return oneOf(
+    fields.map((field) => body(field).trim().notEmpty()),
+    { message: 'At least one of the fields is required: ' + fields.join(', ') }
+  )
 }

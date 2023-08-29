@@ -42,6 +42,7 @@ const useSubmit = () => {
 
     if (isValid && isTouched) {
       setIsLoading(true)
+      setValidationErrors(undefined)
       const res = await dispatch(action(...actionParams))
       setIsLoading(false)
       if (isAxiosErrorPayload(res)) {

@@ -84,3 +84,22 @@ export const restorePassword: StoreAction = (token: string, newPassword: string)
     }
   }
 }
+
+export const updateUser: StoreAction<UserPayload> = (
+  token: string,
+  payload: { email: string; password?: string } | { email?: string; password: string }
+) => {
+  return async (dispatch) => {
+    try {
+      const { data, status } = await axios.post<JSONResponse<UserPayload>>('/api/user/update-user', payload, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (data.payload && data.payload.user) {
+        dispatch(userActions.setUserData(data.payload.user))
+      }
+      return { data, status }
+    } catch (err) {
+      return errorHandler(err)
+    }
+  }
+}

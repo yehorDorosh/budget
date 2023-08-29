@@ -1,8 +1,8 @@
 import express from 'express'
 
-import { emailValidator, notEmptyValidator, passwordValidator } from '../utils/validators'
+import { emailValidator, notEmptyValidator, passwordValidator, atLeastOneNotEmptyValidator } from '../utils/validators'
 
-import { login, signup, sendRestorePasswordEmail, restorePassword, getUserInfo } from '../controllers/user'
+import { login, signup, sendRestorePasswordEmail, restorePassword, getUserInfo, updateUser } from '../controllers/user'
 import auth from '../middleware/auth'
 import { validationErrorsHandler } from '../utils/errors'
 
@@ -26,5 +26,13 @@ router.post(
 )
 
 router.get('/get-user', auth, getUserInfo)
+
+router.post(
+  '/update-user',
+  auth,
+  [atLeastOneNotEmptyValidator('email', 'password')],
+  validationErrorsHandler('Update user validation failed'),
+  updateUser
+)
 
 export default router

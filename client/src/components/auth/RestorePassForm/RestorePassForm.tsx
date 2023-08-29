@@ -18,7 +18,7 @@ interface Props {
 const SignupForm: React.FC<Props> = ({ token }) => {
   const navigate = useNavigate()
   const { submit, isLoading, validationErrorsBE } = useFormSubmit()
-  const { fieldState: passwordState, filedDispatch: passwordDispatch } = useField()
+  const { fieldState: passwordState, fieldDispatch: passwordDispatch } = useField()
   const [tokenExpired, setTokenExpired] = useState(false)
 
   try {

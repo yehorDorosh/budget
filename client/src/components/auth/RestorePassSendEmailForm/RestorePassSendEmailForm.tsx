@@ -15,7 +15,7 @@ interface Props {
 
 const RestorePassSendEmailForm: FC<Props> = ({ onSendEmail }) => {
   const { submit, isLoading, validationErrorsBE } = useFormSubmit()
-  const { fieldState: emailState, filedDispatch: emailDispatch } = useField()
+  const { fieldState: emailState, fieldDispatch: emailDispatch } = useField()
   const [userNotFound, setUserNotFound] = useState(false)
 
   function emailHandler(e: React.ChangeEvent<HTMLInputElement>) {

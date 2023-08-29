@@ -33,11 +33,11 @@ const useField = () => {
         return state
     }
   }
-  const [fieldState, filedDispatch] = useReducer(fieldReducer, fieldInitialState)
+  const [fieldState, fieldDispatch] = useReducer(fieldReducer, fieldInitialState)
 
   return {
     fieldState,
-    filedDispatch
+    fieldDispatch
   }
 }
 

@@ -10,7 +10,8 @@ export enum ResCodes {
   LOGIN,
   SEND_RESTORE_PASSWORD_EMAIL,
   RESET_PASSWORD,
-  SEND_USER
+  SEND_USER,
+  UPDATE_USER
 }
 
 export interface JSONResponse<T = void> {

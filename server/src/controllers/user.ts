@@ -110,3 +110,20 @@ export const getUserInfo: RequestHandler = async (req, res: AppRes<UserPayload>,
     payload: { user: { id: user.id, email: user.email, token: null } }
   })
 }
+
+export const updateUser: RequestHandler = async (req, res: AppRes<UserPayload>, next) => {
+  const user = req.user
+  const email = req.body.email
+  const password = req.body.password
+
+  if (!user) return next()
+  try {
+    if (email) user.email = email
+    if (password) user.password = await bcrypt.hash(password, 12)
+    await BudgetDataSource.manager.save(user)
+    const userState: UserState = { id: user.id, email: user.email, token: null }
+    res.status(200).json({ message: 'User was updated', code: ResCodes.UPDATE_USER, payload: { user: userState } })
+  } catch (err) {
+    errorHandler({ message: 'Failed to update user', details: err }, next)
+  }
+}
