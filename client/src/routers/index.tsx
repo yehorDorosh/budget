@@ -9,6 +9,7 @@ import ErrorPage from '../components/pages/ErrorPage'
 import RestorePassSendEmailPage from '../components/pages/RestorePassSendEmailPage'
 import RestorePassPage from '../components/pages/RestorePassPage'
 import ProfilePage from '../components/pages/ProfilePage'
+import RequireAuth from '../components/auth/RequireAuth/RequireAuth'
 
 const router = createBrowserRouter([
   {
@@ -35,7 +36,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/profile',
-        element: <ProfilePage />
+        element: (
+          <RequireAuth>
+            <ProfilePage />
+          </RequireAuth>
+        )
       }
     ]
   },
