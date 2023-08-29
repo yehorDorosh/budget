@@ -21,6 +21,12 @@ const SignupForm: React.FC<Props> = ({ token }) => {
   const { fieldState: passwordState, filedDispatch: passwordDispatch } = useField()
   const [tokenExpired, setTokenExpired] = useState(false)
 
+  try {
+    jose.decodeJwt(token)
+  } catch (e) {
+    throw new Error('Invalid token')
+  }
+
   function passwordHandler(e: React.ChangeEvent<HTMLInputElement>) {
     passwordDispatch({ type: 'set&check', payload: { value: e.target.value, touched: true }, validation: passwordValidator })
   }
