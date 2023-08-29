@@ -73,3 +73,14 @@ export const getRestoreEmail: StoreAction = (email: string) => {
     }
   }
 }
+
+export const restorePassword: StoreAction = (token: string, newPassword: string) => {
+  return async () => {
+    try {
+      const { data, status } = await axios.post<JSONResponse>(`/api/user/restore-password/${token}`, { newPassword })
+      return { data, status }
+    } catch (err) {
+      return errorHandler(err)
+    }
+  }
+}
