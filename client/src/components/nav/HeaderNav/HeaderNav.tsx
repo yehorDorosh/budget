@@ -17,9 +17,14 @@ const HeaderNav = () => {
     <nav className={classes.nav}>
       <ul>
         {isLogin ? (
-          <li>
-            <button onClick={logoutHandler}>Log Out</button>
-          </li>
+          <Fragment>
+            <li>
+              <NavLink to="/profile">Profile</NavLink>
+            </li>
+            <li>
+              <button onClick={logoutHandler}>Log Out</button>
+            </li>
+          </Fragment>
         ) : (
           <Fragment>
             <li>

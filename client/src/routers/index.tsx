@@ -8,6 +8,7 @@ import RouterErrorBoundary from '../components/errors/RouterErrorBoundary'
 import ErrorPage from '../components/pages/ErrorPage'
 import RestorePassSendEmailPage from '../components/pages/RestorePassSendEmailPage'
 import RestorePassPage from '../components/pages/RestorePassPage'
+import ProfilePage from '../components/pages/ProfilePage'
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: '/restore-password/:token',
         element: <RestorePassPage />
+      },
+      {
+        path: '/profile',
+        element: <ProfilePage />
       }
     ]
   },
