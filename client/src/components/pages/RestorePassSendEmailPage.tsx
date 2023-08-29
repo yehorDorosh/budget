@@ -1,12 +1,22 @@
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 
-import RestorePassSendEmailForm from '../auth/RestorePassSendEmailForm'
+import RestorePassSendEmailForm from '../auth/RestorePassSendEmailForm/RestorePassSendEmailForm'
 
 const RestorePassSendEmailPage = () => {
+  const [email, setEmail] = useState<string | undefined>()
+
+  const sendEmailHandler = (email: string) => {
+    setEmail(email)
+  }
+
   return (
     <Fragment>
       <h1>Restore password</h1>
-      <RestorePassSendEmailForm />
+      {email ? (
+        <p>The email with instructions on how to reset your password was sent to the email address {email}</p>
+      ) : (
+        <RestorePassSendEmailForm onSendEmail={sendEmailHandler} />
+      )}
     </Fragment>
   )
 }

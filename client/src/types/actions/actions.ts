@@ -1,22 +1,30 @@
 import { AppDispatch } from '../../store'
 
-export function determineAxiosErrorPayload<T>(toBeDetermined: ActionResult<T>): toBeDetermined is AxiosErrorPayload {
-  return toBeDetermined && (toBeDetermined as AxiosErrorPayload).errorMsg !== undefined
+export function isAxiosErrorPayload<T = void>(toBeDetermined: ActionResult<T>): toBeDetermined is AxiosErrorPayload<T> {
+  return toBeDetermined && (toBeDetermined as AxiosErrorPayload<T>).errorMsg !== undefined
 }
 
-export type AxiosErrorPayload = {
+export function isRegularErrorObject<T = void>(toBeDetermined: ActionResult<T>): toBeDetermined is RegularErrorObject {
+  return toBeDetermined && (toBeDetermined as RegularErrorObject).error !== undefined
+}
+
+export function isActionPayload<T = void>(toBeDetermined: ActionResult<T>): toBeDetermined is ActionPayload<T> {
+  return toBeDetermined && (toBeDetermined as ActionPayload<T>).data !== undefined
+}
+
+export type AxiosErrorPayload<T = void> = {
   errorMsg: string
-  data: JSONResponse<unknown>
-  status: number
-}
-
-export type RegularErrorObject = { error: unknown }
-
-export type ActionPayload<T> = {
   data: JSONResponse<T>
   status: number
 }
 
-export type ActionResult<T> = AxiosErrorPayload | RegularErrorObject | ActionPayload<T>
+export type RegularErrorObject = { error: Error }
 
-export type StoreAction<T> = (...arg: any) => (dispatch: AppDispatch) => Promise<ActionResult<T>>
+export type ActionPayload<T = void> = {
+  data: JSONResponse<T>
+  status: number
+}
+
+export type ActionResult<T = void> = AxiosErrorPayload<T> | RegularErrorObject | ActionPayload<T>
+
+export type StoreAction<T = void> = (...arg: any) => (dispatch: AppDispatch) => Promise<ActionResult<T>>

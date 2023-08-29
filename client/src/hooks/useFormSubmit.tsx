@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { AxiosErrorPayload, StoreAction, determineAxiosErrorPayload } from '../types/actions/actions'
+import { ActionResult, StoreAction, isActionPayload, isAxiosErrorPayload, isRegularErrorObject } from '../types/actions/actions'
 import { FieldState } from './useField'
 import { useAppDispatch } from './useReduxTS'
 import { Action as UseFieldActions } from './useField'
@@ -18,20 +18,20 @@ import { Action as UseFieldActions } from './useField'
  * @returns - if the action returns an axios error, return the error. If the action returns a status code of 403, return the status code. If the action returns a status code of 300 or higher, navigate to the 500 page. Otherwise, return nothing.
  */
 
-export type FormSubmit = <T>(
+export type FormSubmit = <T = void>(
   fields: FieldState[],
   fieldsDispatch: Map<React.Dispatch<UseFieldActions>, ValidationFunction | null>,
   action: StoreAction<T>,
-  actionParams: any[],
-  callback: () => void
-) => Promise<AxiosErrorPayload | void>
+  actionParams: any[]
+) => Promise<ActionResult<T> | void>
 
 const useSubmit = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>()
 
-  const submit: FormSubmit = async (fields, fieldsDispatch, action, actionParams, callback) => {
+  const submit: FormSubmit = async (fields, fieldsDispatch, action, actionParams) => {
     for (let [fieldDispatch, validator] of fieldsDispatch) {
       if (!validator) continue
       fieldDispatch({ type: 'validate', validation: validator })
@@ -44,10 +44,14 @@ const useSubmit = () => {
       setIsLoading(true)
       const res = await dispatch(action(...actionParams))
       setIsLoading(false)
-      if (determineAxiosErrorPayload(res)) {
-        if (res.status && res.status === 403) return res
-        if (res.status && res.status === 422) return res
-        if (res.status && res.status >= 300) navigate('/500', { state: { data: res } })
+      if (isAxiosErrorPayload(res)) {
+        if (res.status >= 300 && res.status !== 403 && res.status !== 422) navigate('/500', { state: { data: res } })
+        if (res.data.validationErrors) setValidationErrors(res.data.validationErrors)
+        return res
+      }
+
+      if (isRegularErrorObject(res)) {
+        navigate('/500', { state: { data: res } })
         return
       }
 
@@ -55,13 +59,16 @@ const useSubmit = () => {
         fieldDispatch({ type: 'clear' })
       }
 
-      callback()
+      if (isActionPayload(res)) {
+        return res
+      }
     }
   }
 
   return {
     submit,
-    isLoading
+    isLoading,
+    validationErrorsBE: validationErrors
   }
 }
 

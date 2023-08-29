@@ -14,16 +14,6 @@ declare global {
     }
   }
 
-  enum ResCodes {
-    ERORR,
-    VALIDATION_ERROR,
-    CREATE_USER,
-    LOGIN,
-    SEND_RESTORE_PASSWORD_EMAIL,
-    RESET_PASSWORD,
-    SEND_USER
-  }
-
   interface UserPayload {
     user: UserState
   }

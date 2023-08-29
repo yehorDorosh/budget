@@ -1,7 +1,5 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
-
-// import classes from './SignupForm.module.scss'
 
 import { emailValidator, passwordValidator, shouldMatchValidator } from '../../../utils/validators'
 import useField from '../../../hooks/useField'
@@ -12,11 +10,10 @@ import BaseInput from '../../ui/BaseInput/BaseInput'
 
 const SignupForm = () => {
   const navigate = useNavigate()
-  const { submit, isLoading } = useFormSubmit()
+  const { submit, isLoading, validationErrorsBE } = useFormSubmit()
   const { fieldState: emailState, filedDispatch: emailDispatch } = useField()
   const { fieldState: passwordState, filedDispatch: passwordDispatch } = useField()
   const { fieldState: confirmPasswordState, filedDispatch: confirmPasswordDispatch } = useField()
-  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([])
 
   function emailHandler(e: React.ChangeEvent<HTMLInputElement>) {
     emailDispatch({ type: 'set&check', payload: { value: e.target.value, touched: true }, validation: emailValidator })
@@ -36,7 +33,7 @@ const SignupForm = () => {
 
   async function submitHandler(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const res = await submit<UserPayload>(
+    await submit<UserPayload>(
       [emailState, passwordState, confirmPasswordState],
       new Map([
         [emailDispatch, emailValidator],
@@ -44,17 +41,14 @@ const SignupForm = () => {
         [confirmPasswordDispatch, shouldMatchValidator.bind(null, passwordState.value)]
       ]),
       signUp,
-      [emailState.value, passwordState.value],
-      () => navigate('/', { replace: true })
+      [emailState.value, passwordState.value]
     )
 
-    if (res && res.data && res.data.validationErrors) {
-      setValidationErrors(res.data.validationErrors)
-    }
+    navigate('/', { replace: true })
   }
 
   return (
-    <BaseForm onSubmit={submitHandler} isLoading={isLoading} errors={validationErrors} noValidate>
+    <BaseForm onSubmit={submitHandler} isLoading={isLoading} errors={validationErrorsBE} noValidate>
       <BaseInput
         label="Email"
         isValid={emailState.isValid}

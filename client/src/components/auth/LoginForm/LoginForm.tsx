@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 import { login } from '../../../store/user/user-actions'
 import useSubmit from '../../../hooks/useFormSubmit'
@@ -7,6 +7,7 @@ import useField from '../../../hooks/useField'
 import BaseForm from '../../ui/BaseForm/BaseForm'
 import BaseInput from '../../ui/BaseInput/BaseInput'
 import { notEmpty } from '../../../utils/validators'
+import { isAxiosErrorPayload } from '../../../types/actions/actions'
 
 const LoginForm = () => {
   const navigate = useNavigate()
@@ -33,10 +34,13 @@ const LoginForm = () => {
         [passwordDispatch, notEmpty]
       ]),
       login,
-      [emailState.value, passwordState.value],
-      () => navigate('/')
+      [emailState.value, passwordState.value]
     )
-    if (res && res.status && res.status === 403) setWrongCredentials(true)
+    if (res && isAxiosErrorPayload(res) && res.status === 403) {
+      setWrongCredentials(true)
+    } else {
+      navigate('/')
+    }
   }
 
   return (
@@ -65,7 +69,7 @@ const LoginForm = () => {
         <button type="submit">Login</button>
       </BaseForm>
       <p className="center">
-        <a href="/restore-password">Forgot password?</a>
+        <NavLink to="/restore-password">Forgot password?</NavLink>
       </p>
     </Fragment>
   )

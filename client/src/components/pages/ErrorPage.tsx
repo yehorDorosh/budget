@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { ActionResult, determineAxiosErrorPayload } from '../../types/actions/actions'
+import { ActionResult, isAxiosErrorPayload, isRegularErrorObject } from '../../types/actions/actions'
 import ErrorTemplate from '../templates/ErrorTemplate'
 import ErrorList from '../ui/ErrorList/ErrorList'
 
@@ -28,9 +28,10 @@ const ErrorPage: FC<Props> = ({ message, routerError }) => {
             {routerError.status} {routerError.statusText}
           </i>
         )}
-        {determineAxiosErrorPayload(dataFromAction) && <i>{dataFromAction.errorMsg}</i>}
+        {isAxiosErrorPayload(dataFromAction) && <i>{dataFromAction.errorMsg}</i>}
+        {isRegularErrorObject(dataFromAction) && <i>{dataFromAction.error.message}</i>}
       </p>
-      {determineAxiosErrorPayload(dataFromAction) && dataFromAction.data.validationErrors?.length && (
+      {isAxiosErrorPayload(dataFromAction) && dataFromAction.data.validationErrors?.length && (
         <ErrorList errors={dataFromAction.data.validationErrors} />
       )}
     </ErrorTemplate>
