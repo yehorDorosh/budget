@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../../hooks/useReduxTS'
 
 import classes from './HeaderNav.module.scss'
@@ -8,9 +8,11 @@ import { userActions } from '../../../store/user/user-slice'
 const HeaderNav = () => {
   const isLogin = useAppSelector((state) => state.user.isLogin)
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
-  const logoutHandler = () => {
-    dispatch(userActions.logout())
+  const logoutHandler = async () => {
+    await dispatch(userActions.logout())
+    navigate('/', { replace: true })
   }
 
   return (
