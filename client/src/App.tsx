@@ -3,10 +3,8 @@ import router from './routers'
 import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from './hooks/useReduxTS'
 
-import * as jose from 'jose'
-
 import ErrorBoundary from './components/errors/ErrorBoundary'
-import { loginAndAutoLogout } from './store/user/user-actions'
+import { loginAndAutoLogout, getUserData } from './store/user/user-actions'
 
 function App() {
   const dispatch = useAppDispatch()
@@ -16,6 +14,7 @@ function App() {
     if (!isLogin) {
       const token = storeToken || localStorage.getItem('token')
       if (token) {
+        dispatch(getUserData(token))
         loginAndAutoLogout(token, dispatch)
       }
     }
