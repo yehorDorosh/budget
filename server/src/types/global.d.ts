@@ -1,3 +1,5 @@
+import { Category } from '../models/category'
+
 export {}
 
 declare global {
@@ -12,5 +14,9 @@ declare global {
 
   interface UserPayload {
     user: UserState
+  }
+
+  interface CategoriesPayload {
+    categories: Category[]
   }
 }

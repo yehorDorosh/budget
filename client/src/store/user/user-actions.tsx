@@ -2,15 +2,8 @@ import axios from 'axios'
 import * as jose from 'jose'
 
 import { StoreAction, SimpleStoreAtion } from '../../types/actions/actions'
-
 import { userActions } from './user-slice'
-
-function errorHandler(err: any) {
-  if (axios.isAxiosError(err) && err.response) {
-    return { errorMsg: err.message, data: err.response.data, status: err.response.status }
-  }
-  return { error: err }
-}
+import { errorHandler } from '../../utils/errors'
 
 export const loginAndAutoLogout: SimpleStoreAtion = (token: string) => {
   return (dispatch, getState) => {

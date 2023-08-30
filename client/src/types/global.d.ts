@@ -1,4 +1,5 @@
 import { UserState } from '../store/user/user-slice'
+import { CategoriesState } from '../store/categories/categories-slice'
 
 export {}
 
@@ -17,6 +18,8 @@ declare global {
   interface UserPayload {
     user: UserState
   }
+
+  type CategoriesPayload = CategoriesState
 
   interface ValidationError {
     location: string

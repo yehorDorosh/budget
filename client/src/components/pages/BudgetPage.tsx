@@ -1,8 +1,10 @@
+import { Fragment } from 'react'
+
 const BudgetPage = () => {
   return (
-    <div>
+    <Fragment>
       <h1>Budget</h1>
-    </div>
+    </Fragment>
   )
 }
 

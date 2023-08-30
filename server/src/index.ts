@@ -6,6 +6,7 @@ import bodyParser from 'body-parser'
 import { SERVER_PORT, SERVER_PORT_DEV, isDev } from './utils/config'
 import { expressErrorHandler } from './utils/errors'
 import userRouter from './routes/user'
+import categoriesRouter from './routes/categories'
 import { BudgetDataSource } from './db/data-source'
 import auth from './middleware/auth'
 
@@ -21,6 +22,7 @@ app.get('/api', auth, (req, res) => {
 })
 
 app.use('/api/user', userRouter)
+app.use('/api/categories', categoriesRouter)
 
 app.use((req, res) => {
   res.status(200).sendFile(path.join(__dirname, '..', '..', 'client', 'build', 'index.html'))
