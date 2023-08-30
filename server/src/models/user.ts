@@ -1,4 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+
+import { Category } from './category'
 
 @Entity('users')
 export class User {
@@ -10,6 +12,9 @@ export class User {
 
   @Column('varchar', { length: 128 })
   password: string
+
+  @OneToMany(() => Category, (category) => category.user, { onDelete: 'CASCADE' })
+  categories: Category[]
 
   @CreateDateColumn()
   created_at: Date

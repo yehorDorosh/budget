@@ -13,6 +13,7 @@ import {
   DB_NAME
 } from '../utils/config'
 import { User } from '../models/user'
+import { Category } from '../models/category'
 
 export const BudgetDataSource = new DataSource({
   type: 'postgres',
@@ -21,7 +22,7 @@ export const BudgetDataSource = new DataSource({
   username: isDev ? DB_USERNAME_DEV : DB_USERNAME,
   password: isDev ? DB_PASSWORD_DEV : DB_PASSWORD,
   database: DB_NAME,
-  entities: [User],
+  entities: [User, Category],
   logging: true,
   synchronize: true
 })
