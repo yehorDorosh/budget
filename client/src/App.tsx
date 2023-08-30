@@ -6,8 +6,7 @@ import { useAppDispatch, useAppSelector } from './hooks/useReduxTS'
 import * as jose from 'jose'
 
 import ErrorBoundary from './components/errors/ErrorBoundary'
-import { userActions } from './store/user/user-slice'
-import { getUserData } from './store/user/user-actions'
+import { loginAndAutoLogout } from './store/user/user-actions'
 
 function App() {
   const dispatch = useAppDispatch()
@@ -17,14 +16,7 @@ function App() {
     if (!isLogin) {
       const token = storeToken || localStorage.getItem('token')
       if (token) {
-        const { exp: expiryDate } = jose.decodeJwt(token)
-        if (expiryDate && Date.now() >= expiryDate * 1000) {
-          dispatch(userActions.logout())
-        } else {
-          dispatch(getUserData(token))
-        }
-      } else {
-        dispatch(userActions.logout())
+        loginAndAutoLogout(token, dispatch)
       }
     }
   }, [isLogin, storeToken, dispatch])

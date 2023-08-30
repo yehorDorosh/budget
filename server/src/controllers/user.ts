@@ -10,8 +10,9 @@ import { errorHandler } from '../utils/errors'
 import { BudgetDataSource } from '../db/data-source'
 import { User } from '../models/user'
 import { getUser } from '../db/crud'
+import { SERVER_LOGOUT_TIMER } from '../utils/config'
 
-function generateToken(userId: number, time: string = '1h') {
+function generateToken(userId: number, time: string = SERVER_LOGOUT_TIMER!) {
   const secret = new TextEncoder().encode(SERVER_JWT_SECRET!)
   return new jose.SignJWT({ userId }).setProtectedHeader({ alg: 'HS256' }).setExpirationTime(time).sign(secret)
 }

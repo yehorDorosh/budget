@@ -1,8 +1,10 @@
 import axios from 'axios'
+import * as jose from 'jose'
 
 import { StoreAction } from '../../types/actions/actions'
 
 import { userActions } from './user-slice'
+import { AppDispatch } from '..'
 
 function errorHandler(err: any) {
   if (axios.isAxiosError(err) && err.response) {
@@ -11,14 +13,27 @@ function errorHandler(err: any) {
   return { error: err }
 }
 
+export function loginAndAutoLogout(token: string, dispatch: AppDispatch) {
+  localStorage.setItem('token', token)
+  dispatch(userActions.login())
+  const { exp: expiryDate } = jose.decodeJwt(token)
+  let timer = setInterval(() => {
+    if (expiryDate && Date.now() >= expiryDate * 1000) {
+      dispatch(userActions.logout())
+      clearInterval(timer)
+    }
+  }, 1000)
+}
+
 export const signUp: StoreAction<UserPayload> = (email: string, password: string) => {
   return async (dispatch) => {
     try {
       const { data, status } = await axios.post<JSONResponse<UserPayload>>('/api/user/signup', { email, password })
       if (data.payload && data.payload.user) {
         dispatch(userActions.setUserData(data.payload.user))
-        dispatch(userActions.login())
-        if (data.payload.user.token) localStorage.setItem('token', data.payload.user.token)
+        if (data.payload.user.token) {
+          loginAndAutoLogout(data.payload.user.token, dispatch)
+        }
       }
       return { data, status }
     } catch (err) {
@@ -53,8 +68,9 @@ export const login: StoreAction<UserPayload> = (email: string, password: string)
       const { data, status } = await axios.post<JSONResponse<UserPayload>>('/api/user/login', { email, password })
       if (data.payload && data.payload.user) {
         dispatch(userActions.setUserData(data.payload.user))
-        dispatch(userActions.login())
-        if (data.payload.user.token) localStorage.setItem('token', data.payload.user.token)
+        if (data.payload.user.token) {
+          loginAndAutoLogout(data.payload.user.token, dispatch)
+        }
       }
       return { data, status }
     } catch (err) {
