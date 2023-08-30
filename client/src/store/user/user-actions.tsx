@@ -129,3 +129,14 @@ export const updateUser: StoreAction<UserPayload> = (
     }
   }
 }
+
+export const deleteUser: StoreAction = (token: string, password: string) => {
+  return async () => {
+    try {
+      const { data, status } = await axios.patch(`/api/user/delete-user`, { password }, { headers: { Authorization: `Bearer ${token}` } })
+      return { data, status }
+    } catch (err) {
+      return errorHandler(err)
+    }
+  }
+}

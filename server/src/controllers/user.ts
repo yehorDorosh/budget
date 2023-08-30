@@ -128,3 +128,21 @@ export const updateUser: RequestHandler = async (req, res: AppRes<UserPayload>, 
     errorHandler({ message: 'Failed to update user', details: err }, next)
   }
 }
+
+export const deleteUser: RequestHandler = async (req, res: AppRes, next) => {
+  const user = req.user
+  const password = req.body.password
+
+  if (!user) return next()
+
+  try {
+    const isEqual = await bcrypt.compare(password, user.password)
+    if (!isEqual) {
+      return errorHandler({ message: 'Wrong password', statusCode: 403 }, next)
+    }
+    await BudgetDataSource.manager.remove(user)
+    res.status(200).json({ message: 'User was deleted', code: ResCodes.DELETE_USER })
+  } catch (err) {
+    errorHandler({ message: 'Failed to delete user', details: err }, next)
+  }
+}
