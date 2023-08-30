@@ -27,7 +27,7 @@ router.post(
 
 router.get('/get-user', auth, getUserInfo)
 
-router.post(
+router.put(
   '/update-user',
   auth,
   [atLeastOneNotEmptyValidator('email', 'password')],

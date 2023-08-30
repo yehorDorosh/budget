@@ -117,7 +117,7 @@ export const updateUser: StoreAction<UserPayload> = (
 ) => {
   return async (dispatch) => {
     try {
-      const { data, status } = await axios.post<JSONResponse<UserPayload>>('/api/user/update-user', payload, {
+      const { data, status } = await axios.put<JSONResponse<UserPayload>>('/api/user/update-user', payload, {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (data.payload && data.payload.user) {
