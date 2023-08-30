@@ -1,10 +1,9 @@
 import axios from 'axios'
 import * as jose from 'jose'
 
-import { StoreAction } from '../../types/actions/actions'
+import { StoreAction, SimpleStoreAtion } from '../../types/actions/actions'
 
 import { userActions } from './user-slice'
-import { AppDispatch } from '..'
 
 function errorHandler(err: any) {
   if (axios.isAxiosError(err) && err.response) {
@@ -13,26 +12,38 @@ function errorHandler(err: any) {
   return { error: err }
 }
 
-export function loginAndAutoLogout(token: string, dispatch: AppDispatch) {
-  localStorage.setItem('token', token)
-  dispatch(userActions.login())
-  const { exp: expiryDate } = jose.decodeJwt(token)
-  let timer = setInterval(() => {
-    if (expiryDate && Date.now() >= expiryDate * 1000) {
-      dispatch(userActions.logout())
-      clearInterval(timer)
+export const loginAndAutoLogout: SimpleStoreAtion = (token: string) => {
+  return (dispatch, getState) => {
+    const autoLogoutTimer = getState().user.autoLogoutTimer
+    const isLogin = getState().user.isLogin
+    const { exp: expiryDate } = jose.decodeJwt(token)
+    localStorage.setItem('token', token)
+
+    if (!isLogin) dispatch(userActions.login())
+
+    if (!autoLogoutTimer) {
+      dispatch(
+        userActions.setAutoLogoutTimer(
+          setInterval(() => {
+            // console.log(expiryDate! - Date.now() / 1000)
+            if (expiryDate && Date.now() >= expiryDate * 1000) {
+              dispatch(userActions.logout())
+            }
+          }, 1000)
+        )
+      )
     }
-  }, 1000)
+  }
 }
 
 export const signUp: StoreAction<UserPayload> = (email: string, password: string) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     try {
       const { data, status } = await axios.post<JSONResponse<UserPayload>>('/api/user/signup', { email, password })
       if (data.payload && data.payload.user) {
         dispatch(userActions.setUserData(data.payload.user))
         if (data.payload.user.token) {
-          loginAndAutoLogout(data.payload.user.token, dispatch)
+          dispatch(loginAndAutoLogout(data.payload.user.token))
         }
       }
       return { data, status }
@@ -53,7 +64,6 @@ export const getUserData: StoreAction<UserPayload> = (token: string) => {
           if (localStorage.getItem('token')) data.payload.user.token = localStorage.getItem('token')
         }
         dispatch(userActions.setUserData(data.payload.user))
-        dispatch(userActions.login())
       }
       return { data, status }
     } catch (err) {
@@ -63,13 +73,13 @@ export const getUserData: StoreAction<UserPayload> = (token: string) => {
 }
 
 export const login: StoreAction<UserPayload> = (email: string, password: string) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     try {
       const { data, status } = await axios.post<JSONResponse<UserPayload>>('/api/user/login', { email, password })
       if (data.payload && data.payload.user) {
         dispatch(userActions.setUserData(data.payload.user))
         if (data.payload.user.token) {
-          loginAndAutoLogout(data.payload.user.token, dispatch)
+          dispatch(loginAndAutoLogout(data.payload.user.token))
         }
       }
       return { data, status }

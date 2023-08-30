@@ -15,7 +15,7 @@ function App() {
       const token = storeToken || localStorage.getItem('token')
       if (token) {
         dispatch(getUserData(token))
-        loginAndAutoLogout(token, dispatch)
+        dispatch(loginAndAutoLogout(token))
       }
     }
   }, [isLogin, storeToken, dispatch])

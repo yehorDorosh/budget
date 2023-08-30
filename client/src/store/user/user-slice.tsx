@@ -5,13 +5,15 @@ export interface UserState {
   email: string | null
   token: string | null
   isLogin?: boolean | null
+  autoLogoutTimer: NodeJS.Timeout | null
 }
 
 const initialState: UserState = {
   id: null,
   email: null,
   token: null,
-  isLogin: null
+  isLogin: null,
+  autoLogoutTimer: null
 }
 
 const userSlice = createSlice({
@@ -32,6 +34,13 @@ const userSlice = createSlice({
       state.id = null
       state.email = null
       state.token = null
+      if (state.autoLogoutTimer) {
+        clearInterval(state.autoLogoutTimer)
+        state.autoLogoutTimer = null
+      }
+    },
+    setAutoLogoutTimer(state, action: PayloadAction<NodeJS.Timeout>) {
+      state.autoLogoutTimer = action.payload
     }
   }
 })
