@@ -10,6 +10,8 @@ import RestorePassSendEmailPage from '../components/pages/RestorePassSendEmailPa
 import RestorePassPage from '../components/pages/RestorePassPage'
 import ProfilePage from '../components/pages/ProfilePage'
 import RequireAuth from '../components/auth/RequireAuth/RequireAuth'
+import BudgetPage from '../components/pages/BudgetPage'
+import CategoriesPage from '../components/pages/CategoriesPage'
 
 const router = createBrowserRouter([
   {
@@ -39,6 +41,22 @@ const router = createBrowserRouter([
         element: (
           <RequireAuth>
             <ProfilePage />
+          </RequireAuth>
+        )
+      },
+      {
+        path: '/budget',
+        element: (
+          <RequireAuth>
+            <BudgetPage />
+          </RequireAuth>
+        )
+      },
+      {
+        path: '/budget/categories',
+        element: (
+          <RequireAuth>
+            <CategoriesPage />
           </RequireAuth>
         )
       }
