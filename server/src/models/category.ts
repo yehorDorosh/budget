@@ -10,7 +10,7 @@ export class Category {
   @Column({ type: 'varchar', length: 128, unique: true })
   name: string
 
-  @ManyToOne(() => User, (user) => user.categories)
+  @ManyToOne(() => User, (user) => user.categories, { onDelete: 'CASCADE' })
   user: User
 
   @CreateDateColumn()

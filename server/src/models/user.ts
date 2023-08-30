@@ -13,7 +13,7 @@ export class User {
   @Column('varchar', { length: 128 })
   password: string
 
-  @OneToMany(() => Category, (category) => category.user, { onDelete: 'CASCADE' })
+  @OneToMany(() => Category, (category) => category.user)
   categories: Category[]
 
   @CreateDateColumn()

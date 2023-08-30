@@ -60,6 +60,7 @@ export const getUserData: StoreAction<UserPayload> = (token: string) => {
       }
       return { data, status }
     } catch (err) {
+      dispatch(userActions.logout())
       return errorHandler(err)
     }
   }
