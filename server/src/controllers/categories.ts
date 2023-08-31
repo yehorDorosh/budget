@@ -7,11 +7,11 @@ import { Category } from '../models/category'
 import { getCategories } from '../db/crud'
 
 export const addCategory: RequestHandler = async (req, res: AppRes<CategoriesPayload>, next) => {
-  const user = req.user
+  const user = req.user!
   const name = req.body.name
   const category = new Category()
   category.name = name
-  if (!user) return next()
+
   category.user = user
   try {
     await BudgetDataSource.manager.save(category)

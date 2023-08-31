@@ -27,8 +27,7 @@ const auth: RequestHandler = async (req, res, next) => {
 
   try {
     const user = await getUser({ userId: req.userId }, next)
-    if (!user) return
-    req.user = user
+    req.user = user!
   } catch (err) {
     errorHandler({ message: 'Failed to authenticate', statusCode: 500, details: err }, next)
   }

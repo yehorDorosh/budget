@@ -102,9 +102,8 @@ export const restorePassword: RequestHandler = async (req, res: AppRes, next) =>
   }
 }
 
-export const getUserInfo: RequestHandler = async (req, res: AppRes<UserPayload>, next) => {
-  const user = req.user
-  if (!user) return next()
+export const getUserInfo: RequestHandler = async (req, res: AppRes<UserPayload>) => {
+  const user = req.user!
   res.status(200).json({
     message: 'User info was sent successfully',
     code: ResCodes.SEND_USER,
@@ -113,11 +112,10 @@ export const getUserInfo: RequestHandler = async (req, res: AppRes<UserPayload>,
 }
 
 export const updateUser: RequestHandler = async (req, res: AppRes<UserPayload>, next) => {
-  const user = req.user
+  const user = req.user!
   const email = req.body.email
   const password = req.body.password
 
-  if (!user) return next()
   try {
     if (email) user.email = email
     if (password) user.password = await bcrypt.hash(password, 12)
@@ -130,10 +128,8 @@ export const updateUser: RequestHandler = async (req, res: AppRes<UserPayload>, 
 }
 
 export const deleteUser: RequestHandler = async (req, res: AppRes, next) => {
-  const user = req.user
+  const user = req.user!
   const password = req.body.password
-
-  if (!user) return next()
 
   try {
     const isEqual = await bcrypt.compare(password, user.password)
