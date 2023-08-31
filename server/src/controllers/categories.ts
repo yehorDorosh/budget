@@ -52,18 +52,42 @@ export const getCategories: RequestHandler = async (req, res: AppRes<CategoriesP
 }
 
 export const deleteCategory: RequestHandler = async (req, res: AppRes<CategoriesPayload>, next) => {
+  const user = req.user!
   const categoryId = req.query.id ? +req.query.id : null
   if (!categoryId) {
     return errorHandler({ message: 'deleteCategory. Invalid query param id', statusCode: 500 }, next)
   }
 
   try {
-    const category = await CategoryCRUD.delete(categoryId, next)
+    await CategoryCRUD.delete(categoryId, next)
+
+    const categories = await CategoryCRUD.get(user.id, next)
 
     res.status(200).json({
       message: 'Category list successfully provided',
       code: ResCodes.GET_CATEGORIES,
-      payload: { categories: category ? [category] : [] }
+      payload: { categories: categories || [] }
+    })
+  } catch (err) {
+    console.log(err)
+    errorHandler({ message: 'Failed to create new user', details: err }, next)
+  }
+}
+
+export const updateCategory: RequestHandler = async (req, res: AppRes<CategoriesPayload>, next) => {
+  const user = req.user!
+  const categoryId: number = +req.body.categoryId
+  const name: string = req.body.name
+
+  try {
+    await CategoryCRUD.update(categoryId, name, next)
+
+    const categories = await CategoryCRUD.get(user.id, next)
+
+    res.status(200).json({
+      message: 'Category list successfully provided',
+      code: ResCodes.UPDATE_CATEGORY,
+      payload: { categories: categories || [] }
     })
   } catch (err) {
     console.log(err)
