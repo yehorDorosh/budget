@@ -5,19 +5,29 @@ import { useAppDispatch, useAppSelector } from './hooks/useReduxTS'
 
 import ErrorBoundary from './components/errors/ErrorBoundary'
 import { loginAndAutoLogout, getUserData } from './store/user/user-actions'
+import { userActions } from './store/user/user-slice'
+import { isAxiosErrorPayload } from './types/actions/actions'
 
 function App() {
   const dispatch = useAppDispatch()
   const { isLogin, token: storeToken } = useAppSelector((state) => state.user)
 
   useEffect(() => {
-    if (!isLogin) {
-      const token = storeToken || localStorage.getItem('token')
-      if (token) {
-        dispatch(getUserData(token))
-        dispatch(loginAndAutoLogout(token))
+    const loginOnFirstLoad = async () => {
+      if (!isLogin) {
+        const token = storeToken || localStorage.getItem('token')
+        if (token) {
+          const res = await dispatch(getUserData(token))
+          if (isAxiosErrorPayload(res) && res.status === 200) {
+            dispatch(loginAndAutoLogout(token))
+          } else {
+            dispatch(userActions.logout())
+          }
+        }
       }
     }
+
+    loginOnFirstLoad()
   }, [isLogin, storeToken, dispatch])
   return (
     <ErrorBoundary>
