@@ -75,7 +75,7 @@ export class CategoryCRUD {
       errorHandler({ message: 'Invalid search params for getCategories(CRUD)', statusCode: 500 }, next)
       return null
     }
-    const categories = await BudgetDataSource.manager.findBy(Category, { user: { id: userId } })
+    const categories = await BudgetDataSource.getRepository(Category).find({ where: { user: { id: userId } }, order: { name: 'ASC' } })
     if (!categories) {
       errorHandler({ message: 'No categories for this user', statusCode: 403 }, next)
       return null
@@ -102,6 +102,7 @@ export class CategoryCRUD {
       errorHandler({ message: 'Invalid search params for updateCategory(CRUD)', statusCode: 500 }, next)
       return null
     }
+
     const category = await BudgetDataSource.manager.findOneBy(Category, { id: categoryId })
     if (!category) {
       errorHandler({ message: 'Category not found', statusCode: 403 }, next)

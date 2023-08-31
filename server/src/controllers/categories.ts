@@ -10,7 +10,8 @@ export const addCategory: RequestHandler = async (req, res: AppRes<CategoriesPay
   const name: string = req.body.name
 
   try {
-    await CategoryCRUD.add(user, name, next)
+    const category = await CategoryCRUD.add(user, name, next)
+    if (!category) return errorHandler({ message: 'addCategory failed. CategoryCRUD.add failed', statusCode: 403 }, next)
 
     const categories = await CategoryCRUD.get(user.id, next)
 
@@ -59,7 +60,8 @@ export const deleteCategory: RequestHandler = async (req, res: AppRes<Categories
   }
 
   try {
-    await CategoryCRUD.delete(categoryId, next)
+    const category = await CategoryCRUD.delete(categoryId, next)
+    if (!category) return errorHandler({ message: 'deleteCategory failed. CategoryCRUD.delete failed', statusCode: 403 }, next)
 
     const categories = await CategoryCRUD.get(user.id, next)
 
@@ -76,11 +78,12 @@ export const deleteCategory: RequestHandler = async (req, res: AppRes<Categories
 
 export const updateCategory: RequestHandler = async (req, res: AppRes<CategoriesPayload>, next) => {
   const user = req.user!
-  const categoryId: number = +req.body.categoryId
+  const categoryId: number = +req.body.id
   const name: string = req.body.name
 
   try {
-    await CategoryCRUD.update(categoryId, name, next)
+    const category = await CategoryCRUD.update(categoryId, name, next)
+    if (!category) return errorHandler({ message: 'updateCategory failed. CategoryCRUD.update failed', statusCode: 403 }, next)
 
     const categories = await CategoryCRUD.get(user.id, next)
 
@@ -90,7 +93,6 @@ export const updateCategory: RequestHandler = async (req, res: AppRes<Categories
       payload: { categories: categories || [] }
     })
   } catch (err) {
-    console.log(err)
     errorHandler({ message: 'Failed to create new user', details: err }, next)
   }
 }
