@@ -5,34 +5,110 @@ import { User } from '../models/user'
 import { errorHandler } from '../utils/errors'
 import { Category } from '../models/category'
 
-type GetUser = (selector: { userId?: UserId; email?: string }, next: NextFunction) => Promise<User | null>
-type GetCategories = (userId: UserId, next: NextFunction) => Promise<Category[] | null>
+export class UserCRUD {
+  static add = async (email: string, password: string, next: NextFunction) => {
+    if (!email || !password) {
+      errorHandler({ message: 'Invalid search params for addUser(CRUD)', statusCode: 500 }, next)
+      return null
+    }
+    const user = new User()
+    user.email = email
+    user.password = password
+    await BudgetDataSource.manager.save(user)
+    return user
+  }
 
-export const getUser: GetUser = async ({ userId, email }, next: NextFunction) => {
-  console.log('getUser(CRUD)', { userId, email })
-  if (!userId && !email) {
-    errorHandler({ message: 'Invalid search params for getUser(CRUD)', statusCode: 500 }, next)
-    return null
+  static get = async ({ userId, email }: { userId?: UserId; email?: string }, next: NextFunction) => {
+    if (!userId && !email) {
+      errorHandler({ message: 'Invalid search params for getUser(CRUD)', statusCode: 500 }, next)
+      return null
+    }
+    const searchParams = userId ? { id: userId } : email ? { email } : {}
+    const user = await BudgetDataSource.manager.findOneBy(User, searchParams)
+    if (!user) {
+      errorHandler({ message: 'User not found', statusCode: 403 }, next)
+      return null
+    }
+    return user
   }
-  const searchParams = userId ? { id: userId } : email ? { email } : {}
-  const user = await BudgetDataSource.manager.findOneBy(User, searchParams)
-  if (!user) {
-    errorHandler({ message: 'User not found', statusCode: 403 }, next)
-    return null
+
+  static delete = async (user: User, next: NextFunction) => {
+    if (!user) {
+      errorHandler({ message: 'Invalid search params for deleteUser(CRUD)', statusCode: 500 }, next)
+      return null
+    }
+    await BudgetDataSource.manager.remove(user)
+    return user
   }
-  return user
+
+  static update = async (
+    user: User,
+    { email, password }: { email: string; password?: string } | { email?: string; password: string },
+    next: NextFunction
+  ) => {
+    if (!user || (!email && !password)) {
+      errorHandler({ message: 'Invalid search params for updateUser(CRUD)', statusCode: 500 }, next)
+      return null
+    }
+    if (email) user.email = email
+    if (password) user.password = password
+    await BudgetDataSource.manager.save(user)
+    return user
+  }
 }
 
-export const getCategories: GetCategories = async (userId, next) => {
-  console.log('getCategories(CRUD)', { userId })
-  if (!userId) {
-    errorHandler({ message: 'Invalid search params for getCategories(CRUD)', statusCode: 500 }, next)
-    return null
+export class CategoryCRUD {
+  static add = async (user: User, name: string, next: NextFunction) => {
+    if (!user || !name) {
+      errorHandler({ message: 'Invalid search params for addCategory(CRUD)', statusCode: 500 }, next)
+      return null
+    }
+    const category = new Category()
+    category.name = name
+    category.user = user
+    await BudgetDataSource.manager.save(category)
+    return category
   }
-  const categories = await BudgetDataSource.manager.findBy(Category, { user: { id: userId } })
-  if (!categories) {
-    errorHandler({ message: 'No categories for this user', statusCode: 403 }, next)
-    return null
+
+  static get = async (userId: UserId, next: NextFunction) => {
+    if (!userId) {
+      errorHandler({ message: 'Invalid search params for getCategories(CRUD)', statusCode: 500 }, next)
+      return null
+    }
+    const categories = await BudgetDataSource.manager.findBy(Category, { user: { id: userId } })
+    if (!categories) {
+      errorHandler({ message: 'No categories for this user', statusCode: 403 }, next)
+      return null
+    }
+    return categories
   }
-  return categories
+
+  static delete = async (categoryId: number, next: NextFunction) => {
+    if (!categoryId) {
+      errorHandler({ message: 'Invalid search params for deleteCategory(CRUD)', statusCode: 500 }, next)
+      return null
+    }
+    const category = await BudgetDataSource.manager.findOneBy(Category, { id: categoryId })
+    if (!category) {
+      errorHandler({ message: 'Category not found', statusCode: 403 }, next)
+      return null
+    }
+    await BudgetDataSource.manager.remove(category)
+    return category
+  }
+
+  static update = async (categoryId: number, name: string, next: NextFunction) => {
+    if (!categoryId || !name) {
+      errorHandler({ message: 'Invalid search params for updateCategory(CRUD)', statusCode: 500 }, next)
+      return null
+    }
+    const category = await BudgetDataSource.manager.findOneBy(Category, { id: categoryId })
+    if (!category) {
+      errorHandler({ message: 'Category not found', statusCode: 403 }, next)
+      return null
+    }
+    category.name = name
+    await BudgetDataSource.manager.save(category)
+    return category
+  }
 }

@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from './hooks/useReduxTS'
 import ErrorBoundary from './components/errors/ErrorBoundary'
 import { loginAndAutoLogout, getUserData } from './store/user/user-actions'
 import { userActions } from './store/user/user-slice'
-import { isAxiosErrorPayload } from './types/actions/actions'
+import { isActionPayload } from './types/actions/actions'
 
 function App() {
   const dispatch = useAppDispatch()
@@ -18,7 +18,7 @@ function App() {
         const token = storeToken || localStorage.getItem('token')
         if (token) {
           const res = await dispatch(getUserData(token))
-          if (isAxiosErrorPayload(res) && res.status === 200) {
+          if (isActionPayload(res) && res.status === 200) {
             dispatch(loginAndAutoLogout(token))
           } else {
             dispatch(userActions.logout())

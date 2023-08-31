@@ -12,7 +12,11 @@ export enum ResCodes {
   RESET_PASSWORD,
   SEND_USER,
   UPDATE_USER,
-  DELETE_USER
+  DELETE_USER,
+  CREATE_CATEGORY,
+  GET_CATEGORIES,
+  UPDATE_CATEGORY,
+  DELETE_CATEGORY
 }
 
 export interface JSONResponse<T = void> {
