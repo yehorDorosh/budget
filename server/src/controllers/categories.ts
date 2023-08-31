@@ -3,7 +3,6 @@ import { AppRes, ResCodes } from '../types/express/custom-response'
 
 import { errorHandler } from '../utils/errors'
 import { CategoryCRUD } from '../db/crud'
-import { QueryFailedError } from 'typeorm'
 
 export const addCategory: RequestHandler = async (req, res: AppRes<CategoriesPayload>, next) => {
   const user = req.user!
@@ -17,23 +16,7 @@ export const addCategory: RequestHandler = async (req, res: AppRes<CategoriesPay
 
     res.status(201).json({ message: 'Create new category', code: ResCodes.CREATE_CATEGORY, payload: { categories: categories || [] } })
   } catch (err) {
-    if (err instanceof QueryFailedError && err.driverError.code == 23505) {
-      res.status(422).json({
-        message: 'Category already exist',
-        code: ResCodes.VALIDATION_ERROR,
-        validationErrors: [
-          {
-            location: 'body',
-            msg: 'Category already exist',
-            path: 'name',
-            type: 'field',
-            value: name
-          }
-        ]
-      })
-    } else {
-      errorHandler({ message: 'Failed to create new category', details: err }, next)
-    }
+    errorHandler({ message: 'Failed to create new category', details: err }, next)
   }
 }
 
