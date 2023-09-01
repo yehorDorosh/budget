@@ -2,6 +2,7 @@ import { body, oneOf } from 'express-validator'
 import { BudgetDataSource } from '../db/data-source'
 
 import { User } from '../models/user'
+import { Category } from '../models/category'
 
 export const emailValidator = (fieldName: string = 'email', checkIsExisted: boolean = true) => {
   return body(fieldName)
@@ -31,4 +32,16 @@ export const atLeastOneNotEmptyValidator = (...fields: string[]) => {
     fields.map((field) => body(field).trim().notEmpty()),
     { message: 'At least one of the fields is required: ' + fields.join(', ') }
   )
+}
+
+export const categoryValidator = (fieldName: string = 'name') => {
+  return body(fieldName)
+    .trim()
+    .custom((value) => {
+      return BudgetDataSource.manager.findOneBy(Category, { name: value }).then((category) => {
+        if (category) {
+          return Promise.reject('Category with this name already exists!')
+        }
+      })
+    })
 }
