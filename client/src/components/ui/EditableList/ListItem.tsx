@@ -46,7 +46,7 @@ const ListItem: FC<ListItemProps> = ({ fields, itemId, onEdit, formMarkup, onSen
       {!isEditing && fieldsMarkup}
       {isEditing && <td>{formMarkup}</td>}
       <td>
-        {!isEditing && <button onClick={editBtnHandler}>Update</button>}
+        {!isEditing && <button onClick={editBtnHandler}>Edit</button>}
         {isEditing && <button onClick={() => setIsEditing(false)}>Cancel</button>}
         <button onClick={deleteHandler}>Delete</button>
       </td>

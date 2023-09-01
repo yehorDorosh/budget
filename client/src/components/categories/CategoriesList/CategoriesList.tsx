@@ -5,6 +5,7 @@ import useForm from '../../../hooks/useForm'
 import EditableList, { Item } from '../../ui/EditableList/EditableList'
 import { updateCategory } from '../../../store/categories/categories-actions'
 import { OnEdit } from '../../ui/EditableList/ListItem'
+import { notEmpty } from '../../../utils/validators'
 
 type Props = {
   token: string
@@ -27,14 +28,14 @@ const CategoriesList: FC<Props> = ({ token }) => {
         label: 'Category name',
         placeholder: 'Category name',
         errMsg: 'Field is required.',
-        validator: null,
+        validator: notEmpty,
         state: categoryState,
         dispatch: categoryDispatch,
         defaultValue: categories.find((category) => category.id === targetId)?.name
       }
     ],
     {
-      submitBtnText: 'Update category',
+      submitBtnText: 'Edit category',
       submitAction: updateCategory,
       submitActionParams: [token, targetId, categoryState.value]
     },
