@@ -1,49 +1,54 @@
-import React, { FC, useState } from 'react'
-import { useAppSelector, useAppDispatch } from '../../../hooks/useReduxTS'
-import { deleteCategory, updateCategory } from '../../../store/categories/categories-actions'
-import EditableList from '../../ui/EditableList/EditableList'
-import { notEmpty } from '../../../utils/validators'
-import { SaveEvent } from '../../ui/EditableList/ListItem'
+import { FC, useState } from 'react'
+import { useAppSelector } from '../../../hooks/useReduxTS'
+import useField from '../../../hooks/useField'
+import useForm from '../../../hooks/useForm'
+import EditableList, { Item } from '../../ui/EditableList/EditableList'
+import { updateCategory } from '../../../store/categories/categories-actions'
+import { OnEdit } from '../../ui/EditableList/ListItem'
 
 type Props = {
   token: string
 }
 
 const CategoriesList: FC<Props> = ({ token }) => {
-  const dispatch = useAppDispatch()
+  const [onSend, setOnSend] = useState(false)
   const categories = useAppSelector((state) => state.categories.categories)
-  const [isLoading, setIsLoading] = useState(false)
-  const items = categories.map((category) => {
-    return {
-      id: category.id,
-      fields: [
-        {
-          value: category.name,
-          name: 'name',
-          type: 'text',
-          validation: notEmpty
-        }
-      ]
+  const { fieldState: categoryState, fieldDispatch: categoryDispatch } = useField()
+  const [targetId, setTargetId] = useState<number | null>(null)
+  const items: Item[] = categories.map((category) => ({
+    id: category.id,
+    fields: [{ value: category.name, name: 'name' }]
+  }))
+  const { formMarkup } = useForm(
+    [
+      {
+        name: 'name',
+        type: 'text',
+        label: 'Category name',
+        placeholder: 'Category name',
+        errMsg: 'Field is required.',
+        validator: null,
+        state: categoryState,
+        dispatch: categoryDispatch,
+        defaultValue: categories.find((category) => category.id === targetId)?.name
+      }
+    ],
+    {
+      submitBtnText: 'Update category',
+      submitAction: updateCategory,
+      submitActionParams: [token, targetId, categoryState.value]
+    },
+    {
+      onSubmit: () => setOnSend(false),
+      onGetResponse: () => setOnSend(true)
     }
-  })
+  )
 
-  const onDeleteHandler = async (id: number) => {
-    setIsLoading(true)
-    await dispatch(deleteCategory(token, id))
-    setIsLoading(false)
+  const onEdit: OnEdit = (id) => {
+    setTargetId(id)
   }
 
-  const onSaveHandler: SaveEvent = async (id, data) => {
-    const fieldCategoryName = data.find((item) => item.name === 'name')
-    if (!fieldCategoryName || !fieldCategoryName.isValid) {
-      return
-    }
-    setIsLoading(true)
-    await dispatch(updateCategory(token, id, fieldCategoryName.value))
-    setIsLoading(false)
-  }
-
-  return <EditableList items={items} onDelete={onDeleteHandler} onSave={onSaveHandler} isLoading={isLoading} />
+  return <EditableList items={items} onEdit={onEdit} formMarkup={formMarkup} onSend={onSend} />
 }
 
 export default CategoriesList

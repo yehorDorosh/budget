@@ -1,73 +1,54 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
+import { useAppDispatch, useAppSelector } from '../../../hooks/useReduxTS'
+import { deleteCategory } from '../../../store/categories/categories-actions'
 
 export interface ListItemField {
-  id: number
-  fields: {
-    value: string
-    name: string
-    type: string
-    validation?: (value: string) => boolean
-  }[]
+  value: string
+  name: string
 }
 
-export type SaveEvent = (id: number, data: { name: string; value: string; isValid: boolean }[]) => void
+export type OnEdit = (id: number) => void
 
 interface ListItemProps {
-  item: ListItemField
-  onDelete: (id: number) => void
-  onSave: SaveEvent
+  itemId: number
+  fields: ListItemField[]
+  onEdit: OnEdit
+  onSend: boolean
+  formMarkup: JSX.Element
 }
 
-const ListItem: FC<ListItemProps> = ({ item, onDelete, onSave }) => {
-  const [openForm, setOpenForm] = React.useState(false)
+const ListItem: FC<ListItemProps> = ({ fields, itemId, onEdit, formMarkup, onSend }) => {
+  const dispatch = useAppDispatch()
+  const token = useAppSelector((state) => state.user.token)
+  const [isEditing, setIsEditing] = useState(false)
 
-  const openFormHandler = () => {
-    setOpenForm((prev) => !prev)
+  const deleteHandler = () => {
+    dispatch(deleteCategory(token, itemId))
   }
 
-  const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-    const data = item.fields.map((field) => {
-      const value = String(formData.get(field.name))
-      const isValid = field.validation ? field.validation(value) : true
-      return {
-        name: field.name,
-        value,
-        isValid
-      }
-    })
+  const fieldsMarkup = fields.map((field, i) => {
+    return <td key={i}>{field.value}</td>
+  })
 
-    onSave(item.id, data)
-    setOpenForm(false)
+  const editBtnHandler = () => {
+    setIsEditing(true)
+    onEdit(itemId)
   }
 
-  const formMarkup = (
-    <td>
-      <form onSubmit={submitHandler}>
-        {item.fields.map((field) => {
-          return <input key={field.name} type={field.type} name={field.name} defaultValue={field.value} />
-        })}
-        <button type="submit">Save</button>
-      </form>
-    </td>
-  )
-
-  const dataMarkup = (
-    <td>
-      {item.fields.map((field) => {
-        return <span key={field.name}>{field.value}</span>
-      })}
-    </td>
-  )
+  useEffect(() => {
+    if (onSend) {
+      setIsEditing(false)
+    }
+  }, [onSend])
 
   return (
     <tr>
-      {openForm ? formMarkup : dataMarkup}
-
-      <td>{openForm ? <button onClick={() => setOpenForm(false)}>Cancel</button> : <button onClick={openFormHandler}>Edit</button>}</td>
+      {!isEditing && fieldsMarkup}
+      {isEditing && <td>{formMarkup}</td>}
       <td>
-        <button onClick={() => onDelete(item.id)}>Delete</button>
+        {!isEditing && <button onClick={editBtnHandler}>Update</button>}
+        {isEditing && <button onClick={() => setIsEditing(false)}>Cancel</button>}
+        <button onClick={deleteHandler}>Delete</button>
       </td>
     </tr>
   )

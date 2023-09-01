@@ -13,6 +13,7 @@ interface FieldConfig {
   validator: ValidationFunction | null
   state: FieldState
   dispatch: React.Dispatch<UseFieldAction>
+  defaultValue?: string
 }
 
 interface FormConfig<T = void> {
@@ -66,7 +67,7 @@ const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, for
           placeholder={field.placeholder}
           name={field.name}
           onChange={inputHandler}
-          value={field.state.value}
+          value={field.state.touched ? field.state.value : field.defaultValue}
         />
       ))}
       <button type="submit">{formConfig.submitBtnText}</button>

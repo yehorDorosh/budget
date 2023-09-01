@@ -1,31 +1,28 @@
 import React, { FC } from 'react'
 import ListItem from './ListItem'
-import classes from './EditableList.module.scss'
-import { ListItemField, SaveEvent } from './ListItem'
+import { ListItemField, OnEdit } from './ListItem'
 
-interface Props {
-  items: ListItemField[]
-  onDelete: (id: number) => void
-  onSave: SaveEvent
-  isLoading: boolean
+export interface Item {
+  id: number
+  fields: ListItemField[]
 }
 
-const EditableList: FC<Props> = ({ items, onDelete, onSave, isLoading }) => {
+interface Props {
+  items: Item[]
+  onEdit: OnEdit
+  formMarkup: JSX.Element
+  onSend: boolean
+}
+
+const EditableList: FC<Props> = ({ items, onEdit, formMarkup, onSend }) => {
   return (
-    <div className={classes.container}>
-      <table>
-        <tbody>
-          {items.map((item) => {
-            return <ListItem key={item.id} item={{ id: item.id, fields: item.fields }} onDelete={onDelete} onSave={onSave} />
-          })}
-        </tbody>
-      </table>
-      {isLoading && (
-        <div className={classes.loaderBg}>
-          <div className={classes.loader}></div>
-        </div>
-      )}
-    </div>
+    <table>
+      <tbody>
+        {items.map((item) => {
+          return <ListItem key={item.id} itemId={item.id} fields={item.fields} onEdit={onEdit} formMarkup={formMarkup} onSend={onSend} />
+        })}
+      </tbody>
+    </table>
   )
 }
 
