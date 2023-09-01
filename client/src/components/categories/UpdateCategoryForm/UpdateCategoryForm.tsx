@@ -8,9 +8,11 @@ import { updateCategory } from '../../../store/categories/categories-actions'
 interface Props {
   id: number
   token: string
+  defaultName: string
+  onSave: () => void
 }
 
-const UpdateCategoryForm: FC<Props> = ({ token, id }) => {
+const UpdateCategoryForm: FC<Props> = ({ token, id, defaultName, onSave }) => {
   const { fieldState: categoryState, fieldDispatch: categoryDispatch } = useField()
   const { formMarkup } = useForm(
     [
@@ -22,13 +24,19 @@ const UpdateCategoryForm: FC<Props> = ({ token, id }) => {
         errMsg: 'Field is required.',
         validator: notEmpty,
         state: categoryState,
-        dispatch: categoryDispatch
+        dispatch: categoryDispatch,
+        defaultValue: defaultName
       }
     ],
     {
-      submitBtnText: 'Create category',
+      submitBtnText: 'Save',
       submitAction: updateCategory,
       submitActionParams: [token, id, categoryState.value]
+    },
+    {
+      onGetResponse: () => {
+        onSave()
+      }
     }
   )
 
