@@ -9,7 +9,12 @@ export function isRegularErrorObject<T = void>(toBeDetermined: ActionResult<T>):
 }
 
 export function isActionPayload<T = void>(toBeDetermined: ActionResult<T>): toBeDetermined is ActionPayload<T> {
-  return toBeDetermined && (toBeDetermined as ActionPayload<T>).data !== undefined
+  return (
+    toBeDetermined &&
+    (toBeDetermined as ActionPayload<T>).data !== undefined &&
+    (toBeDetermined as AxiosErrorPayload<T>).errorMsg === undefined &&
+    (toBeDetermined as RegularErrorObject).error === undefined
+  )
 }
 
 export type AxiosErrorPayload<T = void> = {

@@ -2,13 +2,10 @@ import { Fragment, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import * as jose from 'jose'
 
-import BaseForm from '../../ui/BaseForm/BaseForm'
-import BaseInput from '../../ui/BaseInput/BaseInput'
 import useField from '../../../hooks/useField'
-import useFormSubmit from '../../../hooks/useFormSubmit'
+import useForm from '../../../hooks/useForm'
 import { passwordValidator } from '../../../utils/validators'
 import { restorePassword } from '../../../store/user/user-actions'
-import { isActionPayload } from '../../../types/actions/actions'
 import { ResCodes } from '../../../types/enum'
 
 interface Props {
@@ -17,37 +14,45 @@ interface Props {
 
 const SignupForm: React.FC<Props> = ({ token }) => {
   const navigate = useNavigate()
-  const { submit, isLoading, validationErrorsBE } = useFormSubmit()
   const { fieldState: passwordState, fieldDispatch: passwordDispatch } = useField()
   const [tokenExpired, setTokenExpired] = useState(false)
-
   try {
     jose.decodeJwt(token)
   } catch (e) {
     throw new Error('Invalid token')
   }
-
-  function passwordHandler(e: React.ChangeEvent<HTMLInputElement>) {
-    passwordDispatch({ type: 'set&check', payload: { value: e.target.value, touched: true }, validation: passwordValidator })
-  }
-
-  async function submitHandler(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setTokenExpired(false)
-    const { exp: expiryDate } = jose.decodeJwt(token)
-    if (expiryDate && Date.now() >= expiryDate * 1000) {
-      setTokenExpired(true)
-      return
+  const { formMarkup } = useForm(
+    [
+      {
+        name: 'newPassword',
+        type: 'password',
+        label: 'Password',
+        placeholder: 'password',
+        errMsg: 'Password should contain at least 8 symbols. At least one char in upper case and at least 1 number.',
+        validator: passwordValidator,
+        state: passwordState,
+        dispatch: passwordDispatch
+      }
+    ],
+    {
+      submitBtnText: 'Restore password',
+      submitAction: restorePassword,
+      submitActionParams: [token, passwordState.value]
+    },
+    {
+      onSubmit: () => {
+        setTokenExpired(false)
+        const { exp: expiryDate } = jose.decodeJwt(token)
+        if (expiryDate && Date.now() >= expiryDate * 1000) {
+          setTokenExpired(true)
+          return
+        }
+      },
+      onGetResponse: (res) => {
+        if (res.data.code === ResCodes.RESET_PASSWORD) navigate('/login', { replace: true })
+      }
     }
-    const res = await submit([passwordState], new Map([[passwordDispatch, passwordValidator]]), restorePassword, [
-      token,
-      passwordState.value
-    ])
-
-    if (res && isActionPayload(res) && res.data.code === ResCodes.RESET_PASSWORD) {
-      navigate('/login', { replace: true })
-    }
-  }
+  )
 
   return (
     <Fragment>
@@ -59,19 +64,7 @@ const SignupForm: React.FC<Props> = ({ token }) => {
           <NavLink to="/restore-password">Restore password</NavLink>
         </p>
       )}
-      <BaseForm onSubmit={submitHandler} isLoading={isLoading} errors={validationErrorsBE} noValidate>
-        <BaseInput
-          label="Password"
-          isValid={passwordState.isValid}
-          msg="Please enter a password."
-          type="password"
-          placeholder="password"
-          name="newPassword"
-          onChange={passwordHandler}
-          value={passwordState.value}
-        />
-        <button type="submit">Restore password</button>
-      </BaseForm>
+      {formMarkup}
     </Fragment>
   )
 }

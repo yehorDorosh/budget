@@ -1,12 +1,9 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 
 import { notEmpty, emailValidator, passwordValidator } from '../../../utils/validators'
 import useField from '../../../hooks/useField'
-import useFormSubmit from '../../../hooks/useFormSubmit'
+import useForm from '../../../hooks/useForm'
 import { updateUser } from '../../../store/user/user-actions'
-import BaseForm from '../../ui/BaseForm/BaseForm'
-import BaseInput from '../../ui/BaseInput/BaseInput'
-import { isActionPayload } from '../../../types/actions/actions'
 import { ResCodes } from '../../../types/enum'
 
 interface Props {
@@ -16,50 +13,44 @@ interface Props {
 }
 
 const ChangeCredentialsForm: FC<Props> = ({ fieldName, token, onEdit: onEditEmail }) => {
-  const { submit, isLoading, validationErrorsBE } = useFormSubmit()
   const { fieldState, fieldDispatch } = useField()
-
-  let validation: ValidationFunction
-
+  let validator: ValidationFunction
   switch (fieldName) {
     case 'email':
-      validation = emailValidator
+      validator = emailValidator
       break
     case 'password':
-      validation = passwordValidator
+      validator = passwordValidator
       break
     default:
-      validation = notEmpty
+      validator = notEmpty
   }
-
-  function fieldHandler(e: React.ChangeEvent<HTMLInputElement>) {
-    fieldDispatch({ type: 'set&check', payload: { value: e.target.value, touched: true }, validation })
-  }
-
-  async function submitHandler(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const res = await submit([fieldState], new Map([[fieldDispatch, validation]]), updateUser, [token, { [fieldName]: fieldState.value }])
-
-    if (res && isActionPayload(res) && res.data.code === ResCodes.UPDATE_USER) {
-      onEditEmail(fieldState.value)
+  const { formMarkup } = useForm(
+    [
+      {
+        name: fieldName,
+        type: fieldName,
+        label: fieldName.charAt(0).toUpperCase() + fieldName.slice(1),
+        placeholder: fieldName,
+        errMsg: `Please enter a valid ${fieldName}.`,
+        validator,
+        state: fieldState,
+        dispatch: fieldDispatch
+      }
+    ],
+    {
+      submitBtnText: `Change ${fieldName}`,
+      submitAction: updateUser,
+      submitActionParams: [token, { [fieldName]: fieldState.value }]
+    },
+    {
+      onGetResponse: (res) => {
+        if (res.data.code === ResCodes.UPDATE_USER) onEditEmail(fieldState.value)
+      }
     }
-  }
-
-  return (
-    <BaseForm onSubmit={submitHandler} isLoading={isLoading} errors={validationErrorsBE} noValidate>
-      <BaseInput
-        label={fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}
-        isValid={fieldState.isValid}
-        msg={`Please enter a ${fieldName}.`}
-        type={fieldName}
-        placeholder={fieldName}
-        name={fieldName}
-        onChange={fieldHandler}
-        value={fieldState.value}
-      />
-      <button type="submit">Change {fieldName}</button>
-    </BaseForm>
   )
+
+  return formMarkup
 }
 
 export default ChangeCredentialsForm
