@@ -1,10 +1,18 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { ActionResult, StoreAction, isActionPayload, isAxiosErrorPayload, isRegularErrorObject } from '../types/actions/actions'
+import {
+  ActionResult,
+  StoreAction,
+  isActionPayload,
+  isAxiosErrorPayload,
+  isEmailOrPassword,
+  isRegularErrorObject
+} from '../types/actions/actions'
 import { FieldState } from './useField'
 import { useAppDispatch } from './useReduxTS'
 import { Action as UseFieldActions } from './useField'
+import { StoreActionParams } from '../types/actions/actions'
 
 /**
  * Check fields before submitting. If the fields are valid, dispatch the action and clear the fields.
@@ -22,7 +30,7 @@ export type FormSubmit = <T = void>(
   fields: FieldState[],
   fieldsDispatch: Map<React.Dispatch<UseFieldActions>, ValidationFunction | null>,
   action: StoreAction<T>,
-  actionParams: any[]
+  actionParams: StoreActionParams
 ) => Promise<ActionResult<T> | void>
 
 const useSubmit = () => {
@@ -31,7 +39,12 @@ const useSubmit = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>()
 
-  const submit: FormSubmit = async (fields, fieldsDispatch, action, actionParams) => {
+  const submit: FormSubmit = async <T,>(
+    fields: FieldState[],
+    fieldsDispatch: Map<React.Dispatch<UseFieldActions>, ValidationFunction | null>,
+    action: StoreAction<T>,
+    actionParams: StoreActionParams
+  ) => {
     for (let [fieldDispatch, validator] of fieldsDispatch) {
       if (!validator) continue
       fieldDispatch({ type: 'validate', validation: validator })
@@ -43,7 +56,72 @@ const useSubmit = () => {
     if (isValid && isTouched) {
       setIsLoading(true)
       setValidationErrors(undefined)
-      const res = await dispatch(action(...actionParams))
+      let res: ActionResult<T> = { error: new Error('useFormSubmit.tsx: No response') }
+
+      if (
+        typeof actionParams[0] === 'string' &&
+        typeof actionParams[1] === 'undefined' &&
+        typeof actionParams[2] === 'undefined' &&
+        typeof actionParams[3] === 'undefined'
+      ) {
+        res = await dispatch(action(actionParams[0]))
+      }
+
+      if (
+        typeof actionParams[0] === 'string' &&
+        typeof actionParams[1] === 'string' &&
+        typeof actionParams[2] === 'undefined' &&
+        typeof actionParams[3] === 'undefined'
+      ) {
+        res = await dispatch(action(actionParams[0], actionParams[1]))
+      }
+
+      if (
+        typeof actionParams[0] === 'string' &&
+        typeof actionParams[1] === 'number' &&
+        typeof actionParams[2] === 'undefined' &&
+        typeof actionParams[3] === 'undefined'
+      ) {
+        res = await dispatch(action(actionParams[0], actionParams[1]))
+      }
+
+      if (
+        typeof actionParams[0] === 'string' &&
+        isEmailOrPassword(actionParams[1]) &&
+        typeof actionParams[2] === 'undefined' &&
+        typeof actionParams[3] === 'undefined'
+      ) {
+        res = await dispatch(action(actionParams[0], actionParams[1]))
+      }
+
+      if (
+        typeof actionParams[0] === 'string' &&
+        typeof actionParams[1] === 'number' &&
+        typeof actionParams[2] === 'string' &&
+        typeof actionParams[3] === 'undefined'
+      ) {
+        res = await dispatch(action(actionParams[0], actionParams[1], actionParams[2]))
+      }
+
+      if (
+        typeof actionParams[0] === 'string' &&
+        typeof actionParams[1] === 'string' &&
+        typeof actionParams[2] === 'string' &&
+        typeof actionParams[3] === 'undefined'
+      ) {
+        res = await dispatch(action(actionParams[0], actionParams[1], actionParams[2]))
+      }
+
+      if (
+        typeof actionParams[0] === 'string' &&
+        typeof actionParams[1] === 'number' &&
+        typeof actionParams[2] === 'string' &&
+        typeof actionParams[3] === 'string'
+      ) {
+        res = await dispatch(action(actionParams[0], actionParams[1], actionParams[2], actionParams[3]))
+      }
+
+      // const res = await dispatch(action(...actionParams))
       setIsLoading(false)
       if (isAxiosErrorPayload(res)) {
         if (res.status >= 300 && res.status !== 403 && res.status !== 422) navigate('/500', { state: { data: res } })

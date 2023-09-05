@@ -17,6 +17,13 @@ export function isActionPayload<T = void>(toBeDetermined: ActionResult<T>): toBe
   )
 }
 
+export function isEmailOrPassword(toBeDetermined: string | number | EmailOrPassword | undefined): toBeDetermined is EmailOrPassword {
+  return (
+    (toBeDetermined && (toBeDetermined as EmailOrPassword).email !== undefined) ||
+    (toBeDetermined as EmailOrPassword).password !== undefined
+  )
+}
+
 export type AxiosErrorPayload<T = void> = {
   errorMsg: string
   data: JSONResponse<T>
@@ -32,5 +39,19 @@ export type ActionPayload<T = void> = {
 
 export type ActionResult<T = void> = AxiosErrorPayload<T> | RegularErrorObject | ActionPayload<T>
 
-export type StoreAction<T = void> = (...arg: any) => (dispatch: AppDispatch, getState: () => RootState) => Promise<ActionResult<T>>
+export type EmailOrPassword = { email: string; password?: string } | { email?: string; password: string }
+type ActionCreator<T = void> = (dispatch: AppDispatch, getState: () => RootState) => Promise<ActionResult<T>>
+export type StoreActionParams = [string, (string | number | EmailOrPassword)?, string?, string?]
+export type StoreAction<T = void> = {
+  (token: string): ActionCreator<T>
+  (email: string): ActionCreator<T>
+  (email: string, password: string): ActionCreator<T>
+  (token: string, newPassword: string): ActionCreator<T>
+  (token: string, password: string): ActionCreator<T>
+  (token: string, payload: EmailOrPassword): ActionCreator<T>
+  (token: string, id: number): ActionCreator<T>
+  (token: string, id: number, name: string): ActionCreator<T>
+  (token: string, name: string, logType: string): ActionCreator<T>
+  (token: string, id: number, name: string, logType: string): ActionCreator<T>
+}
 export type SimpleStoreAtion = (...arg: any) => (dispatch: AppDispatch, getState: () => RootState) => void

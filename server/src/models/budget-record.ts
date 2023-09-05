@@ -1,12 +1,8 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, RelationId, UpdateDateColumn } from 'typeorm'
 
 import { User } from './user'
 import { Category } from './category'
-
-export enum LogType {
-  INCOME = 'income',
-  EXPENSE = 'expense'
-}
+import { LogType } from '../types/enums'
 
 @Entity('budget-records')
 export class BudgetRecords {
@@ -22,14 +18,14 @@ export class BudgetRecords {
   @Column({ type: 'date' })
   userDate: Date
 
-  @Column({ type: 'enum', enum: LogType })
-  LogType: LogType
-
   @ManyToOne(() => User, (user) => user.categories, { onDelete: 'CASCADE' })
   user: User
 
   @ManyToOne(() => Category, (category) => category.budgetRecord, { onDelete: 'CASCADE' })
   category: Category
+
+  @RelationId((budgetRecord: BudgetRecords) => budgetRecord.category)
+  logType: LogType
 
   @CreateDateColumn()
   created_at: Date

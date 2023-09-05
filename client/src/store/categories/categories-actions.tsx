@@ -1,15 +1,16 @@
 import axios from 'axios'
 
-import { StoreAction } from '../../types/actions/actions'
+import { StoreAction, EmailOrPassword } from '../../types/actions/actions'
 import { categoriesActions } from './categories-slice'
 import { errorHandler } from '../../utils/errors'
 
-export const addCategory: StoreAction<CategoriesPayload> = (token: string, name: string) => {
+export const addCategory: StoreAction<CategoriesPayload> = (token: string, name?: string | EmailOrPassword | number, logType?: string) => {
   return async (dispatch, getState) => {
     try {
+      if (typeof name !== 'string' || !logType) throw new Error('categories-cations.tsx: addCategory invalid params')
       const { data, status } = await axios.post<JSONResponse<CategoriesPayload>>(
         '/api/categories/add',
-        { name },
+        { name, logType },
         { headers: { Authorization: `Bearer ${token}` } }
       )
       if (data.payload && data.payload.categories) {
@@ -38,9 +39,10 @@ export const getCategories: StoreAction<CategoriesPayload> = (token: string) => 
   }
 }
 
-export const deleteCategory: StoreAction<CategoriesPayload> = (token: string, id: number) => {
+export const deleteCategory: StoreAction<CategoriesPayload> = (token: string, id?: number | EmailOrPassword | string) => {
   return async (dispatch, getState) => {
     try {
+      if (typeof id !== 'number') throw new Error('Category id is not a number')
       const { data, status } = await axios.delete<JSONResponse<CategoriesPayload>>(`/api/categories/delete?id=${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -54,12 +56,20 @@ export const deleteCategory: StoreAction<CategoriesPayload> = (token: string, id
   }
 }
 
-export const updateCategory: StoreAction<CategoriesPayload> = (token: string, id: number, name: string) => {
+export const updateCategory: StoreAction<CategoriesPayload> = (
+  token: string,
+  id?: number | EmailOrPassword | string,
+  name?: string,
+  logType?: string
+) => {
   return async (dispatch, getState) => {
     try {
+      if (typeof id !== 'number') throw new Error('Category id is not a number')
+      if (typeof name !== 'string') throw new Error('Category name is not a string')
+      if (typeof logType !== 'string') throw new Error('Category type is not a string')
       const { data, status } = await axios.put<JSONResponse<CategoriesPayload>>(
         '/api/categories/update',
-        { id, name },
+        { id, name, logType },
         { headers: { Authorization: `Bearer ${token}` } }
       )
       if (data.payload && data.payload.categories) {

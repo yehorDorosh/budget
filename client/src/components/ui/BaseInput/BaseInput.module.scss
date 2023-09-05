@@ -9,10 +9,11 @@
   label {
     display: inline-block;
     margin-bottom: 0.25rem;
+    cursor: pointer;
   }
 
   input {
-    -webkit-appearance: none;
+    // -webkit-appearance: none;
     width: 100%;
     box-sizing: border-box;
     height: 2rem;
@@ -22,6 +23,13 @@
     &:focus {
       outline: none;
       border-width: 2px;
+    }
+
+    &[type='radio'] {
+      width: auto;
+      height: auto;
+      margin-left: 0.5rem;
+      vertical-align: middle;
     }
   }
 

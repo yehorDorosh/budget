@@ -12,13 +12,13 @@ export type Action =
   | { type: 'set'; payload: FieldState }
   | { type: 'validate'; validation: ValidationFunction }
 
-const fieldInitialState: FieldState = {
-  value: '',
-  touched: false,
-  isValid: true
-}
+const useField = (defaultValue = '') => {
+  const fieldInitialState: FieldState = {
+    value: defaultValue,
+    touched: defaultValue ? true : false,
+    isValid: true
+  }
 
-const useField = () => {
   const fieldReducer: Reducer<FieldState, Action> = (state, action) => {
     switch (action.type) {
       case 'set&check':

@@ -3,15 +3,17 @@ import { useAppDispatch, useAppSelector } from '../../../hooks/useReduxTS'
 import { deleteCategory } from '../../../store/categories/categories-actions'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import UpdateCategoryForm from '../UpdateCategoryForm/UpdateCategoryForm'
+import { LogType } from '../../../types/enum'
 
 interface Props {
   id: number
   value: string
+  logType: LogType
 }
 
-const ListItem: FC<Props> = ({ id, value }) => {
+const ListItem: FC<Props> = ({ id, value, logType }) => {
   const dispatch = useAppDispatch()
-  const token = useAppSelector((state) => state.user.token)
+  const token = useAppSelector((state) => state.user.token)!
   const [openForm, setOpenForm] = useState(false)
 
   const deleteHandler = () => {
@@ -25,10 +27,11 @@ const ListItem: FC<Props> = ({ id, value }) => {
   return (
     <Fragment>
       <BaseModal isOpen={openForm} onClose={() => setOpenForm(false)}>
-        <UpdateCategoryForm id={id} token={token!} defaultName={value} onSave={() => setOpenForm(false)} />
+        <UpdateCategoryForm id={id} token={token!} defaultName={value} defaultLogType={logType} onSave={() => setOpenForm(false)} />
       </BaseModal>
       <tr>
         <td>{value}</td>
+        <td>{logType}</td>
         <td>
           <button onClick={editBtnHandler}>Edit</button>
           <button onClick={deleteHandler}>Delete</button>

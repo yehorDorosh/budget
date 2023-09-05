@@ -5,9 +5,10 @@ import useField from '../../../hooks/useField'
 import useForm from '../../../hooks/useForm'
 import { updateUser } from '../../../store/user/user-actions'
 import { ResCodes } from '../../../types/enum'
+import { EmailOrPassword } from '../../../types/actions/actions'
 
 interface Props {
-  fieldName: string
+  fieldName: keyof EmailOrPassword
   token: string
   onEdit: (email: string) => void
 }
@@ -41,7 +42,7 @@ const ChangeCredentialsForm: FC<Props> = ({ fieldName, token, onEdit: onEditEmai
     {
       submitBtnText: `Change ${fieldName}`,
       submitAction: updateUser,
-      submitActionParams: [token, { [fieldName]: fieldState.value }]
+      submitActionParams: [token, { [fieldName]: fieldState.value } as EmailOrPassword]
     },
     {
       onGetResponse: (res) => {

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import * as jose from 'jose'
 
-import { StoreAction, SimpleStoreAtion } from '../../types/actions/actions'
+import { StoreAction, SimpleStoreAtion, EmailOrPassword } from '../../types/actions/actions'
 import { userActions } from './user-slice'
 import { errorHandler } from '../../utils/errors'
 
@@ -29,9 +29,10 @@ export const loginAndAutoLogout: SimpleStoreAtion = (token: string) => {
   }
 }
 
-export const signUp: StoreAction<UserPayload> = (email: string, password: string) => {
+export const signUp: StoreAction<UserPayload> = (email: string, password?: string | EmailOrPassword | number) => {
   return async (dispatch, getState) => {
     try {
+      if (typeof password !== 'string') throw new Error('Password is not a string')
       const { data, status } = await axios.post<JSONResponse<UserPayload>>('/api/user/signup', { email, password })
       if (data.payload && data.payload.user) {
         dispatch(userActions.setUserData(data.payload.user))
@@ -65,9 +66,10 @@ export const getUserData: StoreAction<UserPayload> = (token: string) => {
   }
 }
 
-export const login: StoreAction<UserPayload> = (email: string, password: string) => {
+export const login: StoreAction<UserPayload> = (email: string, password?: string | EmailOrPassword | number) => {
   return async (dispatch, getState) => {
     try {
+      if (typeof password !== 'string') throw new Error('Password is not a string')
       const { data, status } = await axios.post<JSONResponse<UserPayload>>('/api/user/login', { email, password })
       if (data.payload && data.payload.user) {
         dispatch(userActions.setUserData(data.payload.user))
@@ -93,9 +95,10 @@ export const getRestoreEmail: StoreAction = (email: string) => {
   }
 }
 
-export const restorePassword: StoreAction = (token: string, newPassword: string) => {
+export const restorePassword: StoreAction = (token: string, newPassword?: string | EmailOrPassword | number) => {
   return async () => {
     try {
+      if (typeof newPassword !== 'string') throw new Error('Password is not a string')
       const { data, status } = await axios.post<JSONResponse>(`/api/user/restore-password/${token}`, { newPassword })
       return { data, status }
     } catch (err) {
@@ -104,12 +107,10 @@ export const restorePassword: StoreAction = (token: string, newPassword: string)
   }
 }
 
-export const updateUser: StoreAction<UserPayload> = (
-  token: string,
-  payload: { email: string; password?: string } | { email?: string; password: string }
-) => {
+export const updateUser: StoreAction<UserPayload> = (token: string, payload?: EmailOrPassword | string | number) => {
   return async (dispatch) => {
     try {
+      if (typeof payload === 'string') throw new Error('Payload type is not EmailOrPassword')
       const { data, status } = await axios.put<JSONResponse<UserPayload>>('/api/user/update-user', payload, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -123,9 +124,10 @@ export const updateUser: StoreAction<UserPayload> = (
   }
 }
 
-export const deleteUser: StoreAction = (token: string, password: string) => {
+export const deleteUser: StoreAction = (token: string, password?: string | EmailOrPassword | number) => {
   return async () => {
     try {
+      if (typeof password !== 'string') throw new Error('Password is not a string')
       const { data, status } = await axios.patch(`/api/user/delete-user`, { password }, { headers: { Authorization: `Bearer ${token}` } })
       return { data, status }
     } catch (err) {

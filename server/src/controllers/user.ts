@@ -2,7 +2,8 @@ import bcrypt from 'bcryptjs'
 import * as jose from 'jose'
 
 import { RequestHandler } from 'express'
-import { AppRes, ResCodes } from '../types/express/custom-response'
+import { AppRes } from '../types/express/custom-response'
+import { ResCodes } from '../types/enums'
 
 import { transport } from '../utils/email'
 import { SERVER_JWT_SECRET, SERVER_EMAIL_USER } from '../utils/config'

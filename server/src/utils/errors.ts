@@ -1,6 +1,7 @@
 import { ErrorRequestHandler, NextFunction, Request } from 'express'
 import { validationResult } from 'express-validator'
-import { AppRes, ResCodes } from '../types/express/custom-response'
+import { AppRes } from '../types/express/custom-response'
+import { ResCodes } from '../types/enums'
 
 type ErrorDetails = string | object | unknown
 type ErrorHandler = {

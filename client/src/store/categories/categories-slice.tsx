@@ -1,8 +1,10 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+import { LogType } from '../../types/enum'
 
 export interface Category {
   id: number
   name: string
+  logType: LogType
   created_at: string
   updated_at: string
 }
