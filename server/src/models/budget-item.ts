@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Re
 
 import { User } from './user'
 import { Category } from './category'
-import { CategoryType } from '../types/enums'
+// import { CategoryType } from '../types/enums'
 
 @Entity('budget')
 export class BudgetItem {
@@ -21,11 +21,11 @@ export class BudgetItem {
   @ManyToOne(() => User, (user) => user.categories, { onDelete: 'CASCADE' })
   user: User
 
-  @ManyToOne(() => Category, (category) => category.budgetRecord, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Category, (category) => category.budgetItem, { onDelete: 'CASCADE' })
   category: Category
 
-  @RelationId((budgetRecord: BudgetItem) => budgetRecord.category)
-  categoryType: CategoryType
+  @RelationId((budgetItem: BudgetItem) => budgetItem.category)
+  categoryId: Category
 
   @CreateDateColumn()
   created_at: Date

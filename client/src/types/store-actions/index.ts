@@ -49,6 +49,9 @@ export interface StoreActionData {
   payload?: EmailOrPassword
   email?: string
   password?: string
+  value?: number
+  userDate?: Date
+  categoryId?: number
 }
 
 export type StoreAction<T = void> = (

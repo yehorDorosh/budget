@@ -1,5 +1,6 @@
 import { UserState } from '../store/user/user-slice'
 import { CategoriesState } from '../store/categories/categories-slice'
+import { BudgetItemState } from '../store/budget/budget-item-slice'
 
 export {}
 
@@ -20,6 +21,7 @@ declare global {
   }
 
   type CategoriesPayload = CategoriesState
+  type BudgetItemPayload = BudgetItemState
 
   interface ValidationError {
     location: string
