@@ -5,7 +5,10 @@ export interface BudgetItem {
   name: string
   value: number
   userDate: Date
-  categoryId: number
+  category: {
+    name: string
+    categoryType: string
+  }
 }
 
 export interface BudgetItemState {

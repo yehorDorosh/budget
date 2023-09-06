@@ -152,10 +152,15 @@ export class budgetItemCRUD {
       errorHandler({ message: 'Invalid search params for getBudgetItems(CRUD)', statusCode: 500 }, next)
       return null
     }
-    const budgetItems = await BudgetDataSource.getRepository(BudgetItem).find({
-      where: { user: { id: userId } },
-      order: { userDate: 'ASC' }
-    })
+
+    const budgetItems = await BudgetDataSource.getRepository(BudgetItem)
+      .createQueryBuilder('budget')
+      .leftJoin('budget.category', 'category')
+      .addSelect(['category.name', 'category.categoryType'])
+      .where('budget.user = :userId', { userId })
+      .orderBy('budget.userDate', 'ASC')
+      .getMany()
+
     if (!budgetItems) {
       errorHandler({ message: 'No budget items for this user', statusCode: 403 }, next)
       return null
