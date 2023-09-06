@@ -4,19 +4,19 @@ import useField from '../../../hooks/useField'
 import useForm from '../../../hooks/useForm'
 import { notEmpty } from '../../../utils/validators'
 import { updateCategory } from '../../../store/categories/categories-actions'
-import { LogType } from '../../../types/enum'
+import { CategoryType } from '../../../types/enum'
 
 interface Props {
   id: number
   token: string
   defaultName: string
-  defaultLogType: string
+  defaultCategoryType: string
   onSave: () => void
 }
 
-const UpdateCategoryForm: FC<Props> = ({ token, id, defaultName, defaultLogType, onSave }) => {
+const UpdateCategoryForm: FC<Props> = ({ token, id, defaultName, defaultCategoryType, onSave }) => {
   const { fieldState: categoryState, fieldDispatch: categoryDispatch } = useField(defaultName)
-  const { fieldState: logTypeState, fieldDispatch: logTypeDispatch } = useField(defaultLogType)
+  const { fieldState: categoryTypeState, fieldDispatch: categoryTypeDispatch } = useField(defaultCategoryType)
   const { formMarkup } = useForm(
     [
       {
@@ -32,34 +32,34 @@ const UpdateCategoryForm: FC<Props> = ({ token, id, defaultName, defaultLogType,
         defaultValue: defaultName
       },
       {
-        id: 'logTypeExpense',
-        name: 'logType',
+        id: 'categoryTypeExpense',
+        name: 'categoryType',
         type: 'radio',
         label: 'Log type Expense',
         errMsg: 'Field is required.',
         validator: null,
-        state: logTypeState,
-        dispatch: logTypeDispatch,
-        defaultValue: LogType.EXPENSE,
-        attrs: { defaultChecked: defaultLogType === LogType.EXPENSE }
+        state: categoryTypeState,
+        dispatch: categoryTypeDispatch,
+        defaultValue: CategoryType.EXPENSE,
+        attrs: { defaultChecked: defaultCategoryType === CategoryType.EXPENSE }
       },
       {
-        id: 'logTypeIncome',
-        name: 'logType',
+        id: 'categoryTypeIncome',
+        name: 'categoryType',
         type: 'radio',
         label: 'Log type Income',
         errMsg: 'Field is required.',
         validator: null,
-        state: logTypeState,
-        dispatch: logTypeDispatch,
-        defaultValue: LogType.INCOME,
-        attrs: { defaultChecked: defaultLogType === LogType.INCOME }
+        state: categoryTypeState,
+        dispatch: categoryTypeDispatch,
+        defaultValue: CategoryType.INCOME,
+        attrs: { defaultChecked: defaultCategoryType === CategoryType.INCOME }
       }
     ],
     {
       submitBtnText: 'Save',
       submitAction: updateCategory,
-      submitActionData: { token, id, name: categoryState.value, logType: logTypeState.value }
+      submitActionData: { token, id, name: categoryState.value, categoryType: categoryTypeState.value }
     },
     {
       onGetResponse: () => {

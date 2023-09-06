@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Re
 
 import { User } from './user'
 import { Category } from './category'
-import { LogType } from '../types/enums'
+import { CategoryType } from '../types/enums'
 
 @Entity('budget-records')
 export class BudgetRecords {
@@ -25,7 +25,7 @@ export class BudgetRecords {
   category: Category
 
   @RelationId((budgetRecord: BudgetRecords) => budgetRecord.category)
-  logType: LogType
+  categoryType: CategoryType
 
   @CreateDateColumn()
   created_at: Date

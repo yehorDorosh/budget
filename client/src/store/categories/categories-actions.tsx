@@ -4,12 +4,12 @@ import { StoreAction } from '../../types/store-actions'
 import { categoriesActions } from './categories-slice'
 import { errorHandler } from '../../utils/errors'
 
-export const addCategory: StoreAction<CategoriesPayload> = ({ token, name, logType }) => {
+export const addCategory: StoreAction<CategoriesPayload> = ({ token, name, categoryType }) => {
   return async (dispatch, getState) => {
     try {
       const { data, status } = await axios.post<JSONResponse<CategoriesPayload>>(
         '/api/categories/add',
-        { name, logType },
+        { name, categoryType },
         { headers: { Authorization: `Bearer ${token}` } }
       )
       if (data.payload && data.payload.categories) {
@@ -54,12 +54,12 @@ export const deleteCategory: StoreAction<CategoriesPayload> = ({ token, id }) =>
   }
 }
 
-export const updateCategory: StoreAction<CategoriesPayload> = ({ token, id, name, logType }) => {
+export const updateCategory: StoreAction<CategoriesPayload> = ({ token, id, name, categoryType }) => {
   return async (dispatch, getState) => {
     try {
       const { data, status } = await axios.put<JSONResponse<CategoriesPayload>>(
         '/api/categories/update',
-        { id, name, logType },
+        { id, name, categoryType },
         { headers: { Authorization: `Bearer ${token}` } }
       )
       if (data.payload && data.payload.categories) {

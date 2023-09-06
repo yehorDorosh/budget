@@ -4,7 +4,7 @@ import { BudgetDataSource } from './data-source'
 import { User } from '../models/user'
 import { errorHandler } from '../utils/errors'
 import { Category } from '../models/category'
-import { LogType } from '../types/enums'
+import { CategoryType } from '../types/enums'
 
 export class UserCRUD {
   static add = async (email: string, password: string, next: NextFunction) => {
@@ -59,14 +59,14 @@ export class UserCRUD {
 }
 
 export class CategoryCRUD {
-  static add = async (user: User, name: string, logType: LogType, next: NextFunction) => {
-    if (!user || !name || !logType) {
+  static add = async (user: User, name: string, categoryType: CategoryType, next: NextFunction) => {
+    if (!user || !name || !categoryType) {
       errorHandler({ message: 'Invalid search params for addCategory(CRUD)', statusCode: 500 }, next)
       return null
     }
     const category = new Category()
     category.name = name
-    category.logType = logType
+    category.categoryType = categoryType
     category.user = user
     await BudgetDataSource.manager.save(category)
     return category
@@ -99,8 +99,8 @@ export class CategoryCRUD {
     return category
   }
 
-  static update = async (categoryId: number, { name, logType }: { name: string; logType: LogType }, next: NextFunction) => {
-    if (!categoryId || (!name && !logType)) {
+  static update = async (categoryId: number, { name, categoryType }: { name: string; categoryType: CategoryType }, next: NextFunction) => {
+    if (!categoryId || (!name && !categoryType)) {
       errorHandler({ message: 'Invalid search params for updateCategory(CRUD)', statusCode: 500 }, next)
       return null
     }
@@ -111,7 +111,7 @@ export class CategoryCRUD {
       return null
     }
     if (name) category.name = name
-    if (logType) category.logType = logType
+    if (categoryType) category.categoryType = categoryType
     await BudgetDataSource.manager.save(category)
     return category
   }

@@ -4,7 +4,7 @@ import useField from '../../../hooks/useField'
 import useForm from '../../../hooks/useForm'
 import { notEmpty } from '../../../utils/validators'
 import { addCategory } from '../../../store/categories/categories-actions'
-import { LogType } from '../../../types/enum'
+import { CategoryType } from '../../../types/enum'
 
 interface Props {
   token: string
@@ -12,7 +12,7 @@ interface Props {
 
 const AddCategoryForm: FC<Props> = ({ token }) => {
   const { fieldState: categoryState, fieldDispatch: categoryDispatch } = useField()
-  const { fieldState: logTypeState, fieldDispatch: logTypeDispatch } = useField(LogType.EXPENSE)
+  const { fieldState: categoryTypeState, fieldDispatch: categoryTypeDispatch } = useField(CategoryType.EXPENSE)
   const { formMarkup } = useForm(
     [
       {
@@ -27,33 +27,33 @@ const AddCategoryForm: FC<Props> = ({ token }) => {
         dispatch: categoryDispatch
       },
       {
-        id: 'logTypeExpense',
-        name: 'logType',
+        id: 'categoryTypeExpense',
+        name: 'categoryType',
         type: 'radio',
         label: 'Log type Expense',
         errMsg: 'Field is required.',
         validator: null,
-        state: logTypeState,
-        dispatch: logTypeDispatch,
-        defaultValue: LogType.EXPENSE,
+        state: categoryTypeState,
+        dispatch: categoryTypeDispatch,
+        defaultValue: CategoryType.EXPENSE,
         attrs: { defaultChecked: true }
       },
       {
-        id: 'logTypeIncome',
-        name: 'logType',
+        id: 'categoryTypeIncome',
+        name: 'categoryType',
         type: 'radio',
         label: 'Log type Income',
         errMsg: 'Field is required.',
         validator: null,
-        state: logTypeState,
-        dispatch: logTypeDispatch,
-        defaultValue: LogType.INCOME
+        state: categoryTypeState,
+        dispatch: categoryTypeDispatch,
+        defaultValue: CategoryType.INCOME
       }
     ],
     {
       submitBtnText: 'Create category',
       submitAction: addCategory,
-      submitActionData: { token, name: categoryState.value, logType: logTypeState.value }
+      submitActionData: { token, name: categoryState.value, categoryType: categoryTypeState.value }
     }
   )
 

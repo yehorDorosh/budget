@@ -3,15 +3,15 @@ import { useAppDispatch, useAppSelector } from '../../../hooks/useReduxTS'
 import { deleteCategory } from '../../../store/categories/categories-actions'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import UpdateCategoryForm from '../UpdateCategoryForm/UpdateCategoryForm'
-import { LogType } from '../../../types/enum'
+import { CategoryType } from '../../../types/enum'
 
 interface Props {
   id: number
   value: string
-  logType: LogType
+  categoryType: CategoryType
 }
 
-const ListItem: FC<Props> = ({ id, value, logType }) => {
+const ListItem: FC<Props> = ({ id, value, categoryType }) => {
   const dispatch = useAppDispatch()
   const token = useAppSelector((state) => state.user.token)!
   const [openForm, setOpenForm] = useState(false)
@@ -27,11 +27,17 @@ const ListItem: FC<Props> = ({ id, value, logType }) => {
   return (
     <Fragment>
       <BaseModal isOpen={openForm} onClose={() => setOpenForm(false)}>
-        <UpdateCategoryForm id={id} token={token!} defaultName={value} defaultLogType={logType} onSave={() => setOpenForm(false)} />
+        <UpdateCategoryForm
+          id={id}
+          token={token!}
+          defaultName={value}
+          defaultCategoryType={categoryType}
+          onSave={() => setOpenForm(false)}
+        />
       </BaseModal>
       <tr>
         <td>{value}</td>
-        <td>{logType}</td>
+        <td>{categoryType}</td>
         <td>
           <button onClick={editBtnHandler}>Edit</button>
           <button onClick={deleteHandler}>Delete</button>

@@ -45,7 +45,7 @@ export interface StoreActionData {
   token?: string
   id?: number
   name?: string
-  logType?: string
+  categoryType?: string
   payload?: EmailOrPassword
   email?: string
   password?: string

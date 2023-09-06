@@ -4,19 +4,19 @@ import { ResCodes } from '../types/enums'
 import { AppRes } from '../types/express/custom-response'
 import { errorHandler } from '../utils/errors'
 import { CategoryCRUD } from '../db/crud'
-import { LogType } from '../types/enums'
+import { CategoryType } from '../types/enums'
 
 export const addCategory: RequestHandler = async (req, res: AppRes<CategoriesPayload>, next) => {
   const user = req.user!
   const name: string = req.body.name
 
-  if (!Object.values(LogType).includes(req.body.logType)) {
-    return errorHandler({ message: 'addCategory. Invalid logType', statusCode: 400 }, next)
+  if (!Object.values(CategoryType).includes(req.body.categoryType)) {
+    return errorHandler({ message: 'addCategory. Invalid categoryType', statusCode: 400 }, next)
   }
-  const logType: LogType = req.body.logType
+  const categoryType: CategoryType = req.body.categoryType
 
   try {
-    const category = await CategoryCRUD.add(user, name, logType, next)
+    const category = await CategoryCRUD.add(user, name, categoryType, next)
     if (!category) return errorHandler({ message: 'addCategory failed. CategoryCRUD.add failed', statusCode: 403 }, next)
 
     const categories = await CategoryCRUD.get(user.id, next)
@@ -71,13 +71,13 @@ export const updateCategory: RequestHandler = async (req, res: AppRes<Categories
   const categoryId: number = +req.body.id
   const name: string = req.body.name
 
-  if (!Object.values(LogType).includes(req.body.logType)) {
-    return errorHandler({ message: 'addCategory. Invalid logType', statusCode: 400 }, next)
+  if (!Object.values(CategoryType).includes(req.body.categoryType)) {
+    return errorHandler({ message: 'addCategory. Invalid categoryType', statusCode: 400 }, next)
   }
-  const logType: LogType = req.body.logType
+  const categoryType: CategoryType = req.body.categoryType
 
   try {
-    const category = await CategoryCRUD.update(categoryId, { name, logType }, next)
+    const category = await CategoryCRUD.update(categoryId, { name, categoryType }, next)
     if (!category) return errorHandler({ message: 'updateCategory failed. CategoryCRUD.update failed', statusCode: 403 }, next)
 
     const categories = await CategoryCRUD.get(user.id, next)

@@ -14,7 +14,7 @@ export enum ResCodes {
   DELETE_CATEGORY
 }
 
-export enum LogType {
+export enum CategoryType {
   INCOME = 'income',
   EXPENSE = 'expense'
 }

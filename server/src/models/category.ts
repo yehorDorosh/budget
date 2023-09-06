@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGenerate
 
 import { User } from './user'
 import { BudgetRecords } from './budget-record'
-import { LogType } from '../types/enums'
+import { CategoryType } from '../types/enums'
 
 @Entity('categories')
 export class Category {
@@ -12,8 +12,8 @@ export class Category {
   @Column({ type: 'varchar', length: 128 })
   name: string
 
-  @Column({ type: 'enum', enum: LogType })
-  logType: LogType
+  @Column({ type: 'enum', enum: CategoryType })
+  categoryType: CategoryType
 
   @ManyToOne(() => User, (user) => user.categories, { onDelete: 'CASCADE' })
   user: User
