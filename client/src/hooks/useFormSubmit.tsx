@@ -8,11 +8,11 @@ import {
   isAxiosErrorPayload,
   isEmailOrPassword,
   isRegularErrorObject
-} from '../types/actions/actions'
+} from '../types/store-actions'
 import { FieldState } from './useField'
 import { useAppDispatch } from './useReduxTS'
 import { Action as UseFieldActions } from './useField'
-import { StoreActionParams } from '../types/actions/actions'
+import { StoreActionParams } from '../types/store-actions'
 
 /**
  * Check fields before submitting. If the fields are valid, dispatch the action and clear the fields.

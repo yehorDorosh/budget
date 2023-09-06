@@ -1,7 +1,7 @@
 import axios from 'axios'
 import * as jose from 'jose'
 
-import { StoreAction, SimpleStoreAtion, EmailOrPassword } from '../../types/actions/actions'
+import { StoreAction, SimpleStoreAtion, EmailOrPassword } from '../../types/store-actions'
 import { userActions } from './user-slice'
 import { errorHandler } from '../../utils/errors'
 

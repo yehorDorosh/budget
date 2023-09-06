@@ -2,8 +2,8 @@ import BaseForm from '../components/ui/BaseForm/BaseForm'
 import BaseInput from '../components/ui/BaseInput/BaseInput'
 import { FieldState, Action as UseFieldAction } from './useField'
 import useSubmit from './useFormSubmit'
-import { StoreAction, isActionPayload, isAxiosErrorPayload } from '../types/actions/actions'
-import { StoreActionParams } from '../types/actions/actions'
+import { StoreAction, isActionPayload, isAxiosErrorPayload } from '../types/store-actions'
+import { StoreActionParams } from '../types/store-actions'
 
 interface FieldConfig {
   id?: string

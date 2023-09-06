@@ -5,7 +5,7 @@ import useField from '../../../hooks/useField'
 import useForm from '../../../hooks/useForm'
 import { updateUser } from '../../../store/user/user-actions'
 import { ResCodes } from '../../../types/enum'
-import { EmailOrPassword } from '../../../types/actions/actions'
+import { EmailOrPassword } from '../../../types/store-actions'
 
 interface Props {
   fieldName: keyof EmailOrPassword

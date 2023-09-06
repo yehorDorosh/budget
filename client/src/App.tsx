@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from './hooks/useReduxTS'
 import ErrorBoundary from './components/errors/ErrorBoundary'
 import { loginAndAutoLogout, getUserData } from './store/user/user-actions'
 import { userActions } from './store/user/user-slice'
-import { isActionPayload } from './types/actions/actions'
+import { isActionPayload } from './types/store-actions'
 
 function App() {
   const dispatch = useAppDispatch()

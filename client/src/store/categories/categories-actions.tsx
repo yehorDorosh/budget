@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import { StoreAction, EmailOrPassword } from '../../types/actions/actions'
+import { StoreAction, EmailOrPassword } from '../../types/store-actions'
 import { categoriesActions } from './categories-slice'
 import { errorHandler } from '../../utils/errors'
 
