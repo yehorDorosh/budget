@@ -59,7 +59,7 @@ const UpdateCategoryForm: FC<Props> = ({ token, id, defaultName, defaultLogType,
     {
       submitBtnText: 'Save',
       submitAction: updateCategory,
-      submitActionParams: [token, id, categoryState.value, logTypeState.value]
+      submitActionData: { token, id, name: categoryState.value, logType: logTypeState.value }
     },
     {
       onGetResponse: () => {

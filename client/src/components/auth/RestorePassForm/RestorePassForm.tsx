@@ -37,7 +37,7 @@ const SignupForm: React.FC<Props> = ({ token }) => {
     {
       submitBtnText: 'Restore password',
       submitAction: restorePassword,
-      submitActionParams: [token, passwordState.value]
+      submitActionData: { token, password: passwordState.value }
     },
     {
       onSubmit: () => {

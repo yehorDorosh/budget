@@ -17,9 +17,9 @@ function App() {
       if (!isLogin) {
         const token = storeToken || localStorage.getItem('token')
         if (token) {
-          const res = await dispatch(getUserData(token))
+          const res = await dispatch(getUserData({ token }))
           if (isActionPayload(res) && res.status === 200) {
-            dispatch(loginAndAutoLogout(token))
+            dispatch(loginAndAutoLogout({ token }))
           } else {
             dispatch(userActions.logout())
           }

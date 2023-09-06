@@ -53,7 +53,7 @@ const AddCategoryForm: FC<Props> = ({ token }) => {
     {
       submitBtnText: 'Create category',
       submitAction: addCategory,
-      submitActionParams: [token, categoryState.value, logTypeState.value]
+      submitActionData: { token, name: categoryState.value, logType: logTypeState.value }
     }
   )
 

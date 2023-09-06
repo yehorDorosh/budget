@@ -3,7 +3,7 @@ import BaseInput from '../components/ui/BaseInput/BaseInput'
 import { FieldState, Action as UseFieldAction } from './useField'
 import useSubmit from './useFormSubmit'
 import { StoreAction, isActionPayload, isAxiosErrorPayload } from '../types/store-actions'
-import { StoreActionParams } from '../types/store-actions'
+import { StoreActionData } from '../types/store-actions'
 
 interface FieldConfig {
   id?: string
@@ -22,7 +22,7 @@ interface FieldConfig {
 interface FormConfig<T = void> {
   submitBtnText: string
   submitAction: StoreAction<T>
-  submitActionParams: StoreActionParams
+  submitActionData: StoreActionData
   errMsg?: string
 }
 
@@ -58,7 +58,7 @@ const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, for
       fieldsConfig.map((field) => field.state),
       new Map(fieldsConfig.map((field) => [field.dispatch, field.validator])),
       formConfig.submitAction,
-      formConfig.submitActionParams
+      formConfig.submitActionData
     )
     if (formEvents.onGetResponse && res && isActionPayload(res)) formEvents.onGetResponse(res)
     if (formEvents.onReject && res && !isActionPayload(res)) formEvents.onReject(res, isAxiosErrorPayload(res))

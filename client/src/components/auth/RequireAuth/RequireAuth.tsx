@@ -16,7 +16,7 @@ const RequireAuth: FC<Props> = ({ children }) => {
     if (!isLogin) {
       const token = storeToken || localStorage.getItem('token')
       if (token) {
-        dispatch(loginAndAutoLogout(token))
+        dispatch(loginAndAutoLogout({ token }))
       } else {
         navigate('/login', { replace: true })
       }

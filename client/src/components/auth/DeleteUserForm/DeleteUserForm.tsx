@@ -33,7 +33,7 @@ const DeleteUserForm: FC<Props> = ({ token }) => {
     {
       submitBtnText: 'Delete user',
       submitAction: deleteUser,
-      submitActionParams: [token, passwordState.value]
+      submitActionData: { token, password: passwordState.value }
     },
     {
       onGetResponse: (res) => {

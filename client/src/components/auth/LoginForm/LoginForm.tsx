@@ -37,7 +37,7 @@ const LoginForm = () => {
     {
       submitBtnText: 'Login',
       submitAction: login,
-      submitActionParams: [emailState.value, passwordState.value],
+      submitActionData: { email: emailState.value, password: passwordState.value },
       errMsg: wrongCredentials ? 'Wrong credentials' : undefined
     },
     {

@@ -17,7 +17,7 @@ const ListItem: FC<Props> = ({ id, value, logType }) => {
   const [openForm, setOpenForm] = useState(false)
 
   const deleteHandler = () => {
-    dispatch(deleteCategory(token, id))
+    dispatch(deleteCategory({ token, id }))
   }
 
   const editBtnHandler = () => {

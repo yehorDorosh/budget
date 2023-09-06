@@ -11,7 +11,7 @@ const CategoriesPage = () => {
 
   useEffect(() => {
     if (token) {
-      dispatch(getCategories(token))
+      dispatch(getCategories({ token }))
     }
   }, [token, dispatch])
 

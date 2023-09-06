@@ -42,7 +42,7 @@ const ChangeCredentialsForm: FC<Props> = ({ fieldName, token, onEdit: onEditEmai
     {
       submitBtnText: `Change ${fieldName}`,
       submitAction: updateUser,
-      submitActionParams: [token, { [fieldName]: fieldState.value } as EmailOrPassword]
+      submitActionData: { token, payload: { [fieldName]: fieldState.value } as EmailOrPassword }
     },
     {
       onGetResponse: (res) => {

@@ -43,7 +43,7 @@ const SignupForm = () => {
         dispatch: confirmPasswordDispatch
       }
     ],
-    { submitBtnText: 'Sign Up', submitAction: signUp, submitActionParams: [emailState.value, passwordState.value] },
+    { submitBtnText: 'Sign Up', submitAction: signUp, submitActionData: { email: emailState.value, password: passwordState.value } },
     {
       onGetResponse: () => navigate('/', { replace: true })
     }

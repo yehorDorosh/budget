@@ -29,7 +29,7 @@ const RestorePassSendEmailForm: FC<Props> = ({ onSendEmail }) => {
     {
       submitBtnText: 'Send email',
       submitAction: getRestoreEmail,
-      submitActionParams: [emailState.value],
+      submitActionData: { email: emailState.value },
       errMsg: userNotFound ? 'User with this email does not exist' : undefined
     },
     {
