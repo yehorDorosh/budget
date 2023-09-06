@@ -4,8 +4,8 @@ import { User } from './user'
 import { Category } from './category'
 import { CategoryType } from '../types/enums'
 
-@Entity('budget-records')
-export class BudgetRecords {
+@Entity('budget')
+export class BudgetItem {
   @PrimaryGeneratedColumn()
   id: number
 
@@ -24,7 +24,7 @@ export class BudgetRecords {
   @ManyToOne(() => Category, (category) => category.budgetRecord, { onDelete: 'CASCADE' })
   category: Category
 
-  @RelationId((budgetRecord: BudgetRecords) => budgetRecord.category)
+  @RelationId((budgetRecord: BudgetItem) => budgetRecord.category)
   categoryType: CategoryType
 
   @CreateDateColumn()

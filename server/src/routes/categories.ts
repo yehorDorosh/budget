@@ -20,6 +20,12 @@ router.get('/get', auth, getCategories)
 
 router.delete('/delete', auth, deleteCategory)
 
-router.put('/update', [notEmptyValidator('name')], validationErrorsHandler('Categories validation failed'), auth, updateCategory)
+router.put(
+  '/update',
+  [notEmptyValidator('name'), notEmptyValidator('categoryType')],
+  validationErrorsHandler('Categories validation failed'),
+  auth,
+  updateCategory
+)
 
 export default router

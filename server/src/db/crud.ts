@@ -5,6 +5,7 @@ import { User } from '../models/user'
 import { errorHandler } from '../utils/errors'
 import { Category } from '../models/category'
 import { CategoryType } from '../types/enums'
+import { BudgetItem } from '../models/budget-item'
 
 export class UserCRUD {
   static add = async (email: string, password: string, next: NextFunction) => {
@@ -85,6 +86,19 @@ export class CategoryCRUD {
     return categories
   }
 
+  static getById = async (categoryId: number, next: NextFunction) => {
+    if (!categoryId) {
+      errorHandler({ message: 'Invalid search params for getCategory(CRUD)', statusCode: 500 }, next)
+      return null
+    }
+    const categories = await BudgetDataSource.manager.findOneBy(Category, { id: categoryId })
+    if (!categories) {
+      errorHandler({ message: 'No categories for this user', statusCode: 403 }, next)
+      return null
+    }
+    return categories
+  }
+
   static delete = async (categoryId: number, next: NextFunction) => {
     if (!categoryId) {
       errorHandler({ message: 'Invalid search params for deleteCategory(CRUD)', statusCode: 500 }, next)
@@ -114,5 +128,73 @@ export class CategoryCRUD {
     if (categoryType) category.categoryType = categoryType
     await BudgetDataSource.manager.save(category)
     return category
+  }
+}
+
+export class budgetItemCRUD {
+  static add = async (user: User, category: Category, name: string, value: number, userDate: Date, next: NextFunction) => {
+    if (!user || !name || !category || !value || !userDate) {
+      errorHandler({ message: 'Invalid search params for addBudgetItem(CRUD)', statusCode: 500 }, next)
+      return null
+    }
+    const budgetItem = new BudgetItem()
+    budgetItem.user = user
+    budgetItem.category = category
+    budgetItem.name = name
+    budgetItem.value = value
+    budgetItem.userDate = userDate
+    await BudgetDataSource.manager.save(budgetItem)
+    return budgetItem
+  }
+
+  static get = async (userId: UserId, next: NextFunction) => {
+    if (!userId) {
+      errorHandler({ message: 'Invalid search params for getBudgetItems(CRUD)', statusCode: 500 }, next)
+      return null
+    }
+    const budgetItems = await BudgetDataSource.getRepository(BudgetItem).find({
+      where: { user: { id: userId } },
+      order: { userDate: 'ASC' }
+    })
+    if (!budgetItems) {
+      errorHandler({ message: 'No budget items for this user', statusCode: 403 }, next)
+      return null
+    }
+    return budgetItems
+  }
+
+  static delete = async (budgetItemId: number, next: NextFunction) => {
+    if (!budgetItemId) {
+      errorHandler({ message: 'Invalid search params for deleteBudgetItem(CRUD)', statusCode: 500 }, next)
+      return null
+    }
+    const budgetItem = await BudgetDataSource.manager.findOneBy(BudgetItem, { id: budgetItemId })
+    if (!budgetItem) {
+      errorHandler({ message: 'Budget item not found', statusCode: 403 }, next)
+      return null
+    }
+    await BudgetDataSource.manager.remove(budgetItem)
+    return budgetItem
+  }
+
+  static update = async (
+    budgetItemId: number,
+    { name, value, userDate }: { name: string; value: number; userDate: Date },
+    next: NextFunction
+  ) => {
+    if (!budgetItemId || (!name && !value && !userDate)) {
+      errorHandler({ message: 'Invalid search params for updateBudgetItem(CRUD)', statusCode: 500 }, next)
+      return null
+    }
+    const budgetItem = await BudgetDataSource.manager.findOneBy(BudgetItem, { id: budgetItemId })
+    if (!budgetItem) {
+      errorHandler({ message: 'Budget item not found', statusCode: 403 }, next)
+      return null
+    }
+    if (name) budgetItem.name = name
+    if (value) budgetItem.value = value
+    if (userDate) budgetItem.userDate = userDate
+    await BudgetDataSource.manager.save(budgetItem)
+    return budgetItem
   }
 }

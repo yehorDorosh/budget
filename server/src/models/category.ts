@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 
 import { User } from './user'
-import { BudgetRecords } from './budget-record'
+import { BudgetItem } from './budget-item'
 import { CategoryType } from '../types/enums'
 
 @Entity('categories')
@@ -18,8 +18,8 @@ export class Category {
   @ManyToOne(() => User, (user) => user.categories, { onDelete: 'CASCADE' })
   user: User
 
-  @OneToMany(() => BudgetRecords, (budgetRecord) => budgetRecord.category)
-  budgetRecord: BudgetRecords[]
+  @OneToMany(() => BudgetItem, (budgetItem) => budgetItem.category)
+  budgetRecord: BudgetItem[]
 
   @CreateDateColumn()
   created_at: Date
