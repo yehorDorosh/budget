@@ -5,8 +5,6 @@ export interface Category {
   id: number
   name: string
   categoryType: CategoryType
-  created_at: string
-  updated_at: string
 }
 
 export interface CategoriesState {
