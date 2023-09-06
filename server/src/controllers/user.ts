@@ -86,7 +86,7 @@ export const sendRestorePasswordEmail: RequestHandler = async (req, res: AppRes,
 
 export const restorePassword: RequestHandler = async (req, res: AppRes, next) => {
   const token: string = req.params.token
-  const newPassword: string = req.body.newPassword
+  const password: string = req.body.password
   let decodedToken: jose.JWTVerifyResult
   let user: User | null
 
@@ -99,7 +99,7 @@ export const restorePassword: RequestHandler = async (req, res: AppRes, next) =>
     user = await UserCRUD.get({ userId: decodedToken.payload.userId as number }, next)
     if (!user) return errorHandler({ message: 'User not found', statusCode: 403 }, next)
 
-    const hashedPassword = await bcrypt.hash(newPassword, 12)
+    const hashedPassword = await bcrypt.hash(password, 12)
     UserCRUD.update(user, { password: hashedPassword }, next)
 
     res.status(200).json({ message: 'Password was restored', code: ResCodes.RESET_PASSWORD })

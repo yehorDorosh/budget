@@ -46,7 +46,6 @@ export interface StoreActionData {
   id?: number
   name?: string
   logType?: string
-  newPassword?: string
   payload?: EmailOrPassword
   email?: string
   password?: string
