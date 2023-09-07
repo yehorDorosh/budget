@@ -22,3 +22,9 @@ export enum CategoryType {
   INCOME = 'income',
   EXPENSE = 'expense'
 }
+
+export enum QueryFilter {
+  ALL,
+  YEAR,
+  MONTH
+}

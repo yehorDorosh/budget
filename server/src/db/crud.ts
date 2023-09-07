@@ -4,7 +4,7 @@ import { BudgetDataSource } from './data-source'
 import { User } from '../models/user'
 import { errorHandler } from '../utils/errors'
 import { Category } from '../models/category'
-import { CategoryType } from '../types/enums'
+import { CategoryType, QueryFilter } from '../types/enums'
 import { BudgetItem } from '../models/budget-item'
 
 export class UserCRUD {
@@ -152,15 +152,20 @@ export class budgetItemCRUD {
       errorHandler({ message: 'Invalid search params for getBudgetItems(CRUD)', statusCode: 500 }, next)
       return null
     }
-    console.log('filters', filters)
     const queryBuilder = BudgetDataSource.getRepository(BudgetItem).createQueryBuilder('budget')
     queryBuilder
       .leftJoin('budget.category', 'category')
       .addSelect(['category.id', 'category.name', 'category.categoryType'])
       .where('budget.user = :userId', { userId })
-    if (filters?.month) {
+
+    if (filters?.active === QueryFilter.MONTH && filters?.month) {
       queryBuilder.andWhere("TO_CHAR(budget.userDate, 'YYYY-MM') = :month", { month: filters.month })
     }
+
+    if (filters?.active === QueryFilter.YEAR && filters?.year) {
+      queryBuilder.andWhere("TO_CHAR(budget.userDate, 'YYYY') = :year", { year: filters.year })
+    }
+
     const budgetItems = await queryBuilder.orderBy('budget.userDate', 'DESC').getMany()
 
     if (!budgetItems) {

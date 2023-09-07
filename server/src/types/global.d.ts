@@ -1,5 +1,6 @@
 import { Category } from '../models/category'
 import { BudgetItem } from '../models/budget-item'
+import { QueryFilter } from './enums'
 
 export {}
 
@@ -27,5 +28,7 @@ declare global {
 
   interface BudgetItemsFilters {
     month?: string
+    year?: string
+    active?: QueryFilter
   }
 }

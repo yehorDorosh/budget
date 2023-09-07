@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { formatDateYearMonth, getCurrentYearMonth } from '../../utils/date'
+import { QueryFilter } from '../../types/enum'
 
 export interface BudgetItem {
   id: number
@@ -15,6 +16,8 @@ export interface BudgetItem {
 
 export interface BudgetItemsFilters {
   month?: string
+  year?: string
+  active?: QueryFilter
 }
 
 export interface BudgetItemState {
@@ -25,7 +28,9 @@ export interface BudgetItemState {
 const initialState: BudgetItemState = {
   budgetItems: [],
   filters: {
-    month: getCurrentYearMonth()
+    month: getCurrentYearMonth(),
+    year: new Date().getFullYear().toString(),
+    active: QueryFilter.MONTH
   }
 }
 
@@ -60,6 +65,12 @@ const budgetItemSlice = createSlice({
       const date = new Date(state.filters.month)
       date.setMonth(date.getMonth() - 1)
       state.filters.month = formatDateYearMonth(date)
+    },
+    setFilterYear(state, action: PayloadAction<string>) {
+      state.filters.year = action.payload
+    },
+    setActiveFilter(state, action: PayloadAction<QueryFilter>) {
+      state.filters.active = action.payload
     }
   }
 })

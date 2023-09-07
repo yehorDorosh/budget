@@ -3,9 +3,10 @@ import axios from 'axios'
 import { StoreAction } from '../../types/store-actions'
 import { budgetItemActions } from './budget-item-slice'
 import { errorHandler } from '../../utils/errors'
+import objectToQueryString from '../../utils/query'
 
 export const addBudgetItem: StoreAction<BudgetItemPayload> = ({ token, categoryId, name, value, userDate, filters }) => {
-  const query = filters ? `?month=${filters.month}` : ''
+  const query = filters ? '?' + objectToQueryString(filters) : ''
   return async (dispatch, getState) => {
     try {
       const { data, status } = await axios.post<JSONResponse<BudgetItemPayload>>(
@@ -24,7 +25,7 @@ export const addBudgetItem: StoreAction<BudgetItemPayload> = ({ token, categoryI
 }
 
 export const getBudgetItems: StoreAction<BudgetItemPayload> = ({ token, filters }) => {
-  const query = filters ? `?month=${filters.month}` : ''
+  const query = filters ? '?' + objectToQueryString(filters) : ''
   return async (dispatch, getState) => {
     try {
       const { data, status } = await axios.get<JSONResponse<BudgetItemPayload>>(`/api/budget/get-budget-item${query}`, {
@@ -41,7 +42,7 @@ export const getBudgetItems: StoreAction<BudgetItemPayload> = ({ token, filters 
 }
 
 export const deleteBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id, filters }) => {
-  const query = filters ? `&month=${filters.month}` : ''
+  const query = filters ? '&' + objectToQueryString(filters) : ''
   return async (dispatch, getState) => {
     try {
       const { data, status } = await axios.delete<JSONResponse<BudgetItemPayload>>(`/api/budget/delete-budget-item?id=${id}${query}`, {
@@ -58,7 +59,7 @@ export const deleteBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id, fi
 }
 
 export const updateBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id, categoryId, name, value, userDate, filters }) => {
-  const query = filters ? `?month=${filters.month}` : ''
+  const query = filters ? '?' + objectToQueryString(filters) : ''
   return async (dispatch, getState) => {
     try {
       const { data, status } = await axios.put<JSONResponse<BudgetItemPayload>>(

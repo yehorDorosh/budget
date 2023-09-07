@@ -13,10 +13,10 @@ interface Props {
 const ListItem: FC<Props> = ({ budgetItem, token }) => {
   const dispatch = useAppDispatch()
   const [openForm, setOpenForm] = useState(false)
-  const monthFilter = useAppSelector((state) => state.budgetItem.filters.month)
+  const filters = useAppSelector((state) => state.budgetItem.filters)
 
   const deleteHandler = () => {
-    dispatch(deleteBudgetItem({ token, id: budgetItem.id, filters: { month: monthFilter } }))
+    dispatch(deleteBudgetItem({ token, id: budgetItem.id, filters }))
   }
 
   const editBtnHandler = () => {
