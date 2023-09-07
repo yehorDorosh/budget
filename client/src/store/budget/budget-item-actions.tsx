@@ -37,3 +37,37 @@ export const getBudgetItems: StoreAction<BudgetItemPayload> = ({ token }) => {
     }
   }
 }
+
+export const deleteBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id }) => {
+  return async (dispatch, getState) => {
+    try {
+      const { data, status } = await axios.delete<JSONResponse<BudgetItemPayload>>(`/api/budget/delete-budget-item?id=${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (data.payload && data.payload.budgetItems) {
+        dispatch(budgetItemActions.setBudgetItems(data.payload.budgetItems))
+      }
+      return { data, status }
+    } catch (err) {
+      return errorHandler(err)
+    }
+  }
+}
+
+export const updateBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id, categoryId, name, value, userDate }) => {
+  return async (dispatch, getState) => {
+    try {
+      const { data, status } = await axios.put<JSONResponse<BudgetItemPayload>>(
+        `/api/budget/update-budget-item`,
+        { id, categoryId, name, value, userDate },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      if (data.payload && data.payload.budgetItems) {
+        dispatch(budgetItemActions.setBudgetItems(data.payload.budgetItems))
+      }
+      return { data, status }
+    } catch (err) {
+      return errorHandler(err)
+    }
+  }
+}

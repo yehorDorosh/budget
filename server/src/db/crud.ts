@@ -156,7 +156,7 @@ export class budgetItemCRUD {
     const budgetItems = await BudgetDataSource.getRepository(BudgetItem)
       .createQueryBuilder('budget')
       .leftJoin('budget.category', 'category')
-      .addSelect(['category.name', 'category.categoryType'])
+      .addSelect(['category.id', 'category.name', 'category.categoryType'])
       .where('budget.user = :userId', { userId })
       .orderBy('budget.userDate', 'ASC')
       .getMany()
@@ -184,10 +184,10 @@ export class budgetItemCRUD {
 
   static update = async (
     budgetItemId: number,
-    { name, value, userDate }: { name: string; value: number; userDate: Date },
+    { name, value, userDate, categoryId }: { name: string; value: number; userDate: Date; categoryId: number },
     next: NextFunction
   ) => {
-    if (!budgetItemId || (!name && !value && !userDate)) {
+    if (!budgetItemId || (!name && !value && !userDate) || !categoryId) {
       errorHandler({ message: 'Invalid search params for updateBudgetItem(CRUD)', statusCode: 500 }, next)
       return null
     }
@@ -199,6 +199,14 @@ export class budgetItemCRUD {
     if (name) budgetItem.name = name
     if (value) budgetItem.value = value
     if (userDate) budgetItem.userDate = userDate
+    if (categoryId) {
+      const category = await BudgetDataSource.manager.findOneBy(Category, { id: categoryId })
+      if (!category) {
+        errorHandler({ message: 'Category not found. updateBudgetItem(CRUD)', statusCode: 404 }, next)
+        return null
+      }
+      budgetItem.category = category
+    }
     await BudgetDataSource.manager.save(budgetItem)
     return budgetItem
   }

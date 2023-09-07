@@ -50,7 +50,7 @@ export interface StoreActionData {
   email?: string
   password?: string
   value?: number
-  userDate?: Date
+  userDate?: string
   categoryId?: number
 }
 

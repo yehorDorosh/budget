@@ -4,8 +4,9 @@ export interface BudgetItem {
   id: number
   name: string
   value: number
-  userDate: Date
+  userDate: string
   category: {
+    id: number
     name: string
     categoryType: string
   }
@@ -24,7 +25,17 @@ const budgetItemSlice = createSlice({
   initialState,
   reducers: {
     setBudgetItems(state, action: PayloadAction<BudgetItem[]>) {
-      state.budgetItems = action.payload
+      const budgetItems = action.payload.map(
+        (budgetItem): BudgetItem => ({
+          ...budgetItem,
+          value: +budgetItem.value,
+          category: {
+            ...budgetItem.category,
+            id: +budgetItem.category.id
+          }
+        })
+      )
+      state.budgetItems = budgetItems
     }
   }
 })

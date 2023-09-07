@@ -13,7 +13,7 @@ const CategoriesList: FC<Props> = ({ token }) => {
     <table>
       <tbody>
         {categories.map((item) => {
-          return <CategoryItem key={item.id} id={item.id} value={item.name} categoryType={item.categoryType} />
+          return <CategoryItem key={item.id} id={item.id} value={item.name} categoryType={item.categoryType} token={token} />
         })}
       </tbody>
     </table>

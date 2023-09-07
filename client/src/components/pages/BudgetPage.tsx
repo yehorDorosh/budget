@@ -2,7 +2,7 @@ import { Fragment, useEffect } from 'react'
 
 import { useAppSelector, useAppDispatch } from '../../hooks/useReduxTS'
 import BudgetItemsList from '../budget/BudgetItemsList/BudgetItemsList'
-import AddBudgetItemForm from '../budget/AddBudgetItemForm/AddBudgetItemForm/AddBudgetItemForm'
+import AddBudgetItemForm from '../budget/AddBudgetItemForm/AddBudgetItemForm'
 import { getCategories } from '../../store/categories/categories-actions'
 
 const BudgetPage = () => {

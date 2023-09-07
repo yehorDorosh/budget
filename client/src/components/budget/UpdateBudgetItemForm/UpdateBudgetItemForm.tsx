@@ -1,23 +1,25 @@
 import { FC } from 'react'
 
-import useField from '../../../../hooks/useField'
-import useForm from '../../../../hooks/useForm'
-import { notEmpty } from '../../../../utils/validators'
-import { addBudgetItem } from '../../../../store/budget/budget-item-actions'
-import { useAppSelector } from '../../../../hooks/useReduxTS'
-import { CategoryType } from '../../../../types/enum'
+import useField from '../../../hooks/useField'
+import useForm from '../../../hooks/useForm'
+import { notEmpty } from '../../../utils/validators'
+import { updateBudgetItem } from '../../../store/budget/budget-item-actions'
+import { useAppSelector } from '../../../hooks/useReduxTS'
+import { CategoryType } from '../../../types/enum'
+import { BudgetItem } from '../../../store/budget/budget-item-slice'
 
 interface Props {
   token: string
+  currentBudgetItem: BudgetItem
+  onSave: () => void
 }
 
-const AddBudgetItemForm: FC<Props> = ({ token }) => {
-  const currentDate = new Date().toISOString().split('T')[0]
-  const { fieldState: nameState, fieldDispatch: nameDispatch } = useField()
-  const { fieldState: valueState, fieldDispatch: valueDispatch } = useField()
-  const { fieldState: dateState, fieldDispatch: dateDispatch } = useField(currentDate)
-  const { fieldState: categoryState, fieldDispatch: categoryDispatch } = useField()
-  const { fieldState: categoryTypeState, fieldDispatch: categoryTypeDispatch } = useField(CategoryType.EXPENSE)
+const UpdateBudgetItemForm: FC<Props> = ({ token, currentBudgetItem, onSave }) => {
+  const { fieldState: nameState, fieldDispatch: nameDispatch } = useField(currentBudgetItem.name)
+  const { fieldState: valueState, fieldDispatch: valueDispatch } = useField(currentBudgetItem.value.toString())
+  const { fieldState: dateState, fieldDispatch: dateDispatch } = useField(currentBudgetItem.userDate)
+  const { fieldState: categoryState, fieldDispatch: categoryDispatch } = useField(currentBudgetItem.category.id.toString())
+  const { fieldState: categoryTypeState, fieldDispatch: categoryTypeDispatch } = useField(currentBudgetItem.category.categoryType)
   const categories = useAppSelector((state) => state.categories.categories)
 
   const { formMarkup } = useForm(
@@ -32,7 +34,7 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
         state: categoryTypeState,
         dispatch: categoryTypeDispatch,
         defaultValue: CategoryType.EXPENSE,
-        attrs: { defaultChecked: true }
+        attrs: { defaultChecked: currentBudgetItem.category.categoryType === CategoryType.EXPENSE }
       },
       {
         id: 'categoryTypeIncome',
@@ -43,7 +45,8 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
         validator: null,
         state: categoryTypeState,
         dispatch: categoryTypeDispatch,
-        defaultValue: CategoryType.INCOME
+        defaultValue: CategoryType.INCOME,
+        attrs: { defaultChecked: currentBudgetItem.category.categoryType === CategoryType.INCOME }
       },
       {
         id: 'name',
@@ -54,7 +57,8 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
         errMsg: 'Field is required.',
         validator: notEmpty,
         state: nameState,
-        dispatch: nameDispatch
+        dispatch: nameDispatch,
+        defaultValue: currentBudgetItem.name
       },
       {
         id: 'value',
@@ -66,7 +70,8 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
         validator: notEmpty,
         state: valueState,
         dispatch: valueDispatch,
-        attrs: { min: '0', step: '0.01', pattern: 'd+(.d{1,2})?' }
+        attrs: { min: '0', step: '0.01', pattern: 'd+(.d{1,2})?' },
+        defaultValue: currentBudgetItem.value.toString()
       },
       {
         id: 'date',
@@ -78,7 +83,7 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
         validator: notEmpty,
         state: dateState,
         dispatch: dateDispatch,
-        defaultValue: currentDate
+        defaultValue: currentBudgetItem.userDate
       },
       {
         id: 'category',
@@ -94,22 +99,27 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
           ...categories
             .filter((category) => category.categoryType === categoryTypeState.value)
             .map((category) => ({ value: category.id.toString(), label: category.name }))
-        ]
+        ],
+        defaultValue: currentBudgetItem.category.id.toString()
       }
     ],
     {
-      submitBtnText: 'Create budget item',
-      submitAction: addBudgetItem,
+      submitBtnText: 'Save budget item',
+      submitAction: updateBudgetItem,
       submitActionData: {
         token,
+        id: currentBudgetItem.id,
         name: nameState.value,
         value: +valueState.value,
-        userDate: new Date(dateState.value),
+        userDate: new Date(dateState.value).toISOString(),
         categoryId: +categoryState.value
       }
+    },
+    {
+      onGetResponse: () => onSave()
     }
   )
   return formMarkup
 }
 
-export default AddBudgetItemForm
+export default UpdateBudgetItemForm

@@ -2,6 +2,7 @@ import { FC, useEffect } from 'react'
 
 import { useAppSelector, useAppDispatch } from '../../../hooks/useReduxTS'
 import { getBudgetItems } from '../../../store/budget/budget-item-actions'
+import BudgetItem from './BudgetItem'
 
 interface Props {
   token: string
@@ -17,15 +18,12 @@ const BudgetItemsList: FC<Props> = ({ token }) => {
     }
   }, [token, dispatch])
   return (
-    <ul>
-      {budgetItems.length !== 0 &&
-        budgetItems.map((budgetItem) => (
-          <li key={budgetItem.id}>
-            {budgetItem.name} {budgetItem.value} {budgetItem.userDate.toString()} {budgetItem.category.name}{' '}
-            {budgetItem.category.categoryType}
-          </li>
-        ))}
-    </ul>
+    <table>
+      <tbody>
+        {budgetItems.length !== 0 &&
+          budgetItems.map((budgetItem) => <BudgetItem key={budgetItem.id} token={token} budgetItem={budgetItem} />)}
+      </tbody>
+    </table>
   )
 }
 

@@ -9,7 +9,7 @@ export const addBudgetItem: RequestHandler = async (req, res: AppRes<BudgetItems
   const categoryId: number = req.body.categoryId
   const name: string = req.body.name
   const value: number = req.body.value
-  const userDate: Date = req.body.userDate
+  const userDate: Date = new Date(req.body.userDate)
 
   try {
     const category = await CategoryCRUD.getById(categoryId, next)
@@ -62,12 +62,13 @@ export const deleteBudgetItem: RequestHandler = async (req, res: AppRes<BudgetIt
 export const updateBudgetItem: RequestHandler = async (req, res: AppRes<BudgetItemsPayload>, next) => {
   const user = req.user!
   const budgetItemId: number = req.body.id
+  const categoryId: number = req.body.categoryId
   const name: string = req.body.name
   const value: number = req.body.value
-  const userDate: Date = req.body.userDate
+  const userDate: Date = new Date(req.body.userDate)
 
   try {
-    const budgetItem = await budgetItemCRUD.update(budgetItemId, { name, value, userDate }, next)
+    const budgetItem = await budgetItemCRUD.update(budgetItemId, { name, value, userDate, categoryId }, next)
     if (!budgetItem) return errorHandler({ message: 'updateBudgetItem failed. BudgetItemCRUD.update failed', statusCode: 404 }, next)
 
     const budgetItems = await budgetItemCRUD.get(user.id, next)
