@@ -12,9 +12,10 @@ interface Props {
 }
 
 const AddBudgetItemForm: FC<Props> = ({ token }) => {
+  const currentDate = new Date().toISOString().split('T')[0]
   const { fieldState: nameState, fieldDispatch: nameDispatch } = useField()
   const { fieldState: valueState, fieldDispatch: valueDispatch } = useField()
-  const { fieldState: dateState, fieldDispatch: dateDispatch } = useField()
+  const { fieldState: dateState, fieldDispatch: dateDispatch } = useField(currentDate)
   const { fieldState: categoryState, fieldDispatch: categoryDispatch } = useField()
   const { fieldState: categoryTypeState, fieldDispatch: categoryTypeDispatch } = useField(CategoryType.EXPENSE)
   const categories = useAppSelector((state) => state.categories.categories)
@@ -64,7 +65,8 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
         errMsg: 'Field is required.',
         validator: notEmpty,
         state: valueState,
-        dispatch: valueDispatch
+        dispatch: valueDispatch,
+        attrs: { min: '0', step: '0.01', pattern: 'd+(.d{1,2})?' }
       },
       {
         id: 'date',
@@ -75,8 +77,8 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
         errMsg: 'Field is required.',
         validator: notEmpty,
         state: dateState,
-        dispatch: dateDispatch
-        // defaultValue: new Date().toISOString().slice(0, 10)
+        dispatch: dateDispatch,
+        defaultValue: currentDate
       },
       {
         id: 'category',
