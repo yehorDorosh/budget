@@ -8,7 +8,7 @@ export const addCategory: StoreAction<CategoriesPayload> = ({ token, name, categ
   return async (dispatch, getState) => {
     try {
       const { data, status } = await axios.post<JSONResponse<CategoriesPayload>>(
-        '/api/categories/add',
+        '/api/categories/add-category',
         { name, categoryType },
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -25,7 +25,7 @@ export const addCategory: StoreAction<CategoriesPayload> = ({ token, name, categ
 export const getCategories: StoreAction<CategoriesPayload> = ({ token }) => {
   return async (dispatch, getState) => {
     try {
-      const { data, status } = await axios.get<JSONResponse<CategoriesPayload>>('/api/categories/get', {
+      const { data, status } = await axios.get<JSONResponse<CategoriesPayload>>('/api/categories/get-categories', {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (data.payload && data.payload.categories) {
@@ -41,7 +41,7 @@ export const getCategories: StoreAction<CategoriesPayload> = ({ token }) => {
 export const deleteCategory: StoreAction<CategoriesPayload> = ({ token, id }) => {
   return async (dispatch, getState) => {
     try {
-      const { data, status } = await axios.delete<JSONResponse<CategoriesPayload>>(`/api/categories/delete?id=${id}`, {
+      const { data, status } = await axios.delete<JSONResponse<CategoriesPayload>>(`/api/categories/delete-category?id=${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (data.payload && data.payload.categories) {
@@ -58,7 +58,7 @@ export const updateCategory: StoreAction<CategoriesPayload> = ({ token, id, name
   return async (dispatch, getState) => {
     try {
       const { data, status } = await axios.put<JSONResponse<CategoriesPayload>>(
-        '/api/categories/update',
+        '/api/categories/update-category',
         { id, name, categoryType },
         { headers: { Authorization: `Bearer ${token}` } }
       )

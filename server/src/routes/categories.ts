@@ -9,19 +9,19 @@ import { validationErrorsHandler } from '../utils/errors'
 const router = express.Router()
 
 router.post(
-  '/add',
+  '/add-category',
   [notEmptyValidator('name'), categoryValidator()],
   validationErrorsHandler('Categories validation failed'),
   auth,
   addCategory
 )
 
-router.get('/get', auth, getCategories)
+router.get('/get-categories', auth, getCategories)
 
-router.delete('/delete', auth, deleteCategory)
+router.delete('/delete-category', auth, deleteCategory)
 
 router.put(
-  '/update',
+  '/update-category',
   [notEmptyValidator('name'), notEmptyValidator('categoryType')],
   validationErrorsHandler('Categories validation failed'),
   auth,
