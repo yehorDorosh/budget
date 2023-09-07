@@ -26,6 +26,7 @@ const useField = (defaultValue = '') => {
       case 'set':
         return { ...state, value: action.payload.value, touched: action.payload.touched }
       case 'clear':
+        if (defaultValue) return state
         return { ...state, value: '', touched: false, isValid: true }
       case 'validate':
         return { ...state, isValid: action.validation(state.value) }
