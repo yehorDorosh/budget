@@ -1,5 +1,5 @@
 import React, { FC, Fragment, useState } from 'react'
-import { useAppDispatch } from '../../../hooks/useReduxTS'
+import { useAppDispatch, useAppSelector } from '../../../hooks/useReduxTS'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import UpdateBudgetItemForm from '../UpdateBudgetItemForm/UpdateBudgetItemForm'
 import { BudgetItem } from '../../../store/budget/budget-item-slice'
@@ -13,9 +13,10 @@ interface Props {
 const ListItem: FC<Props> = ({ budgetItem, token }) => {
   const dispatch = useAppDispatch()
   const [openForm, setOpenForm] = useState(false)
+  const monthFilter = useAppSelector((state) => state.budgetItem.filters.month)
 
   const deleteHandler = () => {
-    dispatch(deleteBudgetItem({ token, id: budgetItem.id }))
+    dispatch(deleteBudgetItem({ token, id: budgetItem.id, filters: { month: monthFilter } }))
   }
 
   const editBtnHandler = () => {

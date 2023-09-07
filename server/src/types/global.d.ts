@@ -24,4 +24,8 @@ declare global {
   interface BudgetItemsPayload {
     budgetItems: BudgetItem[]
   }
+
+  interface BudgetItemsFilters {
+    month?: string
+  }
 }

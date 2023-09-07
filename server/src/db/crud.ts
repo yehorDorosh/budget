@@ -147,19 +147,21 @@ export class budgetItemCRUD {
     return budgetItem
   }
 
-  static get = async (userId: UserId, next: NextFunction) => {
+  static get = async (userId: UserId, next: NextFunction, filters?: BudgetItemsFilters) => {
     if (!userId) {
       errorHandler({ message: 'Invalid search params for getBudgetItems(CRUD)', statusCode: 500 }, next)
       return null
     }
-
-    const budgetItems = await BudgetDataSource.getRepository(BudgetItem)
-      .createQueryBuilder('budget')
+    console.log('filters', filters)
+    const queryBuilder = BudgetDataSource.getRepository(BudgetItem).createQueryBuilder('budget')
+    queryBuilder
       .leftJoin('budget.category', 'category')
       .addSelect(['category.id', 'category.name', 'category.categoryType'])
       .where('budget.user = :userId', { userId })
-      .orderBy('budget.userDate', 'DESC')
-      .getMany()
+    if (filters?.month) {
+      queryBuilder.andWhere("TO_CHAR(budget.userDate, 'YYYY-MM') = :month", { month: filters.month })
+    }
+    const budgetItems = await queryBuilder.orderBy('budget.userDate', 'DESC').getMany()
 
     if (!budgetItems) {
       errorHandler({ message: 'No budget items for this user', statusCode: 403 }, next)

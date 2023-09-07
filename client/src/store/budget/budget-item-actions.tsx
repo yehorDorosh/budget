@@ -4,11 +4,12 @@ import { StoreAction } from '../../types/store-actions'
 import { budgetItemActions } from './budget-item-slice'
 import { errorHandler } from '../../utils/errors'
 
-export const addBudgetItem: StoreAction<BudgetItemPayload> = ({ token, categoryId, name, value, userDate }) => {
+export const addBudgetItem: StoreAction<BudgetItemPayload> = ({ token, categoryId, name, value, userDate, filters }) => {
+  const query = filters ? `?month=${filters.month}` : ''
   return async (dispatch, getState) => {
     try {
       const { data, status } = await axios.post<JSONResponse<BudgetItemPayload>>(
-        '/api/budget/add-budget-item',
+        `/api/budget/add-budget-item${query}`,
         { categoryId, name, value, userDate },
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -22,10 +23,11 @@ export const addBudgetItem: StoreAction<BudgetItemPayload> = ({ token, categoryI
   }
 }
 
-export const getBudgetItems: StoreAction<BudgetItemPayload> = ({ token }) => {
+export const getBudgetItems: StoreAction<BudgetItemPayload> = ({ token, filters }) => {
+  const query = filters ? `?month=${filters.month}` : ''
   return async (dispatch, getState) => {
     try {
-      const { data, status } = await axios.get<JSONResponse<BudgetItemPayload>>(`/api/budget/get-budget-item`, {
+      const { data, status } = await axios.get<JSONResponse<BudgetItemPayload>>(`/api/budget/get-budget-item${query}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (data.payload && data.payload.budgetItems) {
@@ -38,10 +40,11 @@ export const getBudgetItems: StoreAction<BudgetItemPayload> = ({ token }) => {
   }
 }
 
-export const deleteBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id }) => {
+export const deleteBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id, filters }) => {
+  const query = filters ? `&month=${filters.month}` : ''
   return async (dispatch, getState) => {
     try {
-      const { data, status } = await axios.delete<JSONResponse<BudgetItemPayload>>(`/api/budget/delete-budget-item?id=${id}`, {
+      const { data, status } = await axios.delete<JSONResponse<BudgetItemPayload>>(`/api/budget/delete-budget-item?id=${id}${query}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (data.payload && data.payload.budgetItems) {
@@ -54,11 +57,12 @@ export const deleteBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id }) 
   }
 }
 
-export const updateBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id, categoryId, name, value, userDate }) => {
+export const updateBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id, categoryId, name, value, userDate, filters }) => {
+  const query = filters ? `?month=${filters.month}` : ''
   return async (dispatch, getState) => {
     try {
       const { data, status } = await axios.put<JSONResponse<BudgetItemPayload>>(
-        `/api/budget/update-budget-item`,
+        `/api/budget/update-budget-item${query}`,
         { id, categoryId, name, value, userDate },
         { headers: { Authorization: `Bearer ${token}` } }
       )

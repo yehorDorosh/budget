@@ -11,12 +11,13 @@ interface Props {
 const BudgetItemsList: FC<Props> = ({ token }) => {
   const dispatch = useAppDispatch()
   const budgetItems = useAppSelector((state) => state.budgetItem.budgetItems)
+  const filters = useAppSelector((state) => state.budgetItem.filters)
 
   useEffect(() => {
     if (token) {
-      dispatch(getBudgetItems({ token }))
+      dispatch(getBudgetItems({ token, filters }))
     }
-  }, [token, dispatch])
+  }, [token, dispatch, filters])
   return (
     <table>
       <tbody>

@@ -1,4 +1,5 @@
 import { AppDispatch, RootState } from '../../store'
+import { BudgetItemsFilters } from '../../store/budget/budget-item-slice'
 
 export function isAxiosErrorPayload<T = void>(toBeDetermined: ActionResult<T>): toBeDetermined is AxiosErrorPayload<T> {
   return toBeDetermined && (toBeDetermined as AxiosErrorPayload<T>).errorMsg !== undefined
@@ -52,6 +53,7 @@ export interface StoreActionData {
   value?: number
   userDate?: string
   categoryId?: number
+  filters?: BudgetItemsFilters
 }
 
 export type StoreAction<T = void> = (
