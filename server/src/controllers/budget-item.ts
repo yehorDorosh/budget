@@ -10,7 +10,8 @@ const parseFilterQuery = (req: Request): BudgetItemsFilters => {
   const month = req.query.month ? req.query.month.toString() : undefined
   const year = req.query.year ? req.query.year.toString() : undefined
   const active = req.query.active ? +req.query.active : undefined
-  return { month, year, active }
+  const name = req.query.name ? req.query.name.toString() : undefined
+  return { month, year, active, name }
 }
 
 export const addBudgetItem: RequestHandler = async (req, res: AppRes<BudgetItemsPayload>, next) => {

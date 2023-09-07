@@ -166,6 +166,10 @@ export class budgetItemCRUD {
       queryBuilder.andWhere("TO_CHAR(budget.userDate, 'YYYY') = :year", { year: filters.year })
     }
 
+    if (filters?.name) {
+      queryBuilder.andWhere('budget.name ILIKE :name', { name: `%${filters.name}%` })
+    }
+
     const budgetItems = await queryBuilder.orderBy('budget.userDate', 'DESC').getMany()
 
     if (!budgetItems) {

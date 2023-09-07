@@ -30,5 +30,6 @@ declare global {
     month?: string
     year?: string
     active?: QueryFilter
+    name?: string
   }
 }

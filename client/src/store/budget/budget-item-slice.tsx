@@ -18,6 +18,7 @@ export interface BudgetItemsFilters {
   month?: string
   year?: string
   active?: QueryFilter
+  name?: string
 }
 
 export interface BudgetItemState {
@@ -30,7 +31,8 @@ const initialState: BudgetItemState = {
   filters: {
     month: getCurrentYearMonth(),
     year: new Date().getFullYear().toString(),
-    active: QueryFilter.MONTH
+    active: QueryFilter.MONTH,
+    name: ''
   }
 }
 
@@ -71,6 +73,9 @@ const budgetItemSlice = createSlice({
     },
     setActiveFilter(state, action: PayloadAction<QueryFilter>) {
       state.filters.active = action.payload
+    },
+    setFilterName(state, action: PayloadAction<string>) {
+      state.filters.name = action.payload
     }
   }
 })

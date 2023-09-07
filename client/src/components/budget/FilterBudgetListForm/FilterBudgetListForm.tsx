@@ -10,14 +10,30 @@ const FilterBudgetListForm = () => {
   const dispatch = useAppDispatch()
   const filterMonth = useAppSelector((state) => state.budgetItem.filters.month)!
   const filterYear = useAppSelector((state) => state.budgetItem.filters.year)!
-  const filter = useAppSelector((state) => state.budgetItem.filters.active)!
+  const filterType = useAppSelector((state) => state.budgetItem.filters.active)!
+  const nameFilter = useAppSelector((state) => state.budgetItem.filters.name)!
 
   const setFilterHandler = (filter: Filter) => {
     dispatch(budgetItemActions.setActiveFilter(filter))
   }
+
+  const findByNameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(budgetItemActions.setFilterName(e.target.value))
+  }
   return (
     <Fragment>
-      {filter === Filter.MONTH && (
+      <BaseForm isLoading={false}>
+        <BaseInput
+          id="name"
+          name="name"
+          type="text"
+          label="Filter by name"
+          isValid={true}
+          value={nameFilter}
+          onChange={findByNameHandler}
+        />
+      </BaseForm>
+      {filterType === Filter.MONTH && (
         <BaseForm isLoading={false}>
           <BaseInput
             id="month"
@@ -36,7 +52,7 @@ const FilterBudgetListForm = () => {
           </button>
         </BaseForm>
       )}
-      {filter === Filter.YEAR && (
+      {filterType === Filter.YEAR && (
         <BaseForm isLoading={false}>
           <BaseInput
             id="year"
