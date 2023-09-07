@@ -158,7 +158,7 @@ export class budgetItemCRUD {
       .leftJoin('budget.category', 'category')
       .addSelect(['category.id', 'category.name', 'category.categoryType'])
       .where('budget.user = :userId', { userId })
-      .orderBy('budget.userDate', 'ASC')
+      .orderBy('budget.userDate', 'DESC')
       .getMany()
 
     if (!budgetItems) {
