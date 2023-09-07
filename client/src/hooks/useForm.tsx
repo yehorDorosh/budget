@@ -1,5 +1,6 @@
 import BaseForm from '../components/ui/BaseForm/BaseForm'
 import BaseInput from '../components/ui/BaseInput/BaseInput'
+import SelectInput, { SelectOption } from '../components/ui/SelectInput/SelectInput'
 import { FieldState, Action as UseFieldAction } from './useField'
 import useSubmit from './useFormSubmit'
 import { StoreAction, isActionPayload, isAxiosErrorPayload } from '../types/store-actions'
@@ -16,6 +17,7 @@ interface FieldConfig {
   state: FieldState
   dispatch: React.Dispatch<UseFieldAction>
   defaultValue?: string
+  options?: SelectOption[]
   attrs?: { [key: string]: string | boolean }
 }
 
@@ -35,7 +37,7 @@ interface FormEvents {
 const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, formEvents: FormEvents = {}) => {
   const { submit, isLoading, validationErrorsBE } = useSubmit()
 
-  const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const inputHandler = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const fieldConfig = fieldsConfig.find((field) => {
       if (field.id) {
         return field.id === e.target.id
@@ -66,22 +68,37 @@ const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, for
 
   const defaultMarkup = (
     <BaseForm onSubmit={submitHandler} isLoading={isLoading} errors={validationErrorsBE || formConfig.errMsg}>
-      {fieldsConfig.map((field, i) => (
-        <BaseInput
-          key={field.id || field.name + i}
-          id={field.id || field.name + i}
-          label={field.label}
-          isValid={field.state.isValid}
-          msg={field.errMsg}
-          type={field.type}
-          placeholder={field.placeholder}
-          name={field.name}
-          onChange={inputHandler}
-          // onInput={inputHandler}
-          value={field.state.touched && field.type !== 'radio' ? field.state.value : field.defaultValue ? field.defaultValue : ''}
-          {...field.attrs}
-        />
-      ))}
+      {fieldsConfig.map((field, i) => {
+        return field.type === 'select' ? (
+          <SelectInput
+            key={field.id || field.name + i}
+            id={field.id || field.name + i}
+            options={field.options || []}
+            label={field.label}
+            isValid={field.state.isValid}
+            msg={field.errMsg}
+            type={field.type}
+            name={field.name}
+            onChange={inputHandler}
+            value={field.state.touched ? field.state.value : field.defaultValue ? field.defaultValue : ''}
+            {...field.attrs}
+          />
+        ) : (
+          <BaseInput
+            key={field.id || field.name + i}
+            id={field.id || field.name + i}
+            label={field.label}
+            isValid={field.state.isValid}
+            msg={field.errMsg}
+            type={field.type}
+            placeholder={field.placeholder}
+            name={field.name}
+            onChange={inputHandler}
+            value={field.state.touched && field.type !== 'radio' ? field.state.value : field.defaultValue ? field.defaultValue : ''}
+            {...field.attrs}
+          />
+        )
+      })}
       <button type="submit">{formConfig.submitBtnText}</button>
     </BaseForm>
   )

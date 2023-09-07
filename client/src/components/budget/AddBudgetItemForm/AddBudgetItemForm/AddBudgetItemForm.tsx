@@ -4,6 +4,8 @@ import useField from '../../../../hooks/useField'
 import useForm from '../../../../hooks/useForm'
 import { notEmpty } from '../../../../utils/validators'
 import { addBudgetItem } from '../../../../store/budget/budget-item-actions'
+import { useAppSelector } from '../../../../hooks/useReduxTS'
+import { CategoryType } from '../../../../types/enum'
 
 interface Props {
   token: string
@@ -14,8 +16,34 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
   const { fieldState: valueState, fieldDispatch: valueDispatch } = useField()
   const { fieldState: dateState, fieldDispatch: dateDispatch } = useField()
   const { fieldState: categoryState, fieldDispatch: categoryDispatch } = useField()
+  const { fieldState: categoryTypeState, fieldDispatch: categoryTypeDispatch } = useField(CategoryType.EXPENSE)
+  const categories = useAppSelector((state) => state.categories.categories)
+
   const { formMarkup } = useForm(
     [
+      {
+        id: 'categoryTypeExpense',
+        name: 'categoryType',
+        type: 'radio',
+        label: 'Log type Expense',
+        errMsg: 'Field is required.',
+        validator: null,
+        state: categoryTypeState,
+        dispatch: categoryTypeDispatch,
+        defaultValue: CategoryType.EXPENSE,
+        attrs: { defaultChecked: true }
+      },
+      {
+        id: 'categoryTypeIncome',
+        name: 'categoryType',
+        type: 'radio',
+        label: 'Log type Income',
+        errMsg: 'Field is required.',
+        validator: null,
+        state: categoryTypeState,
+        dispatch: categoryTypeDispatch,
+        defaultValue: CategoryType.INCOME
+      },
       {
         id: 'name',
         name: 'name',
@@ -48,17 +76,23 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
         validator: notEmpty,
         state: dateState,
         dispatch: dateDispatch
+        // defaultValue: new Date().toISOString().slice(0, 10)
       },
       {
         id: 'category',
         name: 'category',
-        type: 'text',
+        type: 'select',
         label: 'Category',
-        placeholder: 'Category',
         errMsg: 'Field is required.',
-        validator: null,
+        validator: notEmpty,
         state: categoryState,
-        dispatch: categoryDispatch
+        dispatch: categoryDispatch,
+        options: [
+          { value: '', label: 'Choose category' },
+          ...categories
+            .filter((category) => category.categoryType === categoryTypeState.value)
+            .map((category) => ({ value: category.id.toString(), label: category.name }))
+        ]
       }
     ],
     {

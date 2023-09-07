@@ -1,11 +1,19 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect } from 'react'
 
-import { useAppSelector } from '../../hooks/useReduxTS'
+import { useAppSelector, useAppDispatch } from '../../hooks/useReduxTS'
 import BudgetItemsList from '../budget/BudgetItemsList/BudgetItemsList'
 import AddBudgetItemForm from '../budget/AddBudgetItemForm/AddBudgetItemForm/AddBudgetItemForm'
+import { getCategories } from '../../store/categories/categories-actions'
 
 const BudgetPage = () => {
+  const dispatch = useAppDispatch()
   const token = useAppSelector((state) => state.user.token)!
+
+  useEffect(() => {
+    if (token) {
+      dispatch(getCategories({ token }))
+    }
+  }, [dispatch, token])
 
   return (
     <Fragment>

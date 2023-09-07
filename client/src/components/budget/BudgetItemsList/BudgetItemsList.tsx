@@ -21,7 +21,7 @@ const BudgetItemsList: FC<Props> = ({ token }) => {
       {budgetItems.length !== 0 &&
         budgetItems.map((budgetItem) => (
           <li key={budgetItem.id}>
-            {budgetItem.name} {budgetItem.value} {budgetItem.userDate.toString()} {budgetItem.category.name}
+            {budgetItem.name} {budgetItem.value} {budgetItem.userDate.toString()} {budgetItem.category.name}{' '}
             {budgetItem.category.categoryType}
           </li>
         ))}
