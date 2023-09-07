@@ -43,7 +43,8 @@ export const getBudgetItems: RequestHandler = async (req, res: AppRes<BudgetItem
 
 export const deleteBudgetItem: RequestHandler = async (req, res: AppRes<BudgetItemsPayload>, next) => {
   const user = req.user!
-  const budgetItemId: number = req.body.id
+  const budgetItemId: number | null = req.query.id ? +req.query.id : null
+  if (!budgetItemId) return errorHandler({ message: 'deleteBudgetItem failed. BudgetItemId is null', statusCode: 404 }, next)
 
   try {
     const budgetItem = await budgetItemCRUD.delete(budgetItemId, next)
