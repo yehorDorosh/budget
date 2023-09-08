@@ -1,0 +1,41 @@
+$paddings: 0.5rem;
+
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.column {
+  width: calc(100% / 12);
+  height: 150px;
+  padding: $paddings;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.columnTrend {
+  position: relative;
+  border: solid 1px;
+  flex-grow: 1;
+}
+
+.fill {
+  position: absolute;
+  inset: 0;
+  background-color: red;
+}
+
+.month {
+  font-size: 0.8rem;
+  margin-bottom: 0;
+  margin-top: 0.25rem;
+}
+
+.value {
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+  margin-top: 0rem;
+}

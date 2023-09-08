@@ -4,6 +4,7 @@ import { StoreAction } from '../../types/store-actions'
 import { budgetItemActions } from './budget-item-slice'
 import { errorHandler } from '../../utils/errors'
 import objectToQueryString from '../../utils/query'
+import { ReducerType } from '../../types/enum'
 
 export const addBudgetItem: StoreAction<BudgetItemPayload> = ({ token, categoryId, name, value, userDate, filters }) => {
   const query = filters ? '?' + objectToQueryString(filters) : ''
@@ -24,7 +25,7 @@ export const addBudgetItem: StoreAction<BudgetItemPayload> = ({ token, categoryI
   }
 }
 
-export const getBudgetItems: StoreAction<BudgetItemPayload> = ({ token, filters }) => {
+export const getBudgetItems: StoreAction<BudgetItemPayload> = ({ token, filters }, reducerType = ReducerType.budgetItemsList) => {
   const query = filters ? '?' + objectToQueryString(filters) : ''
   return async (dispatch, getState) => {
     try {
@@ -32,7 +33,8 @@ export const getBudgetItems: StoreAction<BudgetItemPayload> = ({ token, filters 
         headers: { Authorization: `Bearer ${token}` }
       })
       if (data.payload && data.payload.budgetItems) {
-        dispatch(budgetItemActions.setBudgetItems(data.payload.budgetItems))
+        if (reducerType === ReducerType.budgetItemsList) dispatch(budgetItemActions.setBudgetItems(data.payload.budgetItems))
+        if (reducerType === ReducerType.BudgetItemsTrend) dispatch(budgetItemActions.setTrendBudgetItems(data.payload.budgetItems))
       }
       return { data, status }
     } catch (err) {

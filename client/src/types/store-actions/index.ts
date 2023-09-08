@@ -1,5 +1,6 @@
 import { AppDispatch, RootState } from '../../store'
 import { BudgetItemsFilters } from '../../store/budget/budget-item-slice'
+import { ReducerType } from '../enum'
 
 export function isAxiosErrorPayload<T = void>(toBeDetermined: ActionResult<T>): toBeDetermined is AxiosErrorPayload<T> {
   return toBeDetermined && (toBeDetermined as AxiosErrorPayload<T>).errorMsg !== undefined
@@ -57,7 +58,8 @@ export interface StoreActionData {
 }
 
 export type StoreAction<T = void> = (
-  data: StoreActionData
+  data: StoreActionData,
+  reducerType?: ReducerType
 ) => (dispatch: AppDispatch, getState: () => RootState) => Promise<ActionResult<T>>
 
 export type SimpleStoreAtion = (data: StoreActionData) => (dispatch: AppDispatch, getState: () => RootState) => void
