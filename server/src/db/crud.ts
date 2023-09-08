@@ -78,7 +78,10 @@ export class CategoryCRUD {
       errorHandler({ message: 'Invalid search params for getCategories(CRUD)', statusCode: 500 }, next)
       return null
     }
-    const categories = await BudgetDataSource.getRepository(Category).find({ where: { user: { id: userId } }, order: { name: 'ASC' } })
+    const categories = await BudgetDataSource.getRepository(Category).find({
+      where: { user: { id: userId } },
+      order: { categoryType: 'DESC', name: 'ASC' }
+    })
     if (!categories) {
       errorHandler({ message: 'No categories for this user', statusCode: 403 }, next)
       return null

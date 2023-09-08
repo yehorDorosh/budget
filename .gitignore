@@ -1,5 +1,6 @@
 node_modules/
 /server/build/*
+/server/build-migration/
 .vscode/
 .DS_Store
 .env
