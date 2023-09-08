@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { FC, useEffect } from 'react'
 
 import { useAppSelector, useAppDispatch } from '../../../hooks/useReduxTS'
@@ -15,9 +16,9 @@ const BudgetItemsList: FC<Props> = ({ token }) => {
 
   useEffect(() => {
     if (token) {
+      console.log('Fetching budget items...')
       dispatch(getBudgetItems({ token, filters }))
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -31,16 +32,13 @@ const BudgetItemsList: FC<Props> = ({ token }) => {
     return () => {
       clearTimeout(timer)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, dispatch, filters.name])
+  }, [filters.name])
 
   useEffect(() => {
     if (token) {
       dispatch(getBudgetItems({ token, filters }))
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, dispatch, filters.year, filters.active])
-
+  }, [token, filters.year, filters.active])
   return (
     <table>
       <tbody>

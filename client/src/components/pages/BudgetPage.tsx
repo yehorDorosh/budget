@@ -17,7 +17,6 @@ const BudgetPage = () => {
       dispatch(getCategories({ token }))
     }
   }, [dispatch, token])
-
   return (
     <Fragment>
       <h1>Budget</h1>
