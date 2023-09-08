@@ -25,7 +25,7 @@ const BudgetItemsList: FC<Props> = ({ token }) => {
     if (token) {
       timer = setTimeout(() => {
         dispatch(getBudgetItems({ token, filters }))
-      }, 2000)
+      }, 1000)
     }
 
     return () => {

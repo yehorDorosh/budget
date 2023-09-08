@@ -6,6 +6,8 @@ import { useAppSelector, useAppDispatch } from '../../../hooks/useReduxTS'
 import { budgetItemActions } from '../../../store/budget/budget-item-slice'
 import { QueryFilter as Filter } from '../../../types/enum'
 
+import classes from './FilterBudgetListForm.module.scss'
+
 const FilterBudgetListForm = () => {
   const dispatch = useAppDispatch()
   const filterMonth = useAppSelector((state) => state.budgetItem.filters.month)!
@@ -69,13 +71,21 @@ const FilterBudgetListForm = () => {
         </BaseForm>
       )}
       <div>
-        <button type="button" onClick={setFilterHandler.bind(null, Filter.ALL)}>
+        <button type="button" className={filterType === Filter.ALL ? classes.active : ''} onClick={setFilterHandler.bind(null, Filter.ALL)}>
           Show all
         </button>
-        <button type="button" onClick={setFilterHandler.bind(null, Filter.YEAR)}>
+        <button
+          type="button"
+          className={filterType === Filter.YEAR ? classes.active : ''}
+          onClick={setFilterHandler.bind(null, Filter.YEAR)}
+        >
           Show by year
         </button>
-        <button type="button" onClick={setFilterHandler.bind(null, Filter.MONTH)}>
+        <button
+          type="button"
+          className={filterType === Filter.MONTH ? classes.active : ''}
+          onClick={setFilterHandler.bind(null, Filter.MONTH)}
+        >
           Show by month
         </button>
       </div>
