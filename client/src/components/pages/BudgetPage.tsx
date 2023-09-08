@@ -2,7 +2,7 @@ import { Fragment, useEffect } from 'react'
 
 import { useAppSelector, useAppDispatch } from '../../hooks/useReduxTS'
 import BudgetItemsList from '../budget/BudgetItemsList/BudgetItemsList'
-import AddBudgetItemForm from '../budget/AddBudgetItemForm/AddBudgetItemForm'
+// import AddBudgetItemForm from '../budget/AddBudgetItemForm/AddBudgetItemForm'
 import { getCategories } from '../../store/categories/categories-actions'
 import FilterBudgetListForm from '../budget/FilterBudgetListForm/FilterBudgetListForm'
 import BudgetResult from '../budget/BudgetResult/BudgetResult'
@@ -21,7 +21,7 @@ const BudgetPage = () => {
   return (
     <Fragment>
       <h1>Budget</h1>
-      <AddBudgetItemForm token={token} />
+      {/* <AddBudgetItemForm token={token} /> */}
       <MonthesTrend token={token} />
       <BudgetResult />
       <FilterBudgetListForm />
