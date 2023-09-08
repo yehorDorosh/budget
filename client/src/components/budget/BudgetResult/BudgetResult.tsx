@@ -7,6 +7,7 @@ import classes from './BudgetResult.module.scss'
 const BudgetResult = () => {
   const budgetItems = useAppSelector((state) => state.budgetItem.budgetItems)
   const filterType = useAppSelector((state) => state.budgetItem.filters.active)
+  const filterYear = useAppSelector((state) => state.budgetItem.filters.year)
 
   const sumExpenses = budgetItems.reduce((acc, budgetItem) => {
     if (budgetItem.category.categoryType === CategoryType.EXPENSE) {
@@ -22,8 +23,10 @@ const BudgetResult = () => {
     return acc
   }, 0)
 
-  const averageYearExpenses = (sumExpenses / 12).toFixed(2)
-  const averageYearIncomes = (sumIncomes / 12).toFixed(2)
+  const isCurrentYear = filterYear ? new Date().getFullYear() === +filterYear : false
+  const monthesAmount = isCurrentYear ? new Date().getMonth() + 1 : 12
+  const averageYearExpenses = (sumExpenses / monthesAmount).toFixed(2)
+  const averageYearIncomes = (sumIncomes / monthesAmount).toFixed(2)
   const total = sumIncomes - sumExpenses
 
   const expensesList = budgetItems
@@ -43,15 +46,15 @@ const BudgetResult = () => {
           <tbody>
             <tr>
               <td>Income</td>
-              <td>{sumIncomes}</td>
+              <td>{sumIncomes.toFixed(2)}</td>
             </tr>
             <tr>
               <td>Expenses</td>
-              <td>{sumExpenses}</td>
+              <td>{sumExpenses.toFixed(2)}</td>
             </tr>
             <tr>
               <td>Total</td>
-              <td>{total}</td>
+              <td>{total.toFixed(2)}</td>
             </tr>
             {filterType === QueryFilter.YEAR && (
               <Fragment>

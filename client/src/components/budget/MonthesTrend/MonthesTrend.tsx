@@ -4,7 +4,7 @@ import BaseForm from '../../ui/BaseForm/BaseForm'
 import BaseInput from '../../ui/BaseInput/BaseInput'
 import { useAppDispatch, useAppSelector } from '../../../hooks/useReduxTS'
 import { getBudgetItems } from '../../../store/budget/budget-item-actions'
-import { Monthes, QueryFilter, ReducerType } from '../../../types/enum'
+import { CategoryType, Monthes, QueryFilter, ReducerType } from '../../../types/enum'
 
 import classes from './MonthesTrend.module.scss'
 
@@ -21,6 +21,8 @@ const MonthesTrend: FC<Props> = ({ token }) => {
   const budgetItemsByMonth: number[] = Array.from({ length: 12 }, () => 0)
 
   budgetItemsTrend.forEach((item) => {
+    if (item.category.categoryType === CategoryType.INCOME) return
+
     const month = new Date(item.userDate).getMonth()
     if (!budgetItemsByMonth[month]) {
       budgetItemsByMonth[month] = item.value
@@ -46,7 +48,7 @@ const MonthesTrend: FC<Props> = ({ token }) => {
       <div className={classes.container}>
         {budgetItemsByMonth.map((value, i) => (
           <div key={i} className={classes.column}>
-            <p className={classes.value}>{value}</p>
+            <p className={classes.value}>{value.toFixed(2)}</p>
             <div className={classes.columnTrend}>
               <div className={classes.fill} style={{ top: `${max ? 100 - (value * 100) / max : 100}%` }}></div>
             </div>
