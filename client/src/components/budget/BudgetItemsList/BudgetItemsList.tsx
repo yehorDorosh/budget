@@ -17,7 +17,22 @@ const BudgetItemsList: FC<Props> = ({ token }) => {
     if (token) {
       dispatch(getBudgetItems({ token, filters }))
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout | undefined
+    if (token) {
+      timer = setTimeout(() => {
+        dispatch(getBudgetItems({ token, filters }))
+      }, 2000)
+    }
+
+    return () => {
+      clearTimeout(timer)
+    }
   }, [token, dispatch, filters])
+
   return (
     <table>
       <tbody>
