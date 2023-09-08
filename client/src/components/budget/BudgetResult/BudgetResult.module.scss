@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+}
+
+.column {
+  padding: 0.5rem;
+}
+
+.list {
+  max-height: 300px;
+  overflow: scroll;
+}
