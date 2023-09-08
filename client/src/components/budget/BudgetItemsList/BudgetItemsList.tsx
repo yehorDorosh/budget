@@ -38,7 +38,7 @@ const BudgetItemsList: FC<Props> = ({ token }) => {
     if (token) {
       dispatch(getBudgetItems({ token, filters }))
     }
-  }, [token, filters.year, filters.active])
+  }, [token, filters.year, filters.active, filters.month])
   return (
     <table>
       <tbody>
