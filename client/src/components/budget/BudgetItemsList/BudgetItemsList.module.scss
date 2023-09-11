@@ -1,3 +1,25 @@
+@import '../../../styles/variables.scss';
+
 .ignore {
   background-color: red;
+}
+
+.table {
+  width: 100%;
+  table-layout: fixed;
+  margin-block: 3rem;
+
+  td,
+  th {
+    font-size: 0.8rem;
+    text-overflow: ellipsis;
+
+    @include m {
+      font-size: 1rem;
+    }
+  }
+}
+
+.btn {
+  margin-block: 0.5rem;
 }

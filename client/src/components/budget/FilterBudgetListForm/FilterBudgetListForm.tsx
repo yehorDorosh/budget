@@ -42,7 +42,7 @@ const FilterBudgetListForm = () => {
 
   return (
     <Fragment>
-      <BaseForm isLoading={false}>
+      <BaseForm isLoading={false} className={classes.generalFilter}>
         <BaseInput
           id="categoryTypeExpenseFilter"
           name="categoryTypeFilter"
@@ -109,7 +109,7 @@ const FilterBudgetListForm = () => {
         />
       </BaseForm>
       {filterType === Filter.MONTH && (
-        <BaseForm isLoading={false}>
+        <BaseForm isLoading={false} className={classes.monthFilter}>
           <BaseInput
             id="month"
             name="month"
@@ -128,7 +128,7 @@ const FilterBudgetListForm = () => {
         </BaseForm>
       )}
       {filterType === Filter.YEAR && (
-        <BaseForm isLoading={false}>
+        <BaseForm isLoading={false} className={classes.monthFilter}>
           <BaseInput
             id="year"
             name="year"
@@ -143,7 +143,7 @@ const FilterBudgetListForm = () => {
           />
         </BaseForm>
       )}
-      <div>
+      <div className={classes.dateFilter}>
         <button type="button" className={filterType === Filter.ALL ? classes.active : ''} onClick={setFilterHandler.bind(null, Filter.ALL)}>
           Show all
         </button>

@@ -6,6 +6,7 @@ import { BudgetItem } from '../../../store/budget/budget-item-slice'
 import { deleteBudgetItem } from '../../../store/budget/budget-item-actions'
 
 import classes from './BudgetItemsList.module.scss'
+import { CategoryType } from '../../../types/enum'
 
 interface Props {
   token: string
@@ -32,13 +33,17 @@ const ListItem: FC<Props> = ({ budgetItem, token }) => {
       </BaseModal>
       <tr className={budgetItem.ignore === true ? classes.ignore : ''}>
         <td>{budgetItem.name}</td>
-        <td>{budgetItem.value}</td>
-        <td>{budgetItem.userDate}</td>
-        <td>{budgetItem.category.name}</td>
-        <td>{budgetItem.category.categoryType}</td>
+        <td className="center">{budgetItem.value}</td>
+        <td className="center">{budgetItem.userDate}</td>
+        <td className="center">{budgetItem.category.name}</td>
+        <td className="center">{budgetItem.category.categoryType === CategoryType.EXPENSE ? 'E' : 'I'}</td>
         <td>
-          <button onClick={editBtnHandler}>Edit</button>
-          <button onClick={deleteHandler}>Delete</button>
+          <button className={classes.btn} onClick={editBtnHandler}>
+            Edit
+          </button>
+          <button className={classes.btn} onClick={deleteHandler}>
+            Delete
+          </button>
         </td>
       </tr>
     </Fragment>
