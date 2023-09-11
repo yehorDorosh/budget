@@ -9,7 +9,7 @@ $paddings: 0.5rem;
 
 .column {
   width: calc(100% / 12);
-  height: 150px;
+  height: 200px;
   padding: $paddings;
   box-sizing: border-box;
   display: flex;
@@ -25,7 +25,26 @@ $paddings: 0.5rem;
 .fill {
   position: absolute;
   inset: 0;
+}
+
+.expenseTrend {
   background-color: red;
+  right: 50%;
+}
+
+.averageExpenses {
+  border-top: solid 1px;
+  right: 50%;
+}
+
+.incomesTrend {
+  background-color: blue;
+  left: 50%;
+}
+
+.averageIncomes {
+  border-top: solid 1px;
+  left: 50%;
 }
 
 .month {
@@ -38,4 +57,12 @@ $paddings: 0.5rem;
   font-size: 0.8rem;
   margin-bottom: 0.25rem;
   margin-top: 0rem;
+}
+
+.expense {
+  color: red;
+}
+
+.income {
+  color: blue;
 }

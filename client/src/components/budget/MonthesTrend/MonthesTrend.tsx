@@ -18,20 +18,42 @@ const MonthesTrend: FC<Props> = ({ token }) => {
   const budgetItemsTrend = useAppSelector((state) => state.budgetItem.trendBudgetItems)
   const budgetItemsList = useAppSelector((state) => state.budgetItem.budgetItems)
 
-  const budgetItemsByMonth: number[] = Array.from({ length: 12 }, () => 0)
+  const expensesByMonth: number[] = Array.from({ length: 12 }, () => 0)
+  const incomesByMonth: number[] = Array.from({ length: 12 }, () => 0)
 
   budgetItemsTrend.forEach((item) => {
-    if (item.category.categoryType === CategoryType.INCOME) return
-
     const month = new Date(item.userDate).getMonth()
-    if (!budgetItemsByMonth[month]) {
-      budgetItemsByMonth[month] = item.value
-    } else {
-      budgetItemsByMonth[month] += item.value
+
+    if (item.category.categoryType === CategoryType.INCOME) {
+      incomesByMonth[month] += item.value
+    }
+
+    if (item.category.categoryType === CategoryType.EXPENSE) {
+      expensesByMonth[month] += item.value
     }
   })
 
-  const max = Math.max(...budgetItemsByMonth)
+  const maxExpense = Math.max(...expensesByMonth)
+  const maxIncome = Math.max(...incomesByMonth)
+  const isCurrentYear = new Date().getFullYear() === +year
+  const monthesAmount = isCurrentYear ? new Date().getMonth() + 1 : 12
+
+  const sumExpenses = budgetItemsTrend.reduce((acc, budgetItem) => {
+    if (budgetItem.category.categoryType === CategoryType.EXPENSE) {
+      return acc + budgetItem.value
+    }
+    return acc
+  }, 0)
+
+  const sumIncomes = budgetItemsTrend.reduce((acc, budgetItem) => {
+    if (budgetItem.category.categoryType === CategoryType.INCOME) {
+      return acc + budgetItem.value
+    }
+    return acc
+  }, 0)
+
+  const averageYearExpenses = sumExpenses / monthesAmount
+  const averageYearIncomes = sumIncomes / monthesAmount
 
   const yearHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setYear(Number(e.target.value))
@@ -45,12 +67,37 @@ const MonthesTrend: FC<Props> = ({ token }) => {
 
   return (
     <div>
+      <ul>
+        <li>Average Expenses: {averageYearExpenses.toFixed(2)}</li>
+        <li>Average Income: {averageYearIncomes.toFixed(2)}</li>
+        <li>Average Saved: {(averageYearIncomes - averageYearExpenses).toFixed(2)}</li>
+        <li>Total saved: {(sumIncomes - sumExpenses).toFixed(2)}</li>
+      </ul>
       <div className={classes.container}>
-        {budgetItemsByMonth.map((value, i) => (
+        {expensesByMonth.map((value, i) => (
           <div key={i} className={classes.column}>
-            <p className={classes.value}>{value.toFixed(2)}</p>
+            <p className={[classes.value, classes.expense].join(' ')}>{value.toFixed(2)}</p>
+            <p className={[classes.value, classes.income].join(' ')}>{incomesByMonth[i].toFixed(2)}</p>
+            <p className={[classes.value, incomesByMonth[i] - value < 0 ? classes.expense : classes.income].join(' ')}>
+              {(incomesByMonth[i] - value).toFixed(2)}
+            </p>
             <div className={classes.columnTrend}>
-              <div className={classes.fill} style={{ top: `${max ? 100 - (value * 100) / max : 100}%` }}></div>
+              <div
+                className={[classes.fill, classes.expenseTrend].join(' ')}
+                style={{ top: `${maxExpense ? 100 - (value * 100) / maxExpense : 100}%` }}
+              ></div>
+              <div
+                className={[classes.fill, classes.averageExpenses].join(' ')}
+                style={{ top: `${maxExpense ? 100 - (averageYearExpenses * 100) / maxExpense : 100}%` }}
+              ></div>
+              <div
+                className={[classes.fill, classes.incomesTrend].join(' ')}
+                style={{ top: `${maxIncome ? 100 - (incomesByMonth[i] * 100) / maxIncome : 100}%` }}
+              ></div>
+              <div
+                className={[classes.fill, classes.averageIncomes].join(' ')}
+                style={{ top: `${maxIncome ? 100 - (averageYearIncomes * 100) / maxIncome : 100}%` }}
+              ></div>
             </div>
             <p className={classes.month}>{Monthes[i]}</p>
           </div>

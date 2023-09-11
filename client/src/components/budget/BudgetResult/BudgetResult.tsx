@@ -1,13 +1,10 @@
-import { Fragment } from 'react'
 import { useAppSelector } from '../../../hooks/useReduxTS'
-import { CategoryType, QueryFilter } from '../../../types/enum'
+import { CategoryType } from '../../../types/enum'
 
 import classes from './BudgetResult.module.scss'
 
 const BudgetResult = () => {
   const budgetItems = useAppSelector((state) => state.budgetItem.budgetItems)
-  const filterType = useAppSelector((state) => state.budgetItem.filters.active)
-  const filterYear = useAppSelector((state) => state.budgetItem.filters.year)
 
   const sumExpenses = budgetItems.reduce((acc, budgetItem) => {
     if (budgetItem.category.categoryType === CategoryType.EXPENSE) {
@@ -23,15 +20,20 @@ const BudgetResult = () => {
     return acc
   }, 0)
 
-  const isCurrentYear = filterYear ? new Date().getFullYear() === +filterYear : false
-  const monthesAmount = isCurrentYear ? new Date().getMonth() + 1 : 12
-  const averageYearExpenses = (sumExpenses / monthesAmount).toFixed(2)
-  const averageYearIncomes = (sumIncomes / monthesAmount).toFixed(2)
   const total = sumIncomes - sumExpenses
 
-  const expensesList = budgetItems
-    .filter((budgetItem) => budgetItem.category.categoryType === CategoryType.EXPENSE)
-    .sort((a, b) => b.value - a.value)
+  const expensesByCategory: { [key: string]: number } = {}
+  budgetItems.forEach((budgetItem) => {
+    if (budgetItem.category.categoryType === CategoryType.EXPENSE) {
+      if (expensesByCategory[budgetItem.category.name]) {
+        expensesByCategory[budgetItem.category.name] += budgetItem.value
+      } else {
+        expensesByCategory[budgetItem.category.name] = budgetItem.value
+      }
+    }
+  })
+  const expensesList = Object.entries(expensesByCategory).sort((a, b) => b[1] - a[1])
+
   return (
     <div className={classes.container}>
       <div className={classes.column}>
@@ -56,18 +58,6 @@ const BudgetResult = () => {
               <td>Total</td>
               <td>{total.toFixed(2)}</td>
             </tr>
-            {filterType === QueryFilter.YEAR && (
-              <Fragment>
-                <tr>
-                  <td>Average Expenses</td>
-                  <td>{averageYearExpenses}</td>
-                </tr>
-                <tr>
-                  <td>Average Income</td>
-                  <td>{averageYearIncomes}</td>
-                </tr>
-              </Fragment>
-            )}
           </tbody>
         </table>
       </div>
@@ -83,9 +73,9 @@ const BudgetResult = () => {
           <tbody>
             {expensesList.map((budgetItem) => {
               return (
-                <tr key={budgetItem.id}>
-                  <td>{budgetItem.name}</td>
-                  <td>{budgetItem.value}</td>
+                <tr key={budgetItem[0]}>
+                  <td>{budgetItem[0]}</td>
+                  <td>{budgetItem[1].toFixed(2)}</td>
                 </tr>
               )
             })}
