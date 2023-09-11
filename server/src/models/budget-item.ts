@@ -18,6 +18,9 @@ export class BudgetItem {
   @Column({ type: 'date', name: 'user_date' })
   userDate: Date
 
+  @Column({ type: 'boolean', default: false })
+  ignore: boolean
+
   @ManyToOne(() => User, (user) => user.categories, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User

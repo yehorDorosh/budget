@@ -48,6 +48,8 @@ const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, for
     if (!fieldConfig) return console.error('useForm.tsx: Field not found')
     if (fieldConfig.validator) {
       fieldConfig.dispatch({ type: 'set&check', payload: { value: e.target.value, touched: true }, validation: fieldConfig.validator })
+    } else if (fieldConfig.type === 'checkbox' && e.target instanceof HTMLInputElement) {
+      fieldConfig.dispatch({ type: 'set', payload: { value: String(e.target.checked), touched: true } })
     } else {
       fieldConfig.dispatch({ type: 'set', payload: { value: e.target.value, touched: true } })
     }

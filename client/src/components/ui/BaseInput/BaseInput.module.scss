@@ -31,6 +31,12 @@
       margin-left: 0.5rem;
       vertical-align: middle;
     }
+
+    &[type='checkbox'] {
+      width: auto;
+      height: auto;
+      margin-left: 0.5rem;
+    }
   }
 
   .errorTxt {

@@ -20,6 +20,7 @@ export interface BudgetItem {
   name: string
   value: number
   userDate: string
+  ignore: boolean
   category: {
     id: number
     name: string

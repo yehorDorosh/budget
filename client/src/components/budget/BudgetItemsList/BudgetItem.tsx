@@ -5,6 +5,8 @@ import UpdateBudgetItemForm from '../UpdateBudgetItemForm/UpdateBudgetItemForm'
 import { BudgetItem } from '../../../store/budget/budget-item-slice'
 import { deleteBudgetItem } from '../../../store/budget/budget-item-actions'
 
+import classes from './BudgetItemsList.module.scss'
+
 interface Props {
   token: string
   budgetItem: BudgetItem
@@ -28,7 +30,7 @@ const ListItem: FC<Props> = ({ budgetItem, token }) => {
       <BaseModal isOpen={openForm} onClose={() => setOpenForm(false)}>
         <UpdateBudgetItemForm token={token} currentBudgetItem={budgetItem} onSave={() => setOpenForm(false)} />
       </BaseModal>
-      <tr>
+      <tr className={budgetItem.ignore === true ? classes.ignore : ''}>
         <td>{budgetItem.name}</td>
         <td>{budgetItem.value}</td>
         <td>{budgetItem.userDate}</td>

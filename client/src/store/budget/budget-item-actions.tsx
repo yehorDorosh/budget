@@ -60,13 +60,13 @@ export const deleteBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id, fi
   }
 }
 
-export const updateBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id, categoryId, name, value, userDate, filters }) => {
+export const updateBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id, categoryId, name, value, userDate, filters, ignore }) => {
   const query = filters ? '?' + objectToQueryString(filters) : ''
   return async (dispatch, getState) => {
     try {
       const { data, status } = await axios.put<JSONResponse<BudgetItemPayload>>(
         `/api/budget/update-budget-item${query}`,
-        { id, categoryId, name, value, userDate },
+        { id, categoryId, name, value, userDate, ignore },
         { headers: { Authorization: `Bearer ${token}` } }
       )
       if (data.payload && data.payload.budgetItems) {

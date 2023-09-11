@@ -20,6 +20,7 @@ const UpdateBudgetItemForm: FC<Props> = ({ token, currentBudgetItem, onSave }) =
   const { fieldState: dateState, fieldDispatch: dateDispatch } = useField(currentBudgetItem.userDate)
   const { fieldState: categoryState, fieldDispatch: categoryDispatch } = useField(currentBudgetItem.category.id.toString())
   const { fieldState: categoryTypeState, fieldDispatch: categoryTypeDispatch } = useField(currentBudgetItem.category.categoryType)
+  const { fieldState: ignoreState, fieldDispatch: ignoreDispatch } = useField(currentBudgetItem.ignore.toString())
   const categories = useAppSelector((state) => state.categories.categories)
   const filters = useAppSelector((state) => state.budgetItem.filters)
 
@@ -102,6 +103,18 @@ const UpdateBudgetItemForm: FC<Props> = ({ token, currentBudgetItem, onSave }) =
             .map((category) => ({ value: category.id.toString(), label: category.name }))
         ],
         defaultValue: currentBudgetItem.category.id.toString()
+      },
+      {
+        id: 'ignore',
+        name: 'ignore',
+        type: 'checkbox',
+        label: 'Ignore this item in statistics',
+        errMsg: 'Field is required.',
+        validator: null,
+        state: ignoreState,
+        dispatch: ignoreDispatch,
+        defaultValue: currentBudgetItem.ignore.toString(),
+        attrs: { defaultChecked: currentBudgetItem.ignore }
       }
     ],
     {
@@ -114,7 +127,8 @@ const UpdateBudgetItemForm: FC<Props> = ({ token, currentBudgetItem, onSave }) =
         value: +valueState.value,
         userDate: new Date(dateState.value).toISOString(),
         categoryId: +categoryState.value,
-        filters: filters
+        filters: filters,
+        ignore: ignoreState.value === 'true'
       }
     },
     {

@@ -55,6 +55,7 @@ export interface StoreActionData {
   userDate?: string
   categoryId?: number
   filters?: BudgetItemsFilters
+  ignore?: boolean
 }
 
 export type StoreAction<T = void> = (

@@ -198,10 +198,10 @@ export class budgetItemCRUD {
 
   static update = async (
     budgetItemId: number,
-    { name, value, userDate, categoryId }: { name: string; value: number; userDate: Date; categoryId: number },
+    { name, value, userDate, categoryId, ignore }: { name: string; value: number; userDate: Date; categoryId: number; ignore: boolean },
     next: NextFunction
   ) => {
-    if (!budgetItemId || (!name && !value && !userDate) || !categoryId) {
+    if (!budgetItemId || (!name && !value && !userDate && !ignore) || !categoryId) {
       errorHandler({ message: 'Invalid search params for updateBudgetItem(CRUD)', statusCode: 500 }, next)
       return null
     }
@@ -221,6 +221,7 @@ export class budgetItemCRUD {
       }
       budgetItem.category = category
     }
+    if (ignore !== undefined) budgetItem.ignore = ignore
     await BudgetDataSource.manager.save(budgetItem)
     return budgetItem
   }

@@ -76,9 +76,10 @@ export const updateBudgetItem: RequestHandler = async (req, res: AppRes<BudgetIt
   const name: string = req.body.name
   const value: number = req.body.value
   const userDate: Date = new Date(req.body.userDate)
+  const ignore: boolean = req.body.ignore
 
   try {
-    const budgetItem = await budgetItemCRUD.update(budgetItemId, { name, value, userDate, categoryId }, next)
+    const budgetItem = await budgetItemCRUD.update(budgetItemId, { name, value, userDate, categoryId, ignore }, next)
     if (!budgetItem) return errorHandler({ message: 'updateBudgetItem failed. BudgetItemCRUD.update failed', statusCode: 404 }, next)
 
     const budgetItems = await budgetItemCRUD.get(user.id, next, parseFilterQuery(req))

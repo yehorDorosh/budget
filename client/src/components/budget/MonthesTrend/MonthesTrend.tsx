@@ -15,7 +15,7 @@ interface Props {
 const MonthesTrend: FC<Props> = ({ token }) => {
   const dispatch = useAppDispatch()
   const [year, setYear] = useState(new Date().getFullYear())
-  const budgetItemsTrend = useAppSelector((state) => state.budgetItem.trendBudgetItems)
+  const budgetItemsTrend = useAppSelector((state) => state.budgetItem.trendBudgetItems).filter((item) => !item.ignore)
   const budgetItemsList = useAppSelector((state) => state.budgetItem.budgetItems)
 
   const expensesByMonth: number[] = Array.from({ length: 12 }, () => 0)
@@ -33,8 +33,7 @@ const MonthesTrend: FC<Props> = ({ token }) => {
     }
   })
 
-  const maxExpense = Math.max(...expensesByMonth)
-  const maxIncome = Math.max(...incomesByMonth)
+  const max = Math.max(...expensesByMonth, ...incomesByMonth)
   const isCurrentYear = new Date().getFullYear() === +year
   const monthesAmount = isCurrentYear ? new Date().getMonth() + 1 : 12
 
@@ -84,19 +83,19 @@ const MonthesTrend: FC<Props> = ({ token }) => {
             <div className={classes.columnTrend}>
               <div
                 className={[classes.fill, classes.expenseTrend].join(' ')}
-                style={{ top: `${maxExpense ? 100 - (value * 100) / maxExpense : 100}%` }}
+                style={{ top: `${max ? 100 - (value * 100) / max : 100}%` }}
               ></div>
               <div
                 className={[classes.fill, classes.averageExpenses].join(' ')}
-                style={{ top: `${maxExpense ? 100 - (averageYearExpenses * 100) / maxExpense : 100}%` }}
+                style={{ top: `${max ? 100 - (averageYearExpenses * 100) / max : 100}%` }}
               ></div>
               <div
                 className={[classes.fill, classes.incomesTrend].join(' ')}
-                style={{ top: `${maxIncome ? 100 - (incomesByMonth[i] * 100) / maxIncome : 100}%` }}
+                style={{ top: `${max ? 100 - (incomesByMonth[i] * 100) / max : 100}%` }}
               ></div>
               <div
                 className={[classes.fill, classes.averageIncomes].join(' ')}
-                style={{ top: `${maxIncome ? 100 - (averageYearIncomes * 100) / maxIncome : 100}%` }}
+                style={{ top: `${max ? 100 - (averageYearIncomes * 100) / max : 100}%` }}
               ></div>
             </div>
             <p className={classes.month}>{Monthes[i]}</p>
