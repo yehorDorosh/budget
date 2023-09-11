@@ -2,9 +2,10 @@ import React, { Fragment } from 'react'
 
 import BaseForm from '../../ui/BaseForm/BaseForm'
 import BaseInput from '../../ui/BaseInput/BaseInput'
+import SelectInput from '../../ui/SelectInput/SelectInput'
 import { useAppSelector, useAppDispatch } from '../../../hooks/useReduxTS'
 import { budgetItemActions } from '../../../store/budget/budget-item-slice'
-import { QueryFilter as Filter } from '../../../types/enum'
+import { CategoryType, QueryFilter as Filter } from '../../../types/enum'
 
 import classes from './FilterBudgetListForm.module.scss'
 
@@ -14,6 +15,10 @@ const FilterBudgetListForm = () => {
   const filterYear = useAppSelector((state) => state.budgetItem.filters.year)!
   const filterType = useAppSelector((state) => state.budgetItem.filters.active)!
   const nameFilter = useAppSelector((state) => state.budgetItem.filters.name)!
+  const categories = useAppSelector((state) => state.categories.categories)
+  const categoryTypeFilter = useAppSelector((state) => state.budgetItem.filters.categoryType)!
+  const categoryFilter = useAppSelector((state) => state.budgetItem.filters.category)!
+  const ignoreFilter = useAppSelector((state) => state.budgetItem.filters.ignore)!
 
   const setFilterHandler = (filter: Filter) => {
     dispatch(budgetItemActions.setActiveFilter(filter))
@@ -22,17 +27,85 @@ const FilterBudgetListForm = () => {
   const findByNameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(budgetItemActions.setFilterName(e.target.value))
   }
+
+  const categoryTypeFilterHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(budgetItemActions.setFilterCategoryType(e.target.value))
+  }
+
+  const categoryFilterHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    dispatch(budgetItemActions.setFilterCategory(e.target.value))
+  }
+
+  const ignoreFilterHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(budgetItemActions.setFilterIgnore(e.target.checked))
+  }
+
   return (
     <Fragment>
       <BaseForm isLoading={false}>
         <BaseInput
-          id="name"
-          name="name"
+          id="categoryTypeExpenseFilter"
+          name="categoryTypeFilter"
+          type="radio"
+          label="Category Type Expense"
+          isValid={true}
+          value={CategoryType.EXPENSE}
+          onChange={categoryTypeFilterHandler}
+        />
+        <BaseInput
+          id="categoryTypeIncomeFilter"
+          name="categoryTypeFilter"
+          type="radio"
+          label="Category Type Income"
+          isValid={true}
+          value={CategoryType.INCOME}
+          onChange={categoryTypeFilterHandler}
+        />
+        <BaseInput
+          id="categoryTypeAllFilter"
+          name="categoryTypeFilter"
+          type="radio"
+          label="All Category Types"
+          isValid={true}
+          value={'all'}
+          onChange={categoryTypeFilterHandler}
+          defaultChecked={true}
+        />
+        <SelectInput
+          id="categoryFilter"
+          name="categoryFilter"
+          type="select"
+          label="Filter by Category"
+          isValid={true}
+          options={[
+            { value: '', label: 'All' },
+            ...categories
+              .filter((category) => {
+                if (!categoryTypeFilter) return true
+                return category.categoryType === categoryTypeFilter
+              })
+              .map((category) => ({ value: category.id.toString(), label: category.name }))
+          ]}
+          value={categoryFilter}
+          onChange={categoryFilterHandler}
+        />
+        <BaseInput
+          id="nameFilter"
+          name="nameFilter"
           type="text"
           label="Filter by name"
           isValid={true}
           value={nameFilter}
           onChange={findByNameHandler}
+        />
+        <BaseInput
+          id="ignoreFilter"
+          name="ignoreFilter"
+          type="checkbox"
+          label="Ignore"
+          isValid={true}
+          onChange={ignoreFilterHandler}
+          checked={ignoreFilter}
         />
       </BaseForm>
       {filterType === Filter.MONTH && (

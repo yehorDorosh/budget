@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { formatDateYearMonth, getCurrentYearMonth } from '../../utils/date'
-import { QueryFilter } from '../../types/enum'
+import { CategoryType, QueryFilter } from '../../types/enum'
 
 function parseBudgetItems(payload: BudgetItem[]) {
   return payload.map(
@@ -24,7 +24,7 @@ export interface BudgetItem {
   category: {
     id: number
     name: string
-    categoryType: string
+    categoryType: CategoryType
   }
 }
 
@@ -33,6 +33,9 @@ export interface BudgetItemsFilters {
   year?: string
   active?: QueryFilter
   name?: string
+  categoryType?: CategoryType
+  category?: number
+  ignore?: boolean
 }
 
 export interface BudgetItemState {
@@ -48,7 +51,7 @@ const initialState: BudgetItemState = {
     month: getCurrentYearMonth(),
     year: new Date().getFullYear().toString(),
     active: QueryFilter.MONTH,
-    name: ''
+    ignore: false
   }
 }
 
@@ -85,6 +88,19 @@ const budgetItemSlice = createSlice({
     },
     setFilterName(state, action: PayloadAction<string>) {
       state.filters.name = action.payload
+    },
+    setFilterCategoryType(state, action: PayloadAction<CategoryType | string>) {
+      if (action.payload === CategoryType.EXPENSE || action.payload === CategoryType.INCOME) {
+        state.filters.categoryType = action.payload
+      } else {
+        delete state.filters.categoryType
+      }
+    },
+    setFilterCategory(state, action: PayloadAction<string>) {
+      state.filters.category = +action.payload
+    },
+    setFilterIgnore(state, action: PayloadAction<boolean>) {
+      state.filters.ignore = action.payload
     }
   }
 })

@@ -1,17 +1,21 @@
 import { Request } from 'express'
 
 import { RequestHandler } from 'express'
-import { ResCodes } from '../types/enums'
+import { CategoryType, ResCodes } from '../types/enums'
 import { AppRes } from '../types/express/custom-response'
 import { errorHandler } from '../utils/errors'
 import { CategoryCRUD, budgetItemCRUD } from '../db/crud'
 
 const parseFilterQuery = (req: Request): BudgetItemsFilters => {
+  console.log(req.query.categoryType)
   const month = req.query.month ? req.query.month.toString() : undefined
   const year = req.query.year ? req.query.year.toString() : undefined
   const active = req.query.active ? +req.query.active : undefined
   const name = req.query.name ? req.query.name.toString() : undefined
-  return { month, year, active, name }
+  const categoryType = req.query.categoryType ? (req.query.categoryType as CategoryType) : undefined
+  const category = req.query.category ? +req.query.category : undefined
+  const ignore = req.query.ignore === 'true' ? true : req.query.ignore === 'false' ? false : undefined
+  return { month, year, active, name, categoryType, category, ignore }
 }
 
 export const addBudgetItem: RequestHandler = async (req, res: AppRes<BudgetItemsPayload>, next) => {

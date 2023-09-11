@@ -161,16 +161,28 @@ export class budgetItemCRUD {
       .addSelect(['category.id', 'category.name', 'category.categoryType'])
       .where('budget.user = :userId', { userId })
 
-    if (filters?.active === QueryFilter.MONTH && filters?.month) {
-      queryBuilder.andWhere("TO_CHAR(budget.userDate, 'YYYY-MM') = :month", { month: filters.month })
-    }
+    if (filters?.ignore !== undefined && filters.ignore) {
+      queryBuilder.andWhere('budget.ignore = :ignore', { ignore: filters.ignore })
+    } else {
+      if (filters?.active === QueryFilter.MONTH && filters?.month) {
+        queryBuilder.andWhere("TO_CHAR(budget.userDate, 'YYYY-MM') = :month", { month: filters.month })
+      }
 
-    if (filters?.active === QueryFilter.YEAR && filters?.year) {
-      queryBuilder.andWhere("TO_CHAR(budget.userDate, 'YYYY') = :year", { year: filters.year })
-    }
+      if (filters?.active === QueryFilter.YEAR && filters?.year) {
+        queryBuilder.andWhere("TO_CHAR(budget.userDate, 'YYYY') = :year", { year: filters.year })
+      }
 
-    if (filters?.name) {
-      queryBuilder.andWhere('budget.name ILIKE :name', { name: `%${filters.name}%` })
+      if (filters?.name) {
+        queryBuilder.andWhere('budget.name ILIKE :name', { name: `%${filters.name}%` })
+      }
+
+      if (filters?.category) {
+        queryBuilder.andWhere('category.id = :category', { category: filters.category })
+      }
+
+      if (filters?.categoryType) {
+        queryBuilder.andWhere('category.categoryType = :categoryType', { categoryType: filters.categoryType })
+      }
     }
 
     const budgetItems = await queryBuilder.orderBy('budget.userDate', 'DESC').getMany()

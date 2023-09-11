@@ -22,17 +22,15 @@ const BudgetResult = () => {
 
   const total = sumIncomes - sumExpenses
 
-  const expensesByCategory: { [key: string]: number } = {}
+  const itemsByCategory: { [key: string]: number } = {}
   budgetItems.forEach((budgetItem) => {
-    if (budgetItem.category.categoryType === CategoryType.EXPENSE) {
-      if (expensesByCategory[budgetItem.category.name]) {
-        expensesByCategory[budgetItem.category.name] += budgetItem.value
-      } else {
-        expensesByCategory[budgetItem.category.name] = budgetItem.value
-      }
+    if (itemsByCategory[budgetItem.category.name]) {
+      itemsByCategory[budgetItem.category.name] += budgetItem.value
+    } else {
+      itemsByCategory[budgetItem.category.name] = budgetItem.value
     }
   })
-  const expensesList = Object.entries(expensesByCategory).sort((a, b) => b[1] - a[1])
+  const expensesList = Object.entries(itemsByCategory).sort((a, b) => b[1] - a[1])
 
   return (
     <div className={classes.container}>

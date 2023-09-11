@@ -1,6 +1,6 @@
 import { Category } from '../models/category'
 import { BudgetItem } from '../models/budget-item'
-import { QueryFilter } from './enums'
+import { CategoryType, QueryFilter } from './enums'
 
 export {}
 
@@ -31,5 +31,8 @@ declare global {
     year?: string
     active?: QueryFilter
     name?: string
+    categoryType?: CategoryType
+    category?: number
+    ignore?: bolean
   }
 }
