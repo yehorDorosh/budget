@@ -32,11 +32,11 @@ interface BudgetItemResponse {
 async function initDB() {
   const BudgetDataSource = new DataSource({
     type: 'postgres',
-    host: 'localhost',
-    port: 3432,
-    username: 'admin',
-    password: 'secret',
-    database: 'budget',
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT ? +process.env.DB_PORT : 3432,
+    username: process.env.DB_USERNAME || 'admin',
+    password: process.env.DB_PASSWORD || 'secret',
+    database: process.env.DB_NAME || 'budget',
     entities: [User, Category, BudgetItem],
     logging: true,
     synchronize: true
