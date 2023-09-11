@@ -16,7 +16,6 @@ const BudgetItemsList: FC<Props> = ({ token }) => {
 
   useEffect(() => {
     if (token) {
-      console.log('Fetching budget items...')
       dispatch(getBudgetItems({ token, filters }))
     }
   }, [])
