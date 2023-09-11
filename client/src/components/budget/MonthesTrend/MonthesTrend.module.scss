@@ -1,3 +1,5 @@
+@import '../../../styles/variables.scss';
+
 $paddings: 0.5rem;
 
 .container {
@@ -5,21 +7,32 @@ $paddings: 0.5rem;
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-end;
+  overflow-x: auto;
 }
 
 .column {
   width: calc(100% / 12);
-  height: 200px;
   padding: $paddings;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  min-width: 80px;
+
+  @include m {
+    height: 200px;
+    min-width: none;
+  }
 }
 
 .columnTrend {
   position: relative;
   border: solid 1px;
   flex-grow: 1;
+  display: none;
+
+  @include m {
+    display: flex;
+  }
 }
 
 .fill {
