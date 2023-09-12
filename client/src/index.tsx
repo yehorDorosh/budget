@@ -4,8 +4,9 @@ import { Provider } from 'react-redux'
 
 import reportWebVitals from './reportWebVitals'
 
-import './styles/normalize.css'
+// import './styles/normalize.css'
 import './styles/index.scss'
+import 'bootstrap/dist/css/bootstrap.css'
 
 import App from './App'
 import store from './store'
