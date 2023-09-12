@@ -38,10 +38,10 @@ const ListItem: FC<Props> = ({ budgetItem, token }) => {
         <td className="center">{budgetItem.category.name}</td>
         <td className="center">{budgetItem.category.categoryType === CategoryType.EXPENSE ? 'E' : 'I'}</td>
         <td>
-          <button className={classes.btn} onClick={editBtnHandler}>
+          <button className="btn btn-warning" onClick={editBtnHandler}>
             Edit
           </button>
-          <button className={classes.btn} onClick={deleteHandler}>
+          <button className="btn btn-danger" onClick={deleteHandler}>
             Delete
           </button>
         </td>

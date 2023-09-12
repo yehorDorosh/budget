@@ -39,8 +39,12 @@ const ListItem: FC<Props> = ({ id, value, categoryType, token }) => {
         <td>{value}</td>
         <td>{categoryType}</td>
         <td>
-          <button onClick={editBtnHandler}>Edit</button>
-          <button onClick={deleteHandler}>Delete</button>
+          <button className="btn btn-warning" onClick={editBtnHandler}>
+            Edit
+          </button>
+          <button className="btn btn-danger" onClick={deleteHandler}>
+            Delete
+          </button>
         </td>
       </tr>
     </Fragment>
