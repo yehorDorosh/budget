@@ -21,7 +21,9 @@ const HeaderNav = () => {
         {isLogin ? (
           <Fragment>
             <li>
-              <NavLink to="/budget">Budget</NavLink>
+              <NavLink to="/budget" end>
+                Budget
+              </NavLink>
             </li>
             <li>
               <NavLink to="/budget/categories">Categories</NavLink>
