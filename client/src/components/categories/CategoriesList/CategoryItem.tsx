@@ -29,7 +29,7 @@ const ListItem: FC<Props> = ({ id, value, categoryType, token }) => {
 
   return (
     <Fragment>
-      <BaseModal isOpen={openForm} onClose={() => setOpenForm(false)}>
+      <BaseModal isOpen={openForm} onClose={() => setOpenForm(false)} title="Edit">
         <UpdateCategoryForm
           id={id}
           token={token!}

@@ -30,7 +30,7 @@ const ListItem: FC<Props> = ({ budgetItem, token }) => {
 
   return (
     <Fragment>
-      <BaseModal isOpen={openForm} onClose={() => setOpenForm(false)}>
+      <BaseModal isOpen={openForm} onClose={() => setOpenForm(false)} title="Edit">
         <UpdateBudgetItemForm token={token} currentBudgetItem={budgetItem} onSave={() => setOpenForm(false)} />
       </BaseModal>
       <BaseCard className={`my-3 ${budgetItem.ignore === true ? 'ignore' : ''}`}>
