@@ -73,7 +73,7 @@ const MonthesTrend: FC<Props> = ({ token }) => {
         <li>Average Saved: {(averageYearIncomes - averageYearExpenses).toFixed(2)}</li>
         <li>Total saved: {(sumIncomes - sumExpenses).toFixed(2)}</li>
       </ul>
-      <div className={classes.container}>
+      <div className={classes.trendContainer}>
         {expensesByMonth.map((value, i) => (
           <div key={i} className={classes.column}>
             <p className={[classes.value, classes.expense].join(' ')}>{value.toFixed(2)}</p>

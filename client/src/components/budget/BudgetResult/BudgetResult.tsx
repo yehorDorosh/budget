@@ -35,7 +35,7 @@ const BudgetResult = () => {
 
   return (
     <BaseCard>
-      <div className={classes.container}>
+      <div className={classes.resultContainer}>
         <div className={classes.column}>
           <h3>Summary</h3>
           <table>
