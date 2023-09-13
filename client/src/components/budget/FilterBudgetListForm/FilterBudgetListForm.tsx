@@ -109,7 +109,7 @@ const FilterBudgetListForm = () => {
           checked={ignoreFilter}
         />
         {filterType === Filter.MONTH && (
-          <BaseCard>
+          <BaseCard className="mb-3">
             <BaseInput
               id="month"
               name="month"
@@ -141,6 +141,7 @@ const FilterBudgetListForm = () => {
             min={2015}
             max={2100}
             step={1}
+            className="mb-3"
           />
         )}
       </BaseForm>

@@ -6,7 +6,7 @@ const DefaultTemplate: FC = () => {
   return (
     <Fragment>
       <PageHeader />
-      <main>
+      <main className="py-4">
         <div className="container">
           <Outlet />
         </div>
