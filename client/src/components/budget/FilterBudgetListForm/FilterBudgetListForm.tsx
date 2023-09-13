@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 
 import BaseForm from '../../ui/BaseForm/BaseForm'
 import BaseInput from '../../ui/BaseInput/BaseInput'
@@ -6,8 +6,9 @@ import SelectInput from '../../ui/SelectInput/SelectInput'
 import { useAppSelector, useAppDispatch } from '../../../hooks/useReduxTS'
 import { budgetItemActions } from '../../../store/budget/budget-item-slice'
 import { CategoryType, QueryFilter as Filter } from '../../../types/enum'
+import BaseCard from '../../ui/BaseCard/BaseCard'
 
-import classes from './FilterBudgetListForm.module.scss'
+// import classes from './FilterBudgetListForm.module.scss'
 
 const FilterBudgetListForm = () => {
   const dispatch = useAppDispatch()
@@ -41,8 +42,8 @@ const FilterBudgetListForm = () => {
   }
 
   return (
-    <Fragment>
-      <BaseForm isLoading={false} className={classes.generalFilter}>
+    <BaseCard>
+      <BaseForm isLoading={false}>
         <BaseInput
           id="categoryTypeExpenseFilter"
           name="categoryTypeFilter"
@@ -107,28 +108,26 @@ const FilterBudgetListForm = () => {
           onChange={ignoreFilterHandler}
           checked={ignoreFilter}
         />
-      </BaseForm>
-      {filterType === Filter.MONTH && (
-        <BaseForm isLoading={false} className={classes.monthFilter}>
-          <BaseInput
-            id="month"
-            name="month"
-            type="month"
-            label="Month"
-            isValid={true}
-            value={filterMonth}
-            onChange={(e) => dispatch(budgetItemActions.setFilterMonth(e.target.value))}
-          />
-          <button type="button" onClick={() => dispatch(budgetItemActions.decreaseMonth())}>
-            Previous Month
-          </button>
-          <button type="button" onClick={() => dispatch(budgetItemActions.increaseMonth())}>
-            Next Month
-          </button>
-        </BaseForm>
-      )}
-      {filterType === Filter.YEAR && (
-        <BaseForm isLoading={false} className={classes.monthFilter}>
+        {filterType === Filter.MONTH && (
+          <BaseCard>
+            <BaseInput
+              id="month"
+              name="month"
+              type="month"
+              label="Month"
+              isValid={true}
+              value={filterMonth}
+              onChange={(e) => dispatch(budgetItemActions.setFilterMonth(e.target.value))}
+            />
+            <button type="button" className="btn btn-primary" onClick={() => dispatch(budgetItemActions.decreaseMonth())}>
+              Previous Month
+            </button>
+            <button type="button" className="btn btn-primary" onClick={() => dispatch(budgetItemActions.increaseMonth())}>
+              Next Month
+            </button>
+          </BaseCard>
+        )}
+        {filterType === Filter.YEAR && (
           <BaseInput
             id="year"
             name="year"
@@ -141,28 +140,32 @@ const FilterBudgetListForm = () => {
             max={2100}
             step={1}
           />
-        </BaseForm>
-      )}
-      <div className={classes.dateFilter}>
-        <button type="button" className={filterType === Filter.ALL ? classes.active : ''} onClick={setFilterHandler.bind(null, Filter.ALL)}>
+        )}
+      </BaseForm>
+      <BaseCard>
+        <button
+          type="button"
+          className={`btn btn-primary ${filterType === Filter.ALL ? 'active' : ''}`}
+          onClick={setFilterHandler.bind(null, Filter.ALL)}
+        >
           Show all
         </button>
         <button
           type="button"
-          className={filterType === Filter.YEAR ? classes.active : ''}
+          className={`btn btn-primary ${filterType === Filter.YEAR ? 'active' : ''}`}
           onClick={setFilterHandler.bind(null, Filter.YEAR)}
         >
           Show by year
         </button>
         <button
           type="button"
-          className={filterType === Filter.MONTH ? classes.active : ''}
+          className={`btn btn-primary ${filterType === Filter.MONTH ? 'active' : ''}`}
           onClick={setFilterHandler.bind(null, Filter.MONTH)}
         >
           Show by month
         </button>
-      </div>
-    </Fragment>
+      </BaseCard>
+    </BaseCard>
   )
 }
 

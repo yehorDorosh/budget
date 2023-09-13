@@ -1,10 +1,11 @@
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
 import { login } from '../../../store/user/user-actions'
 import useField from '../../../hooks/useField'
 import useForm from '../../../hooks/useForm'
 import { notEmpty } from '../../../utils/validators'
+import BaseCard from '../../ui/BaseCard/BaseCard'
 
 const LoginForm = () => {
   const navigate = useNavigate()
@@ -50,12 +51,12 @@ const LoginForm = () => {
   )
 
   return (
-    <Fragment>
+    <BaseCard>
       {formMarkup}
       <p className="center">
         <NavLink to="/restore-password">Forgot password?</NavLink>
       </p>
-    </Fragment>
+    </BaseCard>
   )
 }
 

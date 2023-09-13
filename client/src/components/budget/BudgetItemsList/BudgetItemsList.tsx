@@ -4,6 +4,7 @@ import { FC, useEffect } from 'react'
 import { useAppSelector, useAppDispatch } from '../../../hooks/useReduxTS'
 import { getBudgetItems } from '../../../store/budget/budget-item-actions'
 import BudgetItem from './BudgetItem'
+import BaseCard from '../../ui/BaseCard/BaseCard'
 
 import classes from './BudgetItemsList.module.scss'
 
@@ -41,22 +42,24 @@ const BudgetItemsList: FC<Props> = ({ token }) => {
     }
   }, [token, filters.year, filters.active, filters.month, filters.categoryType, filters.category, filters.ignore])
   return (
-    <table className={classes.table}>
-      <thead>
-        <tr>
-          <th className="left">Name</th>
-          <th>Amount</th>
-          <th>Date</th>
-          <th>Category</th>
-          <th>T</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {budgetItems.length !== 0 &&
-          budgetItems.map((budgetItem) => <BudgetItem key={budgetItem.id} token={token} budgetItem={budgetItem} />)}
-      </tbody>
-    </table>
+    <BaseCard>
+      <table className={classes.table}>
+        <thead>
+          <tr>
+            <th className="left">Name</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Category</th>
+            <th>T</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {budgetItems.length !== 0 &&
+            budgetItems.map((budgetItem) => <BudgetItem key={budgetItem.id} token={token} budgetItem={budgetItem} />)}
+        </tbody>
+      </table>
+    </BaseCard>
   )
 }
 

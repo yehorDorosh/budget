@@ -6,6 +6,7 @@ import { notEmpty } from '../../../utils/validators'
 import { addBudgetItem } from '../../../store/budget/budget-item-actions'
 import { useAppSelector } from '../../../hooks/useReduxTS'
 import { CategoryType } from '../../../types/enum'
+import BaseCard from '../../ui/BaseCard/BaseCard'
 
 interface Props {
   token: string
@@ -111,7 +112,7 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
       }
     }
   )
-  return formMarkup
+  return <BaseCard>{formMarkup}</BaseCard>
 }
 
 export default AddBudgetItemForm

@@ -4,6 +4,7 @@ import { emailValidator, passwordValidator, shouldMatchValidator } from '../../.
 import useField from '../../../hooks/useField'
 import useForm from '../../../hooks/useForm'
 import { signUp } from '../../../store/user/user-actions'
+import BaseCard from '../../ui/BaseCard/BaseCard'
 
 const SignupForm = () => {
   const navigate = useNavigate()
@@ -49,7 +50,7 @@ const SignupForm = () => {
     }
   )
 
-  return formMarkup
+  return <BaseCard>{formMarkup}</BaseCard>
 }
 
 export default SignupForm

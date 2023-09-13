@@ -6,6 +6,7 @@ import useForm from '../../../hooks/useForm'
 import { updateUser } from '../../../store/user/user-actions'
 import { ResCodes } from '../../../types/enum'
 import { EmailOrPassword } from '../../../types/store-actions'
+import BaseCard from '../../ui/BaseCard/BaseCard'
 
 interface Props {
   fieldName: keyof EmailOrPassword
@@ -51,7 +52,7 @@ const ChangeCredentialsForm: FC<Props> = ({ fieldName, token, onEdit: onEditEmai
     }
   )
 
-  return formMarkup
+  return <BaseCard>{formMarkup}</BaseCard>
 }
 
 export default ChangeCredentialsForm

@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import * as jose from 'jose'
 
@@ -7,6 +7,7 @@ import useForm from '../../../hooks/useForm'
 import { passwordValidator } from '../../../utils/validators'
 import { restorePassword } from '../../../store/user/user-actions'
 import { ResCodes } from '../../../types/enum'
+import BaseCard from '../../ui/BaseCard/BaseCard'
 
 interface Props {
   token: string
@@ -55,7 +56,7 @@ const SignupForm: React.FC<Props> = ({ token }) => {
   )
 
   return (
-    <Fragment>
+    <BaseCard>
       {tokenExpired && (
         <p>
           <span className="error">
@@ -65,7 +66,7 @@ const SignupForm: React.FC<Props> = ({ token }) => {
         </p>
       )}
       {formMarkup}
-    </Fragment>
+    </BaseCard>
   )
 }
 
