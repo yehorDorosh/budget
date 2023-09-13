@@ -5,8 +5,8 @@ export class Weather {
   @PrimaryGeneratedColumn({ name: 'db_id' })
   dbId: number
 
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date
+  @CreateDateColumn({ name: 'reg_date' })
+  regDate: Date
 
   @Column({ type: 'varchar', length: 32 })
   id: string
