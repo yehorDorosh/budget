@@ -7,3 +7,9 @@ html {
 .error {
   color: red;
 }
+
+nav {
+  a.active {
+    text-decoration: underline;
+  }
+}
