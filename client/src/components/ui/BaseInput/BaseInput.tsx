@@ -20,16 +20,27 @@ const BaseInput: FC<BaseInputProps> = ({ id, label, isValid, msg, ...props }) =>
     </div>
   )
   const radio = (
-    <div className="form-check">
+    <div className="mb-3 form-check">
       <input id={id} className="form-check-input" {...props} />
       <label htmlFor={id} className="form-check-label">
         {label}
       </label>
     </div>
   )
+  const checkbox = (
+    <div className="mb-3 form-check">
+      <input id={id} className="form-check-input" {...props} />
+      <label htmlFor={id} className="form-check-label">
+        {label}
+      </label>
+    </div>
+  )
+
   switch (props.type) {
     case 'radio':
       return radio
+    case 'checkbox':
+      return checkbox
     default:
       return text
   }
