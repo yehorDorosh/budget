@@ -38,7 +38,7 @@ const BudgetResult = () => {
       <div className={classes.resultContainer}>
         <div className={classes.column}>
           <h3>Summary</h3>
-          <table>
+          <table className="table table-primary">
             <thead>
               <tr>
                 <th>Category</th>
@@ -46,15 +46,15 @@ const BudgetResult = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr className="table-light">
                 <td>Income</td>
                 <td>{sumIncomes.toFixed(2)}</td>
               </tr>
-              <tr>
+              <tr className="table-light">
                 <td>Expenses</td>
                 <td>{sumExpenses.toFixed(2)}</td>
               </tr>
-              <tr>
+              <tr className="table-light">
                 <td>Total</td>
                 <td>{total.toFixed(2)}</td>
               </tr>
@@ -63,7 +63,7 @@ const BudgetResult = () => {
         </div>
         <div className={[classes.column, classes.list].join(' ')}>
           <h3>Most Expenses</h3>
-          <table>
+          <table className="table table-primary">
             <thead>
               <tr>
                 <th>Name</th>
@@ -73,7 +73,7 @@ const BudgetResult = () => {
             <tbody>
               {expensesList.map((budgetItem) => {
                 return (
-                  <tr key={budgetItem[0]}>
+                  <tr key={budgetItem[0]} className="table-light">
                     <td>{budgetItem[0]}</td>
                     <td>{budgetItem[1].toFixed(2)}</td>
                   </tr>
