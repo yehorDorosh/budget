@@ -6,6 +6,7 @@ import { errorHandler } from '../utils/errors'
 import { Category } from '../models/category'
 import { CategoryType, QueryFilter } from '../types/enums'
 import { BudgetItem } from '../models/budget-item'
+import { Weather } from '../models/weather'
 
 export class UserCRUD {
   static add = async (email: string, password: string, next: NextFunction) => {
@@ -236,5 +237,43 @@ export class budgetItemCRUD {
     if (ignore !== undefined) budgetItem.ignore = ignore
     await BudgetDataSource.manager.save(budgetItem)
     return budgetItem
+  }
+}
+
+export class WeatherCRUD {
+  static add = async (id: string, t: number, p: number, v: number, next: NextFunction) => {
+    if (!id || !t || !p || !v) {
+      errorHandler({ message: 'Invalid search params for addWeather(CRUD)', statusCode: 500 }, next)
+      return null
+    }
+    const weather = new Weather()
+    weather.id = id
+    weather.t = t
+    weather.p = p
+    weather.v = v
+    await BudgetDataSource.manager.save(weather)
+    return weather
+  }
+
+  static get = async (next: NextFunction) => {
+    const weathers = await BudgetDataSource.manager.find(Weather)
+    if (!weathers) {
+      errorHandler({ message: 'No weather data', statusCode: 403 }, next)
+      return null
+    }
+    return weathers
+  }
+
+  static getById = async (id: string, next: NextFunction) => {
+    if (!id) {
+      errorHandler({ message: 'Invalid search params for getWeather(CRUD)', statusCode: 500 }, next)
+      return null
+    }
+    const weather = await BudgetDataSource.manager.findOneBy(Weather, { id })
+    if (!weather) {
+      errorHandler({ message: 'No weather data', statusCode: 403 }, next)
+      return null
+    }
+    return weather
   }
 }
