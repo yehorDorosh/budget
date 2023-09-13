@@ -5,6 +5,7 @@ import useForm from '../../../hooks/useForm'
 import { notEmpty } from '../../../utils/validators'
 import { updateCategory } from '../../../store/categories/categories-actions'
 import { CategoryType } from '../../../types/enum'
+import BaseCard from '../../ui/BaseCard/BaseCard'
 
 interface Props {
   id: number
@@ -68,7 +69,7 @@ const UpdateCategoryForm: FC<Props> = ({ token, id, defaultName, defaultCategory
     }
   )
 
-  return formMarkup
+  return <BaseCard>{formMarkup}</BaseCard>
 }
 
 export default UpdateCategoryForm

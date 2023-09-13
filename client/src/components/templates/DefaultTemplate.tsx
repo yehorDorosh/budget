@@ -6,8 +6,8 @@ const DefaultTemplate: FC = () => {
   return (
     <Fragment>
       <PageHeader />
-      <main>
-        <div className="content">
+      <main className="py-4">
+        <div className="container">
           <Outlet />
         </div>
       </main>

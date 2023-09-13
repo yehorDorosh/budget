@@ -34,9 +34,21 @@ const ProgilePage = () => {
       <h1>Profile</h1>
       <div>
         <p>email: {email}</p>
-        <button onClick={changeEmailHandler}>Change email</button>
-        <button onClick={changePasswordHandler}>Change password</button>
-        <button onClick={deleteUserHandler}>Delete user</button>
+        <p>
+          <button className="btn btn-warning" onClick={changeEmailHandler}>
+            Change email
+          </button>
+        </p>
+        <p>
+          <button className="btn btn-warning" onClick={changePasswordHandler}>
+            Change password
+          </button>
+        </p>
+        <p>
+          <button className="btn btn-danger" onClick={deleteUserHandler}>
+            Delete user
+          </button>
+        </p>
       </div>
       {openEmailForm && <ChangeCredentialsForm fieldName="email" token={token!} onEdit={() => setOpenEmailForm(false)} />}
       {openPasswordForm && <ChangeCredentialsForm fieldName="password" token={token!} onEdit={() => setOpenPasswordForm(false)} />}

@@ -7,6 +7,7 @@ import { getBudgetItems } from '../../../store/budget/budget-item-actions'
 import { CategoryType, Monthes, QueryFilter, ReducerType } from '../../../types/enum'
 
 import classes from './MonthesTrend.module.scss'
+import BaseCard from '../../ui/BaseCard/BaseCard'
 
 interface Props {
   token: string
@@ -65,14 +66,14 @@ const MonthesTrend: FC<Props> = ({ token }) => {
   }, [year, token, dispatch, budgetItemsList])
 
   return (
-    <div>
+    <BaseCard className="mb-4">
       <ul>
         <li>Average Expenses: {averageYearExpenses.toFixed(2)}</li>
         <li>Average Income: {averageYearIncomes.toFixed(2)}</li>
         <li>Average Saved: {(averageYearIncomes - averageYearExpenses).toFixed(2)}</li>
         <li>Total saved: {(sumIncomes - sumExpenses).toFixed(2)}</li>
       </ul>
-      <div className={classes.container}>
+      <div className={classes.trendContainer}>
         {expensesByMonth.map((value, i) => (
           <div key={i} className={classes.column}>
             <p className={[classes.value, classes.expense].join(' ')}>{value.toFixed(2)}</p>
@@ -116,7 +117,7 @@ const MonthesTrend: FC<Props> = ({ token }) => {
           step={1}
         />
       </BaseForm>
-    </div>
+    </BaseCard>
   )
 }
 

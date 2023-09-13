@@ -69,7 +69,12 @@ const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, for
   }
 
   const defaultMarkup = (
-    <BaseForm onSubmit={submitHandler} isLoading={isLoading} errors={validationErrorsBE || formConfig.errMsg}>
+    <BaseForm
+      onSubmit={submitHandler}
+      isLoading={isLoading}
+      errors={validationErrorsBE || formConfig.errMsg}
+      className={fieldsConfig.some((field) => field.validator !== null) ? 'needs-validation' : ''}
+    >
       {fieldsConfig.map((field, i) => {
         return field.type === 'select' ? (
           <SelectInput
@@ -83,6 +88,7 @@ const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, for
             name={field.name}
             onChange={inputHandler}
             value={field.state.touched ? field.state.value : field.defaultValue ? field.defaultValue : ''}
+            required={field.validator !== null}
             {...field.attrs}
           />
         ) : (
@@ -97,11 +103,14 @@ const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, for
             name={field.name}
             onChange={inputHandler}
             value={field.state.touched && field.type !== 'radio' ? field.state.value : field.defaultValue ? field.defaultValue : ''}
+            required={field.validator !== null}
             {...field.attrs}
           />
         )
       })}
-      <button type="submit">{formConfig.submitBtnText}</button>
+      <button type="submit" className="btn btn-primary">
+        {formConfig.submitBtnText}
+      </button>
     </BaseForm>
   )
   return {

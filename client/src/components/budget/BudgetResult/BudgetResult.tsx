@@ -1,5 +1,6 @@
 import { useAppSelector } from '../../../hooks/useReduxTS'
 import { CategoryType } from '../../../types/enum'
+import BaseCard from '../../ui/BaseCard/BaseCard'
 
 import classes from './BudgetResult.module.scss'
 
@@ -33,54 +34,56 @@ const BudgetResult = () => {
   const expensesList = Object.entries(itemsByCategory).sort((a, b) => b[1] - a[1])
 
   return (
-    <div className={classes.container}>
-      <div className={classes.column}>
-        <h3>Summary</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Category</th>
-              <th>Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Income</td>
-              <td>{sumIncomes.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td>Expenses</td>
-              <td>{sumExpenses.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td>Total</td>
-              <td>{total.toFixed(2)}</td>
-            </tr>
-          </tbody>
-        </table>
+    <BaseCard className="mb-4">
+      <div className={classes.resultContainer}>
+        <div className={classes.column}>
+          <h3>Summary</h3>
+          <table className="table table-primary">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="table-light">
+                <td>Income</td>
+                <td>{sumIncomes.toFixed(2)}</td>
+              </tr>
+              <tr className="table-light">
+                <td>Expenses</td>
+                <td>{sumExpenses.toFixed(2)}</td>
+              </tr>
+              <tr className="table-light">
+                <td>Total</td>
+                <td>{total.toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div className={[classes.column, classes.list].join(' ')}>
+          <h3>Most Expenses</h3>
+          <table className="table table-primary">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {expensesList.map((budgetItem) => {
+                return (
+                  <tr key={budgetItem[0]} className="table-light">
+                    <td>{budgetItem[0]}</td>
+                    <td>{budgetItem[1].toFixed(2)}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div className={[classes.column, classes.list].join(' ')}>
-        <h3>Most Expenses</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            {expensesList.map((budgetItem) => {
-              return (
-                <tr key={budgetItem[0]}>
-                  <td>{budgetItem[0]}</td>
-                  <td>{budgetItem[1].toFixed(2)}</td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    </BaseCard>
   )
 }
 

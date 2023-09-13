@@ -32,7 +32,9 @@ const HeaderNav = () => {
               <NavLink to="/profile">Profile</NavLink>
             </li>
             <li>
-              <button onClick={logoutHandler}>Log Out</button>
+              <button className="btn btn-primary" onClick={logoutHandler}>
+                Log Out
+              </button>
             </li>
           </Fragment>
         ) : (

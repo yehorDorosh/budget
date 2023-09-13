@@ -8,6 +8,7 @@ import { notEmpty } from '../../../utils/validators'
 import { ResCodes } from '../../../types/enum'
 import { deleteUser } from '../../../store/user/user-actions'
 import { userActions } from '../../../store/user/user-slice'
+import BaseCard from '../../ui/BaseCard/BaseCard'
 
 interface Props {
   token: string
@@ -44,7 +45,7 @@ const DeleteUserForm: FC<Props> = ({ token }) => {
       }
     }
   )
-  return formMarkup
+  return <BaseCard>{formMarkup}</BaseCard>
 }
 
 export default DeleteUserForm

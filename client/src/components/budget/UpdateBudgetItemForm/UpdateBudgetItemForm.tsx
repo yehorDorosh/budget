@@ -7,6 +7,7 @@ import { updateBudgetItem } from '../../../store/budget/budget-item-actions'
 import { useAppSelector } from '../../../hooks/useReduxTS'
 import { CategoryType } from '../../../types/enum'
 import { BudgetItem } from '../../../store/budget/budget-item-slice'
+import BaseCard from '../../ui/BaseCard/BaseCard'
 
 interface Props {
   token: string
@@ -135,7 +136,7 @@ const UpdateBudgetItemForm: FC<Props> = ({ token, currentBudgetItem, onSave }) =
       onGetResponse: () => onSave()
     }
   )
-  return formMarkup
+  return <BaseCard>{formMarkup}</BaseCard>
 }
 
 export default UpdateBudgetItemForm

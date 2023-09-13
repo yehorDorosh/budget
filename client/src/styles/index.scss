@@ -4,29 +4,12 @@ html {
   font-family: 'Roboto', sans-serif;
 }
 
-main {
-  padding: 20px;
-}
-
-.content {
-  @include d {
-    max-width: 60rem;
-    margin: 0 auto;
-  }
-}
-
-.center {
-  text-align: center;
-}
-
-.left {
-  text-align: left;
-}
-
 .error {
   color: red;
 }
 
-button {
-  cursor: pointer;
+nav {
+  a.active {
+    text-decoration: underline;
+  }
 }

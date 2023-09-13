@@ -5,6 +5,7 @@ import useField from '../../../hooks/useField'
 import useForm from '../../../hooks/useForm'
 import { getRestoreEmail } from '../../../store/user/user-actions'
 import { ResCodes } from '../../../types/enum'
+import BaseCard from '../../ui/BaseCard/BaseCard'
 
 interface Props {
   onSendEmail: (email: string) => void
@@ -43,7 +44,7 @@ const RestorePassSendEmailForm: FC<Props> = ({ onSendEmail }) => {
     }
   )
 
-  return formMarkup
+  return <BaseCard>{formMarkup}</BaseCard>
 }
 
 export default RestorePassSendEmailForm

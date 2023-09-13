@@ -13,7 +13,7 @@ interface BaseFormProps extends React.FormHTMLAttributes<HTMLFormElement> {
 const BaseForm: FC<BaseFormProps> = ({ children, isLoading, errors, className, ...props }) => {
   return (
     <Fragment>
-      <form className={[classes.form, className].join(' ')} {...props}>
+      <form className={[classes.form, className].join(' ')} {...props} noValidate={true}>
         {errors && <ErrorList errors={errors} />}
         {children}
         {isLoading && (

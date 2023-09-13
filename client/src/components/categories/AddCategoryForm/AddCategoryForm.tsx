@@ -5,6 +5,7 @@ import useForm from '../../../hooks/useForm'
 import { notEmpty } from '../../../utils/validators'
 import { addCategory } from '../../../store/categories/categories-actions'
 import { CategoryType } from '../../../types/enum'
+import BaseCard from '../../ui/BaseCard/BaseCard'
 
 interface Props {
   token: string
@@ -57,7 +58,7 @@ const AddCategoryForm: FC<Props> = ({ token }) => {
     }
   )
 
-  return formMarkup
+  return <BaseCard className="mb-4">{formMarkup}</BaseCard>
 }
 
 export default AddCategoryForm
