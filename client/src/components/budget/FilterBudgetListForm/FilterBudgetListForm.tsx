@@ -119,12 +119,14 @@ const FilterBudgetListForm = () => {
               value={filterMonth}
               onChange={(e) => dispatch(budgetItemActions.setFilterMonth(e.target.value))}
             />
-            <button type="button" className="btn btn-primary" onClick={() => dispatch(budgetItemActions.decreaseMonth())}>
-              Previous Month
-            </button>
-            <button type="button" className="btn btn-primary" onClick={() => dispatch(budgetItemActions.increaseMonth())}>
-              Next Month
-            </button>
+            <div className="btn-group">
+              <button type="button" className="btn btn-primary" onClick={() => dispatch(budgetItemActions.decreaseMonth())}>
+                Previous Month
+              </button>
+              <button type="button" className="btn btn-primary" onClick={() => dispatch(budgetItemActions.increaseMonth())}>
+                Next Month
+              </button>
+            </div>
           </BaseCard>
         )}
         {filterType === Filter.YEAR && (
@@ -143,27 +145,29 @@ const FilterBudgetListForm = () => {
         )}
       </BaseForm>
       <BaseCard>
-        <button
-          type="button"
-          className={`btn btn-primary ${filterType === Filter.ALL ? 'active' : ''}`}
-          onClick={setFilterHandler.bind(null, Filter.ALL)}
-        >
-          Show all
-        </button>
-        <button
-          type="button"
-          className={`btn btn-primary ${filterType === Filter.YEAR ? 'active' : ''}`}
-          onClick={setFilterHandler.bind(null, Filter.YEAR)}
-        >
-          Show by year
-        </button>
-        <button
-          type="button"
-          className={`btn btn-primary ${filterType === Filter.MONTH ? 'active' : ''}`}
-          onClick={setFilterHandler.bind(null, Filter.MONTH)}
-        >
-          Show by month
-        </button>
+        <div className="btn-group">
+          <button
+            type="button"
+            className={`btn btn-primary ${filterType === Filter.ALL ? 'active' : ''}`}
+            onClick={setFilterHandler.bind(null, Filter.ALL)}
+          >
+            Show all
+          </button>
+          <button
+            type="button"
+            className={`btn btn-primary ${filterType === Filter.YEAR ? 'active' : ''}`}
+            onClick={setFilterHandler.bind(null, Filter.YEAR)}
+          >
+            Show by year
+          </button>
+          <button
+            type="button"
+            className={`btn btn-primary ${filterType === Filter.MONTH ? 'active' : ''}`}
+            onClick={setFilterHandler.bind(null, Filter.MONTH)}
+          >
+            Show by month
+          </button>
+        </div>
       </BaseCard>
     </BaseCard>
   )
