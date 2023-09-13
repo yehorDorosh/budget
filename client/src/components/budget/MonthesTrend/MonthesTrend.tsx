@@ -66,7 +66,7 @@ const MonthesTrend: FC<Props> = ({ token }) => {
   }, [year, token, dispatch, budgetItemsList])
 
   return (
-    <BaseCard>
+    <BaseCard className="mb-4">
       <ul>
         <li>Average Expenses: {averageYearExpenses.toFixed(2)}</li>
         <li>Average Income: {averageYearIncomes.toFixed(2)}</li>

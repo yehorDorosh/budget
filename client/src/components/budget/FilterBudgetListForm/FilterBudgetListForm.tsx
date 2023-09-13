@@ -42,7 +42,7 @@ const FilterBudgetListForm = () => {
   }
 
   return (
-    <BaseCard>
+    <BaseCard className="mb-4">
       <BaseForm isLoading={false}>
         <BaseInput
           id="categoryTypeExpenseFilter"

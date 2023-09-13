@@ -58,7 +58,7 @@ const AddCategoryForm: FC<Props> = ({ token }) => {
     }
   )
 
-  return <BaseCard>{formMarkup}</BaseCard>
+  return <BaseCard className="mb-4">{formMarkup}</BaseCard>
 }
 
 export default AddCategoryForm

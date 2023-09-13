@@ -4,6 +4,9 @@ import { deleteCategory } from '../../../store/categories/categories-actions'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import UpdateCategoryForm from '../UpdateCategoryForm/UpdateCategoryForm'
 import { CategoryType } from '../../../types/enum'
+import BaseCard from '../../ui/BaseCard/BaseCard'
+
+import classes from './CategoryItem.module.scss'
 
 interface Props {
   id: number
@@ -35,18 +38,20 @@ const ListItem: FC<Props> = ({ id, value, categoryType, token }) => {
           onSave={() => setOpenForm(false)}
         />
       </BaseModal>
-      <tr>
-        <td>{value}</td>
-        <td>{categoryType}</td>
-        <td>
-          <button className="btn btn-warning" onClick={editBtnHandler}>
-            Edit
-          </button>
-          <button className="btn btn-danger" onClick={deleteHandler}>
-            Delete
-          </button>
-        </td>
-      </tr>
+      <BaseCard className={`my-3`}>
+        <div className={classes.row}>
+          <div>{value}</div>
+          <div className="px-3">{categoryType}</div>
+          <div className={classes.btns}>
+            <button className="btn btn-warning me-3 my-1" onClick={editBtnHandler}>
+              Edit
+            </button>
+            <button className="btn btn-danger my-1" onClick={deleteHandler}>
+              Delete
+            </button>
+          </div>
+        </div>
+      </BaseCard>
     </Fragment>
   )
 }

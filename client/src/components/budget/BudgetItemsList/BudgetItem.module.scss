@@ -1,0 +1,56 @@
+@import '../../../styles/variables.scss';
+
+.row {
+  @include t {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.name {
+  margin-bottom: 0.25rem;
+
+  @include t {
+    margin-bottom: 0;
+    width: 25%;
+  }
+}
+
+.data {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+
+  @include t {
+    margin-bottom: 0;
+    width: 50%;
+  }
+}
+
+.dataItem {
+  padding-inline: 0.5rem;
+  text-align: center;
+  width: 35%;
+
+  &:first-child {
+    padding-left: 0;
+    width: 20%;
+    text-align: start;
+  }
+
+  &:last-child {
+    padding-right: 0;
+    width: 10%;
+    text-align: end;
+  }
+}
+
+.btns {
+  text-align: end;
+
+  @include t {
+    width: 25%;
+  }
+}

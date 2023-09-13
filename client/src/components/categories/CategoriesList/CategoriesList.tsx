@@ -12,13 +12,11 @@ const CategoriesList: FC<Props> = ({ token }) => {
 
   return (
     <BaseCard>
-      <table>
-        <tbody>
-          {categories.map((item) => {
-            return <CategoryItem key={item.id} id={item.id} value={item.name} categoryType={item.categoryType} token={token} />
-          })}
-        </tbody>
-      </table>
+      <div>
+        {categories.map((item) => {
+          return <CategoryItem key={item.id} id={item.id} value={item.name} categoryType={item.categoryType} token={token} />
+        })}
+      </div>
     </BaseCard>
   )
 }
