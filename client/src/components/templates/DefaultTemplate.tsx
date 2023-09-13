@@ -7,7 +7,7 @@ const DefaultTemplate: FC = () => {
     <Fragment>
       <PageHeader />
       <main>
-        <div className="content">
+        <div className="container">
           <Outlet />
         </div>
       </main>

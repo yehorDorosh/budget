@@ -46,7 +46,7 @@ const BudgetItemsList: FC<Props> = ({ token }) => {
       <table className={classes.table}>
         <thead>
           <tr>
-            <th className="left">Name</th>
+            <th className="text-start">Name</th>
             <th>Amount</th>
             <th>Date</th>
             <th>Category</th>

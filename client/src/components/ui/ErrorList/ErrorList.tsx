@@ -4,7 +4,7 @@ interface Props {
 
 const ErrorList = ({ errors }: Props) => {
   return (
-    <ul className="left text-danger">
+    <ul className="text-start text-danger">
       {typeof errors === 'string' ? (
         <li>{errors}</li>
       ) : (

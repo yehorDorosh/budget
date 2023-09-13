@@ -33,10 +33,10 @@ const ListItem: FC<Props> = ({ budgetItem, token }) => {
       </BaseModal>
       <tr className={budgetItem.ignore === true ? classes.ignore : ''}>
         <td>{budgetItem.name}</td>
-        <td className="center">{budgetItem.value}</td>
-        <td className="center">{budgetItem.userDate}</td>
-        <td className="center">{budgetItem.category.name}</td>
-        <td className="center">{budgetItem.category.categoryType === CategoryType.EXPENSE ? 'E' : 'I'}</td>
+        <td className="text-center">{budgetItem.value}</td>
+        <td className="text-center">{budgetItem.userDate}</td>
+        <td className="text-center">{budgetItem.category.name}</td>
+        <td className="text-center">{budgetItem.category.categoryType === CategoryType.EXPENSE ? 'E' : 'I'}</td>
         <td>
           <button className="btn btn-warning" onClick={editBtnHandler}>
             Edit
