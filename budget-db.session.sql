@@ -2,7 +2,7 @@
 -- DROP TABLE IF EXISTS users CASCADE;
 -- DROP TABLE IF EXISTS categories CASCADE;
 -- DROP TABLE IF EXISTS budget;
--- DROP TABLE IF EXISTS weather;
+DROP TABLE IF EXISTS weather;
 
 
 -- DROP TABLE IF EXISTS categories;

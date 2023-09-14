@@ -13,7 +13,7 @@
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
     "db:up": "docker-compose up -d",
     "db:down": "docker-compose down",
-    "migration": "ts-node ./src/utils/migration.ts"
+    "migration": "EMAIL= USER_ID=2 MIGRATION=weather WEATHER_ID=1 ts-node ./src/utils/migration.ts"
   },
   "repository": {
     "type": "git",

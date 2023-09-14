@@ -5,6 +5,7 @@ import { DataSource } from 'typeorm'
 import { User } from '../models/user'
 import { Category } from '../models/category'
 import { BudgetItem } from '../models/budget-item'
+import { Weather } from '../models/weather'
 
 interface CategoryResponse {
   data: string
@@ -37,7 +38,7 @@ async function initDB() {
     username: process.env.DB_USERNAME || 'admin',
     password: process.env.DB_PASSWORD || 'secret',
     database: process.env.DB_NAME || 'budget',
-    entities: [User, Category, BudgetItem],
+    entities: [User, Category, BudgetItem, Weather],
     logging: true,
     synchronize: true
   })
@@ -128,6 +129,40 @@ async function migrateBudgetItems(email: string, userId: number, dataSource: Dat
   }
 }
 
+async function migrateWeatherData(dataSource: DataSource) {
+  const now = new Date()
+  const nowString = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
+  try {
+    const { data, status } = await axios.get(
+      `http://35.178.207.100/api/weather.php?id=${process.env.WEATHER_ID}&dateFrom=2021-11-02 00:00:00&dateTo=${nowString}`
+    )
+    if (status === 200) {
+      console.log('Migration: weather data recived')
+      const weatherData = data.data
+      if (!Array.isArray(weatherData)) {
+        console.log('Migration: weather data is not array')
+        return Promise.reject('Migration: weather data is not array')
+      }
+
+      for (const weatherItem of weatherData) {
+        const weather = new Weather()
+        weather.id = weatherItem.id
+        weather.t = weatherItem.t
+        weather.p = weatherItem.p
+        weather.v = weatherItem.v
+        weather.regDate = new Date(weatherItem.reg_date)
+        await dataSource.manager.save(weather)
+      }
+      console.log(`Migration: weather data added`)
+      return Promise.resolve()
+    }
+  } catch (error) {
+    console.log(error)
+    console.log('Migration: Weather data fetching failed')
+    return Promise.reject(error)
+  }
+}
+
 const migration = async () => {
   const email = process.env.EMAIL
   const newUserId = process.env.USER_ID && +process.env.USER_ID
@@ -139,6 +174,16 @@ const migration = async () => {
 
   if (!newUserId) {
     console.log('Migration: USER_ID env var dosnt set')
+    return
+  }
+
+  if (!process.env.MIGRATION) {
+    console.log('Migration: MIGRATION env var dosnt set')
+    return
+  }
+
+  if (process.env.MIGRATION === 'weather' && !process.env.WEATHER_ID) {
+    console.log('Migration: WEATHER_ID env var dosnt set')
     return
   }
 
@@ -154,6 +199,9 @@ const migration = async () => {
         break
       case 'budget':
         await migrateBudgetItems(email, newUserId, dataSource)
+        break
+      case 'weather':
+        await migrateWeatherData(dataSource)
         break
       default:
         console.log('Migration: MIGRATION env var dosnt set')

@@ -26,7 +26,7 @@ app.get('/api', auth, (req, res) => {
 app.use('/api/user', userRouter)
 app.use('/api/categories', categoriesRouter)
 app.use('/api/budget', budgetItemRouter)
-app.use('/weather', weatherRouter)
+app.use('/api/weather', weatherRouter)
 
 app.use((req, res) => {
   res.status(200).sendFile(path.join(__dirname, '..', '..', 'client', 'build', 'index.html'))

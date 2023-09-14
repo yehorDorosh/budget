@@ -17,6 +17,6 @@ export class Weather {
   @Column({ type: 'int' })
   p: number
 
-  @Column({ type: 'numeric', precision: 4, scale: 2 })
-  v: number
+  @Column({ type: 'numeric', precision: 4, scale: 2, nullable: true })
+  v: number | null
 }
