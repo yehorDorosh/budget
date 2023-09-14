@@ -2,7 +2,7 @@ import express from 'express'
 
 import { notEmptyValidator } from '../utils/validators'
 import { validationErrorsHandler } from '../utils/errors'
-import { saveWeaterData, getWeatherData } from '../controllers/weather'
+import { saveWeaterData, getWeatherData, getLastWeatherData } from '../controllers/weather'
 
 const router = express.Router()
 
@@ -14,5 +14,7 @@ router.post(
 )
 
 router.get('/', getWeatherData)
+
+router.get('/last', getLastWeatherData)
 
 export default router

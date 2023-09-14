@@ -12,6 +12,7 @@ import ProfilePage from '../components/pages/ProfilePage'
 import RequireAuth from '../components/auth/RequireAuth/RequireAuth'
 import BudgetPage from '../components/pages/BudgetPage'
 import CategoriesPage from '../components/pages/CategoriesPage'
+import WeatherPage from '../components/pages/WeatherPage'
 
 const router = createBrowserRouter([
   {
@@ -57,6 +58,14 @@ const router = createBrowserRouter([
         element: (
           <RequireAuth>
             <CategoriesPage />
+          </RequireAuth>
+        )
+      },
+      {
+        path: '/weather',
+        element: (
+          <RequireAuth>
+            <WeatherPage />
           </RequireAuth>
         )
       }

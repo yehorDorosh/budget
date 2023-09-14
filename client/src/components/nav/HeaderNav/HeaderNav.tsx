@@ -29,6 +29,9 @@ const HeaderNav = () => {
               <NavLink to="/budget/categories">Categories</NavLink>
             </li>
             <li>
+              <NavLink to="/weather">Weather</NavLink>
+            </li>
+            <li>
               <NavLink to="/profile">Profile</NavLink>
             </li>
             <li>

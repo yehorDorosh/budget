@@ -7,6 +7,7 @@ import { Category } from '../models/category'
 import { CategoryType, QueryFilter } from '../types/enums'
 import { BudgetItem } from '../models/budget-item'
 import { Weather } from '../models/weather'
+import { FindManyOptions } from 'typeorm'
 
 export class UserCRUD {
   static add = async (email: string, password: string, next: NextFunction) => {
@@ -255,8 +256,8 @@ export class WeatherCRUD {
     return weather
   }
 
-  static get = async (next: NextFunction) => {
-    const weathers = await BudgetDataSource.manager.find(Weather)
+  static get = async (searchParams: FindManyOptions, next: NextFunction) => {
+    const weathers = await BudgetDataSource.manager.find(Weather, searchParams)
     if (!weathers) {
       errorHandler({ message: 'No weather data', statusCode: 403 }, next)
       return null
@@ -264,16 +265,18 @@ export class WeatherCRUD {
     return weathers
   }
 
-  static getById = async (id: string, next: NextFunction) => {
-    if (!id) {
-      errorHandler({ message: 'Invalid search params for getWeather(CRUD)', statusCode: 500 }, next)
-      return null
-    }
-    const weather = await BudgetDataSource.manager.findOneBy(Weather, { id })
-    if (!weather) {
+  static getLast = async (next: NextFunction) => {
+    const weathers = await BudgetDataSource.getRepository(Weather)
+      .createQueryBuilder('weather')
+      .where('id = :id1 AND reg_date IN (SELECT MAX(reg_date) FROM weather WHERE id = :id1)', { id1: '1' })
+      .orWhere('id = :id2 AND reg_date IN (SELECT MAX(reg_date) FROM weather WHERE id = :id2)', { id2: '2nd-floor' })
+      .orWhere('id = :id3 AND reg_date IN (SELECT MAX(reg_date) FROM weather WHERE id = :id3)', { id3: 'out-of-door' })
+      .getMany()
+
+    if (!weathers) {
       errorHandler({ message: 'No weather data', statusCode: 403 }, next)
       return null
     }
-    return weather
+    return weathers
   }
 }
