@@ -3,7 +3,7 @@ import { RequestHandler } from 'express'
 import { ResCodes, CategoryType } from '../types/enums'
 import { AppRes } from '../types/express/custom-response'
 import { errorHandler } from '../utils/errors'
-import { categoryCRUD } from '../models/category'
+import { categoryCRUD } from '../db/data-source'
 
 export const addCategory: RequestHandler = async (req, res: AppRes<CategoriesPayload>, next) => {
   const user = req.user!

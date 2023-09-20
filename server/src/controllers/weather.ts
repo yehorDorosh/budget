@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import { weatherCRUD } from '../models/weather'
+import { weatherCRUD } from '../db/data-source'
 import { errorHandler } from '../utils/errors'
 import { Between, FindOperator } from 'typeorm'
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions'

@@ -4,8 +4,8 @@ import { RequestHandler } from 'express'
 import { CategoryType, ResCodes } from '../types/enums'
 import { AppRes } from '../types/express/custom-response'
 import { errorHandler } from '../utils/errors'
-import { budgetItemCRUD } from '../models/budget-item'
-import { categoryCRUD } from '../models/category'
+import { budgetItemCRUD } from '../db/data-source'
+import { categoryCRUD } from '../db/data-source'
 
 const parseFilterQuery = (req: Request): BudgetItemsFilters => {
   console.log(req.query.categoryType)

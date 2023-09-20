@@ -4,7 +4,7 @@ import { RequestHandler } from 'express'
 
 import { SERVER_JWT_SECRET } from '../utils/config'
 import { errorHandler } from '../utils/errors'
-import { userCRUD } from '../models/user'
+import { userCRUD } from '../db/data-source'
 
 const auth: RequestHandler = async (req, res, next) => {
   const authHeader = req.get('Authorization')

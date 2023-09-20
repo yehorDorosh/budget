@@ -1,8 +1,5 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
-import { BudgetDataSource } from '../db/data-source'
-import { WeatherCRUD } from '../db/weather-crud'
-
 @Entity('weather')
 export class Weather {
   @PrimaryGeneratedColumn({ name: 'db_id' })
@@ -23,5 +20,3 @@ export class Weather {
   @Column({ type: 'numeric', precision: 4, scale: 2, nullable: true })
   v: number | null
 }
-
-export const weatherCRUD = new WeatherCRUD(Weather, BudgetDataSource)

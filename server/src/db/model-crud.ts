@@ -50,9 +50,7 @@ export class ModelCRUD<T extends Models> implements CRUD<T> {
     const entity = new this.Model()
 
     for (const key in data) {
-      if (key in this.Model) {
-        entity[key as K] = data[key]
-      }
+      entity[key as K] = data[key]
     }
 
     const result = await this.dataSource.manager.save(entity)

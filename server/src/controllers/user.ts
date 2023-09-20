@@ -8,7 +8,8 @@ import { ResCodes } from '../types/enums'
 import { transport } from '../utils/email'
 import { SERVER_JWT_SECRET, SERVER_EMAIL_USER } from '../utils/config'
 import { errorHandler } from '../utils/errors'
-import { User, userCRUD } from '../models/user'
+import { User } from '../models/user'
+import { userCRUD } from '../db/data-source'
 import { SERVER_LOGOUT_TIMER } from '../utils/config'
 
 function generateToken(userId: number, time: string = SERVER_LOGOUT_TIMER!) {
