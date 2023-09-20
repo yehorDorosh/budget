@@ -22,7 +22,7 @@ app.use(bodyParser.json())
 
 app.get('/api', async (req, res, next) => {
   const categoryCRUD = new ModelCRUD(Category, BudgetDataSource)
-  const result = await categoryCRUD.get({ where: { name: 'car' } }, 'findOne', next)
+  const result = await categoryCRUD.findOne({ where: { name: 'car' } }, next)
   res.status(200).json({ message: 'Hello World form api', result })
 })
 

@@ -1,6 +1,8 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 
 import { Category } from './category'
+import { ModelCRUD } from '../db/model-crud'
+import { BudgetDataSource } from '../db/data-source'
 
 @Entity('users')
 export class User {
@@ -22,3 +24,5 @@ export class User {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date
 }
+
+export const UserCRUD = new ModelCRUD(User, BudgetDataSource)

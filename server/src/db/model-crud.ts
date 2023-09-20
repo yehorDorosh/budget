@@ -5,19 +5,16 @@ import { errorHandler } from '../utils/errors'
 import { Category } from '../models/category'
 import { BudgetItem } from '../models/budget-item'
 import { Weather } from '../models/weather'
-import { DataSource } from 'typeorm'
+import { DataSource, FindManyOptions, FindOneOptions } from 'typeorm'
 
 type Models = User | Category | BudgetItem | Weather
-type SearchParams = { [key: string]: string | number | object }
-
-interface EntityManagerMethods<T> {
-  find(model: T, options?: Record<string, string | number>): Promise<null | T[] | T>
-  findOne(model: T, options?: Record<string, string | number>): Promise<null | T[] | T>
-}
 
 interface CRUD<T> {
   add: <K extends keyof T>(data: Record<string, T[K]>, next: NextFunction) => Promise<null | T>
-  get: (searchParams: SearchParams, method: keyof EntityManagerMethods<T>, next: NextFunction) => Promise<null | T | T[]>
+  findOne: (searchParams: { where: FindOneOptions<T>['where'] }, next: NextFunction) => Promise<null | T>
+  findMany: (searchParams: { where: FindManyOptions<T>['where'] }, next: NextFunction) => Promise<null | T[]>
+  update: <K extends keyof T>(entity: T, data: Record<string, T[K]>, next: NextFunction) => Promise<null | T>
+  delete: (id: number, next: NextFunction) => Promise<null | boolean>
 }
 
 export class ModelCRUD<T extends Models> implements CRUD<T> {
@@ -29,7 +26,7 @@ export class ModelCRUD<T extends Models> implements CRUD<T> {
     this.Model = Model
   }
 
-  protected checkParams<T extends object>(data: T): boolean {
+  private checkParams<T extends object>(data: T): boolean {
     if (Object.keys(data).length === 0) {
       return false
     }
@@ -55,32 +52,63 @@ export class ModelCRUD<T extends Models> implements CRUD<T> {
       }
     }
 
-    try {
-      const result = await this.dataSource.manager.save(entity)
-      return result
-    } catch (error) {
-      errorHandler({ message: 'CRUD: add operation failed' }, next)
-      return null
-    }
+    const result = await this.dataSource.manager.save(entity)
+    return result
   }
 
-  async get(searchParams: SearchParams, method: keyof EntityManagerMethods<T>, next: NextFunction): Promise<null | T[] | T> {
-    if (searchParams === undefined || (typeof searchParams === 'object' && !this.checkParams(searchParams))) {
+  async findOne(
+    searchParams: {
+      where: FindOneOptions<T>['where']
+    },
+    next: NextFunction
+  ): Promise<null | T> {
+    if (!this.checkParams(searchParams)) {
       errorHandler({ message: 'CRUD: Invalid search params' }, next)
       return null
     }
 
-    try {
-      if (method in this.dataSource.manager && typeof this.dataSource.manager[method] === 'function') {
-        const result = await this.dataSource.manager[method](this.Model, searchParams)
-        return Array.isArray(result) ? result : result ? result : null
-      } else {
-        errorHandler({ message: 'CRUD: Invalid method' }, next)
-        return null
-      }
-    } catch (error) {
-      errorHandler({ message: 'CRUD: get operation failed' }, next)
+    const result = await this.dataSource.manager.findOne(this.Model, searchParams)
+    return result
+  }
+
+  async findMany(
+    searchParams: {
+      where: FindManyOptions<T>['where']
+    },
+    next: NextFunction
+  ): Promise<null | T[]> {
+    if (!this.checkParams(searchParams)) {
+      errorHandler({ message: 'CRUD: Invalid search params' }, next)
       return null
     }
+
+    const result = await this.dataSource.manager.find(this.Model, searchParams)
+    return result
+  }
+
+  async update<K extends keyof T>(entity: T, data: Record<string, T[K]>, next: NextFunction): Promise<null | T> {
+    if (!this.checkParams(data)) {
+      errorHandler({ message: 'CRUD: Invalid search params' }, next)
+      return null
+    }
+
+    for (const key in data) {
+      if (key in this.Model) {
+        entity[key as K] = data[key]
+      }
+    }
+
+    const result = await this.dataSource.manager.save(entity)
+    return result
+  }
+
+  async delete(id: number, next: NextFunction): Promise<null | boolean> {
+    if (!id) {
+      errorHandler({ message: 'CRUD: Invalid search params' }, next)
+      return null
+    }
+
+    const result = await this.dataSource.manager.delete(this.Model, id)
+    return !!result.affected
   }
 }
