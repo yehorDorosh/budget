@@ -12,13 +12,16 @@ type Models = User | Category | BudgetItem | Weather
 interface CRUD<T> {
   add: <K extends keyof T>(data: Record<string, T[K]>, next: NextFunction) => Promise<null | T>
   findOne: (searchParams: { where: FindOneOptions<T>['where'] }, next: NextFunction) => Promise<null | T>
-  findMany: (searchParams: { where: FindManyOptions<T>['where'] }, next: NextFunction) => Promise<null | T[]>
+  findMany(
+    searchParams: { where: FindManyOptions<T>['where']; order?: FindOneOptions<T>['order'] },
+    next: NextFunction
+  ): Promise<null | T[]>
   update: <K extends keyof T>(entity: T, data: Record<string, T[K]>, next: NextFunction) => Promise<null | T>
   delete: (id: number, next: NextFunction) => Promise<null | boolean>
 }
 
 export class ModelCRUD<T extends Models> implements CRUD<T> {
-  private dataSource: DataSource
+  protected dataSource: DataSource
   private Model: new () => T
 
   constructor(Model: new () => T, dataSource: DataSource) {
@@ -74,6 +77,7 @@ export class ModelCRUD<T extends Models> implements CRUD<T> {
   async findMany(
     searchParams: {
       where: FindManyOptions<T>['where']
+      order?: FindOneOptions<T>['order']
     },
     next: NextFunction
   ): Promise<null | T[]> {

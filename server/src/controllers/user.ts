@@ -8,7 +8,7 @@ import { ResCodes } from '../types/enums'
 import { transport } from '../utils/email'
 import { SERVER_JWT_SECRET, SERVER_EMAIL_USER } from '../utils/config'
 import { errorHandler } from '../utils/errors'
-import { User, UserCRUD } from '../models/user'
+import { User, userCRUD } from '../models/user'
 import { SERVER_LOGOUT_TIMER } from '../utils/config'
 
 function generateToken(userId: number, time: string = SERVER_LOGOUT_TIMER!) {
@@ -22,7 +22,7 @@ export const signup: RequestHandler = async (req, res: AppRes<UserPayload>, next
 
   try {
     const hashedPassword = await bcrypt.hash(password, 12)
-    const user = await UserCRUD.add({ email, password: hashedPassword }, next)
+    const user = await userCRUD.add({ email, password: hashedPassword }, next)
     if (!user) return errorHandler({ message: 'Failed to create new user', statusCode: 500 }, next)
 
     const token = await generateToken(user.id)
@@ -40,7 +40,7 @@ export const login: RequestHandler = async (req, res: AppRes<UserPayload>, next)
   const password: string = req.body.password
 
   try {
-    const user = await UserCRUD.findOne({ where: { email } }, next)
+    const user = await userCRUD.findOne({ where: { email } }, next)
     if (!user) return errorHandler({ message: 'User not found', statusCode: 403 }, next)
 
     const isEqual = await bcrypt.compare(password, user.password)
@@ -61,7 +61,7 @@ export const sendRestorePasswordEmail: RequestHandler = async (req, res: AppRes,
   const email: string = req.body.email
 
   try {
-    const user = await UserCRUD.findOne({ where: { email } }, next)
+    const user = await userCRUD.findOne({ where: { email } }, next)
     if (!user) return errorHandler({ message: 'User not found', statusCode: 403 }, next)
     const token = await generateToken(user.id, '15m')
 
@@ -95,11 +95,11 @@ export const restorePassword: RequestHandler = async (req, res: AppRes, next) =>
       return errorHandler({ message: 'Not authenticated', statusCode: 401, details: 'Invalid token' }, next)
     }
 
-    user = await UserCRUD.findOne({ where: { id: decodedToken.payload.userId as number } }, next)
+    user = await userCRUD.findOne({ where: { id: decodedToken.payload.userId as number } }, next)
     if (!user) return errorHandler({ message: 'User not found', statusCode: 403 }, next)
 
     const hashedPassword = await bcrypt.hash(password, 12)
-    UserCRUD.update(user, { password: hashedPassword }, next)
+    userCRUD.update(user, { password: hashedPassword }, next)
 
     res.status(200).json({ message: 'Password was restored', code: ResCodes.RESET_PASSWORD })
   } catch (err) {
@@ -133,7 +133,7 @@ export const updateUser: RequestHandler = async (req, res: AppRes<UserPayload>, 
       newData.email = email
     }
 
-    const newUser = await UserCRUD.update(user, newData, next)
+    const newUser = await userCRUD.update(user, newData, next)
     if (!newUser) return errorHandler({ message: 'Failed to update user', statusCode: 500 }, next)
 
     const userState: UserState = { id: newUser.id, email: newUser.email, token: null }
@@ -153,7 +153,7 @@ export const deleteUser: RequestHandler = async (req, res: AppRes, next) => {
       return errorHandler({ message: 'Wrong password', statusCode: 403 }, next)
     }
 
-    const result = await UserCRUD.delete(user.id, next)
+    const result = await userCRUD.delete(user.id, next)
 
     if (result === true) {
       res.status(200).json({ message: 'User was deleted', code: ResCodes.DELETE_USER })

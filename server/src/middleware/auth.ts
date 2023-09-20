@@ -4,7 +4,7 @@ import { RequestHandler } from 'express'
 
 import { SERVER_JWT_SECRET } from '../utils/config'
 import { errorHandler } from '../utils/errors'
-import { UserCRUD } from '../db/crud'
+import { userCRUD } from '../models/user'
 
 const auth: RequestHandler = async (req, res, next) => {
   const authHeader = req.get('Authorization')
@@ -26,7 +26,7 @@ const auth: RequestHandler = async (req, res, next) => {
   req.userId = decodedToken.payload.userId as number
 
   try {
-    const user = await UserCRUD.get({ userId: req.userId }, next)
+    const user = await userCRUD.findOne({ where: { id: req.userId } }, next)
     req.user = user!
   } catch (err) {
     errorHandler({ message: 'Failed to authenticate', statusCode: 500, details: err }, next)

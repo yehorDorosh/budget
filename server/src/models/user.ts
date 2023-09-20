@@ -25,4 +25,4 @@ export class User {
   updatedAt: Date
 }
 
-export const UserCRUD = new ModelCRUD(User, BudgetDataSource)
+export const userCRUD = new ModelCRUD(User, BudgetDataSource)

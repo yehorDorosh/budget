@@ -2,7 +2,8 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGenerat
 
 import { User } from './user'
 import { Category } from './category'
-// import { CategoryType } from '../types/enums'
+import { BudgetDataSource } from '../db/data-source'
+import { BudgetItemCRUD } from '../db/budget-item-crud'
 
 @Entity('budget')
 export class BudgetItem {
@@ -39,3 +40,5 @@ export class BudgetItem {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date
 }
+
+export const budgetItemCRUD = new BudgetItemCRUD(BudgetItem, BudgetDataSource)

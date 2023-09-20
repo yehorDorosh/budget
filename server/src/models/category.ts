@@ -3,6 +3,8 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, Pri
 import { User } from './user'
 import { BudgetItem } from './budget-item'
 import { CategoryType } from '../types/enums'
+import { BudgetDataSource } from '../db/data-source'
+import { ModelCRUD } from '../db/model-crud'
 
 @Entity('categories')
 export class Category {
@@ -28,3 +30,5 @@ export class Category {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date
 }
+
+export const categoryCRUD = new ModelCRUD(Category, BudgetDataSource)
