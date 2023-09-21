@@ -125,16 +125,18 @@ export const updateUser: RequestHandler = async (req, res: AppRes<UserPayload>, 
   const newData: { email?: string; password?: string } = {}
 
   try {
+    let newUser: User | null = null
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 12)
       newData.password = hashedPassword
+      newUser = await userCRUD.update(user, { password: hashedPassword }, next)
     }
 
     if (email) {
       newData.email = email
+      newUser = await userCRUD.update(user, { email }, next)
     }
 
-    const newUser = await userCRUD.update(user, newData, next)
     if (!newUser) return errorHandler({ message: 'Failed to update user', statusCode: 500 }, next)
 
     const userState: UserState = { id: newUser.id, email: newUser.email, token: null }

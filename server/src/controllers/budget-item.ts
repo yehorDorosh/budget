@@ -86,7 +86,10 @@ export const updateBudgetItem: RequestHandler = async (req, res: AppRes<BudgetIt
     const budgetItem = await budgetItemCRUD.findOne({ where: { id: budgetItemId } }, next)
     if (!budgetItem) return errorHandler({ message: 'updateBudgetItem failed. No budget item with this id', statusCode: 400 }, next)
 
-    const updatedBudgetItem = await budgetItemCRUD.update(budgetItem, { name, value, userDate, categoryId, ignore }, next)
+    const category = await categoryCRUD.findOne({ where: { id: categoryId } }, next)
+    if (!category) return errorHandler({ message: 'updateBudgetItem failed. No category with this id', statusCode: 400 }, next)
+
+    const updatedBudgetItem = await budgetItemCRUD.update(budgetItem, { name, value, userDate, category, ignore }, next)
     if (!updatedBudgetItem) return errorHandler({ message: 'updateBudgetItem failed. BudgetItemCRUD.update failed', statusCode: 404 }, next)
 
     const budgetItems = await budgetItemCRUD.findManyWithFilters(user.id, parseFilterQuery(req), next)
