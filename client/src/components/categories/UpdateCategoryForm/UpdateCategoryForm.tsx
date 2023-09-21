@@ -21,7 +21,7 @@ const UpdateCategoryForm: FC<Props> = ({ token, id, defaultName, defaultCategory
   const { formMarkup } = useForm(
     [
       {
-        id: 'name',
+        id: 'updateName',
         name: 'name',
         type: 'text',
         label: 'Category name',
@@ -33,7 +33,7 @@ const UpdateCategoryForm: FC<Props> = ({ token, id, defaultName, defaultCategory
         defaultValue: defaultName
       },
       {
-        id: 'categoryTypeExpense',
+        id: 'updateCategoryTypeExpense',
         name: 'categoryType',
         type: 'radio',
         label: 'Log type Expense',
@@ -45,7 +45,7 @@ const UpdateCategoryForm: FC<Props> = ({ token, id, defaultName, defaultCategory
         attrs: { defaultChecked: defaultCategoryType === CategoryType.EXPENSE }
       },
       {
-        id: 'categoryTypeIncome',
+        id: 'updateCategoryTypeIncome',
         name: 'categoryType',
         type: 'radio',
         label: 'Log type Income',

@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { notEmptyValidator, categoryValidator } from '../utils/validators'
+import { notEmptyValidator, categoryValidator, categoryTypeValidator } from '../utils/validators'
 
 import { addCategory, updateCategory, deleteCategory, getCategories } from '../controllers/categories'
 import auth from '../middleware/auth'
@@ -10,9 +10,9 @@ const router = express.Router()
 
 router.post(
   '/add-category',
-  [notEmptyValidator('name'), categoryValidator()],
-  validationErrorsHandler('Categories validation failed'),
   auth,
+  [notEmptyValidator('name'), categoryValidator(), categoryTypeValidator()],
+  validationErrorsHandler('Add Category validation failed.'),
   addCategory
 )
 
@@ -22,9 +22,9 @@ router.delete('/delete-category', auth, deleteCategory)
 
 router.put(
   '/update-category',
-  [notEmptyValidator('name'), notEmptyValidator('categoryType')],
-  validationErrorsHandler('Categories validation failed'),
   auth,
+  [notEmptyValidator('name'), notEmptyValidator('id'), categoryValidator(), categoryTypeValidator()],
+  validationErrorsHandler('Update category validation failed.'),
   updateCategory
 )
 

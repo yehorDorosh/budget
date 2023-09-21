@@ -1,8 +1,9 @@
 import { body, oneOf } from 'express-validator'
-import { BudgetDataSource } from '../db/data-source'
 
+import { BudgetDataSource } from '../db/data-source'
 import { User } from '../models/user'
 import { Category } from '../models/category'
+import { CategoryType } from '../types/enums'
 
 export const emailValidator = (fieldName: string = 'email', checkIsExisted: boolean = true) => {
   return body(fieldName)
@@ -37,11 +38,30 @@ export const atLeastOneNotEmptyValidator = (...fields: string[]) => {
 export const categoryValidator = (fieldName: string = 'name') => {
   return body(fieldName)
     .trim()
+    .custom((value, { req }) => {
+      const user = req.user!
+      const categoryType = req.body.categoryType
+      if (!Object.values(CategoryType).includes(categoryType)) {
+        return Promise.reject('Invalid categoryType')
+      }
+
+      return BudgetDataSource.manager
+        .findOne(Category, { where: { name: value, user: { id: user.id }, categoryType } })
+        .then((category) => {
+          if (category) {
+            return Promise.reject('Category with this name already exists!')
+          }
+        })
+    })
+}
+
+export const categoryTypeValidator = (fieldName: string = 'categoryType') => {
+  return body(fieldName)
+    .trim()
     .custom((value) => {
-      return BudgetDataSource.manager.findOneBy(Category, { name: value }).then((category) => {
-        if (category) {
-          return Promise.reject('Category with this name already exists!')
-        }
-      })
+      if (!Object.values(CategoryType).includes(value)) {
+        return Promise.reject('Invalid categoryType')
+      }
+      return true
     })
 }
