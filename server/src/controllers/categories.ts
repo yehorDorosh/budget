@@ -53,7 +53,7 @@ export const deleteCategory: RequestHandler = async (req, res: AppRes<Categories
     const categories = await categoryCRUD.findMany({ where: { user: { id: user.id } }, order: { categoryType: 'DESC', name: 'ASC' } }, next)
 
     res.status(200).json({
-      message: 'Category list successfully provided',
+      message: 'Category was deleted successfully.',
       code: ResCodes.GET_CATEGORIES,
       payload: { categories: categories || [] }
     })
@@ -79,7 +79,7 @@ export const updateCategory: RequestHandler = async (req, res: AppRes<Categories
     const categories = await categoryCRUD.findMany({ where: { user: { id: user.id } }, order: { categoryType: 'DESC', name: 'ASC' } }, next)
 
     res.status(200).json({
-      message: 'Category list successfully provided',
+      message: 'Category was updated successfully.',
       code: ResCodes.UPDATE_CATEGORY,
       payload: { categories: categories || [] }
     })

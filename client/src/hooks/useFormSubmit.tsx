@@ -54,7 +54,7 @@ const useSubmit = () => {
 
       setIsLoading(false)
       if (isAxiosErrorPayload(res)) {
-        if (res.status >= 300 && res.status !== 403 && res.status !== 422) navigate('/500', { state: { data: res } })
+        if (res.status >= 300 && res.status !== 401 && res.status !== 403 && res.status !== 422) navigate('/500', { state: { data: res } })
         if (res.data.validationErrors) setValidationErrors(res.data.validationErrors)
         return res
       }

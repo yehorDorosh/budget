@@ -45,7 +45,7 @@ const LoginForm = () => {
       onSubmit: () => setWrongCredentials(false),
       onGetResponse: () => navigate('/', { replace: true }),
       onReject: (res, isAxiosErr) => {
-        if (isAxiosErr && res.status === 403) setWrongCredentials(true)
+        if (isAxiosErr && (res.status === 403 || res.status === 401)) setWrongCredentials(true)
       }
     }
   )
