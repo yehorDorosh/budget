@@ -8,7 +8,6 @@ import { budgetItemCRUD } from '../db/data-source'
 import { categoryCRUD } from '../db/data-source'
 
 const parseFilterQuery = (req: Request): BudgetItemsFilters => {
-  console.log(req.query.categoryType)
   const month = req.query.month ? req.query.month.toString() : undefined
   const year = req.query.year ? req.query.year.toString() : undefined
   const active = req.query.active ? +req.query.active : undefined
