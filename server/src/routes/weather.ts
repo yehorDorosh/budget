@@ -9,12 +9,12 @@ const router = express.Router()
 router.post(
   '/',
   [notEmptyValidator('id'), notEmptyValidator('t'), notEmptyValidator('p'), notEmptyValidator('v')],
-  validationErrorsHandler('Add weather item validation failed'),
+  validationErrorsHandler('Add weather item validation failed.'),
   saveWeaterData
 )
 
 router.get('/', getWeatherData)
 
-router.get('/last', getLastWeatherData)
+router.get('/last-weather', getLastWeatherData)
 
 export default router

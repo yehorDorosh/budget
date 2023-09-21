@@ -29,7 +29,7 @@ export const getWeather: StoreAction<WeatherPayload> = ({ id, dbId, dateFrom, da
 export const getLastWeather: StoreAction<WeatherPayload> = () => {
   return async (dispatch, getState) => {
     try {
-      const { data, status } = await axios.get<JSONResponse<WeatherPayload>>('/api/weather/last')
+      const { data, status } = await axios.get<JSONResponse<WeatherPayload>>('/api/weather/last-weather')
       if (data.payload && data.payload.weather) {
         dispatch(weatherActions.setWeather(data.payload.weather))
       }

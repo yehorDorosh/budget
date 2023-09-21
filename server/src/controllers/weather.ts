@@ -13,11 +13,11 @@ export const saveWeaterData: RequestHandler = async (req, res, next) => {
 
   try {
     const weather = await weatherCRUD.add({ id, t, p, v }, next)
-    if (!weather) return errorHandler({ message: 'addWeather failed. WeatherCRUD.add failed', statusCode: 404 }, next)
+    if (!weather) return errorHandler({ message: 'Failed to create weather item.' }, next)
 
-    res.status(201).json({ message: 'Create new weather data', payload: { weather } })
+    res.status(201).json({ message: 'New weather data created successfuly.', payload: { weather } })
   } catch (err) {
-    errorHandler({ message: 'Failed to create budget item', details: err }, next)
+    errorHandler({ message: 'Failed to create weather item.', details: err }, next)
   }
 }
 
@@ -26,6 +26,7 @@ export const getWeatherData: RequestHandler = async (req, res, next) => {
   const dbId: string | null = req.query.dbId ? String(req.query.dbId) : null
   const dateFrom: string | null = req.query.dateFrom ? String(req.query.dateFrom) : null
   const dateTo: string | null = req.query.dateTo ? String(req.query.dateTo) : null
+
   interface Options extends FindManyOptions<Weather> {
     where: FindManyOptions<Weather>['where'] & {
       id?: string
@@ -42,21 +43,19 @@ export const getWeatherData: RequestHandler = async (req, res, next) => {
 
   try {
     const weather = await weatherCRUD.findMany(options, next)
-    if (!weather) return errorHandler({ message: 'getWeather failed. WeatherCRUD.get failed', statusCode: 404 }, next)
 
-    res.status(200).json({ message: 'Get weather', payload: { weather } })
+    res.status(200).json({ message: 'Get weather successfuly.', payload: { weather: weather || [] } })
   } catch (err) {
-    errorHandler({ message: 'Failed to get weather', details: err }, next)
+    errorHandler({ message: 'Failed to get weather.', details: err }, next)
   }
 }
 
 export const getLastWeatherData: RequestHandler = async (req, res, next) => {
   try {
     const weather = await weatherCRUD.getLast(next)
-    if (!weather) return errorHandler({ message: 'getWeather failed. WeatherCRUD.getLat failed', statusCode: 404 }, next)
 
-    res.status(200).json({ message: 'Get last weather', payload: { weather } })
+    res.status(200).json({ message: 'Get last weather successfuly.', payload: { weather: weather || [] } })
   } catch (err) {
-    errorHandler({ message: 'Failed to get last weather', details: err }, next)
+    errorHandler({ message: 'Failed to get last weather.', details: err }, next)
   }
 }
