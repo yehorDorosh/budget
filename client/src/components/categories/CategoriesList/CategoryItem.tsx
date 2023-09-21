@@ -38,7 +38,7 @@ const ListItem: FC<Props> = ({ id, value, categoryType, token }) => {
           onSave={() => setOpenForm(false)}
         />
       </BaseModal>
-      <BaseCard className={`my-3`}>
+      <BaseCard className={`my-3 ${categoryType === CategoryType.EXPENSE ? 'text-bg-dark' : 'text-bg-success'}`}>
         <div className={classes.row}>
           <div>{value}</div>
           <div className="px-3">{categoryType}</div>

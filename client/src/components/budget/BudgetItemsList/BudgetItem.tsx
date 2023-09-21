@@ -33,7 +33,7 @@ const ListItem: FC<Props> = ({ budgetItem, token }) => {
       <BaseModal isOpen={openForm} onClose={() => setOpenForm(false)} title="Edit">
         <UpdateBudgetItemForm token={token} currentBudgetItem={budgetItem} onSave={() => setOpenForm(false)} />
       </BaseModal>
-      <BaseCard className={`my-3 ${budgetItem.ignore === true ? 'text-bg-secondary' : 'text-bg-primary'}`}>
+      <BaseCard className={`my-3 ${budgetItem.ignore === true ? 'text-bg-secondary' : 'text-bg-success'}`}>
         <div className={classes.row}>
           <div className={`${classes.name}`}>{budgetItem.name}</div>
           <div className={`${classes.data}`}>
