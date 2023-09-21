@@ -7,7 +7,7 @@ import { errorHandler } from '../utils/errors'
 export class BudgetItemCRUD extends ModelCRUD<BudgetItem> {
   async findManyWithFilters(userId: UserId, filters: BudgetItemsFilters, next: NextFunction) {
     if (!userId) {
-      errorHandler({ message: 'Invalid search params for getBudgetItems(CRUD)', statusCode: 500 }, next)
+      errorHandler({ message: 'Invalid search params for findManyWithFilters(CRUD)', statusCode: 500 }, next)
       return null
     }
     const queryBuilder = this.dataSource.getRepository(BudgetItem).createQueryBuilder('budget')
@@ -43,7 +43,7 @@ export class BudgetItemCRUD extends ModelCRUD<BudgetItem> {
     const budgetItems = await queryBuilder.orderBy('budget.userDate', 'DESC').getMany()
 
     if (!budgetItems) {
-      errorHandler({ message: 'No budget items for this user', statusCode: 403 }, next)
+      errorHandler({ message: 'No budget items for this user', statusCode: 400 }, next)
       return null
     }
     return budgetItems
