@@ -9,7 +9,7 @@ import { userCRUD } from '../db/data-source'
 const auth: RequestHandler = async (req, res, next) => {
   const authHeader = req.get('Authorization')
   if (!authHeader) {
-    return errorHandler({ message: 'Not authenticated', statusCode: 401 }, next)
+    return errorHandler({ message: 'Not authenticated. Invalid Authorization header.', statusCode: 401 }, next)
   }
   const token = authHeader.split(' ')[1]
   let decodedToken: jose.JWTVerifyResult
@@ -17,19 +17,21 @@ const auth: RequestHandler = async (req, res, next) => {
   try {
     decodedToken = await jose.jwtVerify(token, new TextEncoder().encode(SERVER_JWT_SECRET!))
   } catch (err) {
-    return errorHandler({ message: 'Not authenticated', statusCode: 401, details: err }, next)
+    return errorHandler({ message: 'Not authenticated.  Invalid token.', statusCode: 401, details: err }, next)
   }
 
   if (!decodedToken || !decodedToken.payload || !decodedToken.payload.userId) {
-    return errorHandler({ message: 'Not authenticated', statusCode: 401, details: 'Invalid token' }, next)
+    return errorHandler({ message: 'Failed to authenticate. Invalid token.', statusCode: 401 }, next)
   }
-  req.userId = decodedToken.payload.userId as number
+  req.userId = +decodedToken.payload.userId
 
   try {
     const user = await userCRUD.findOne({ where: { id: req.userId } }, next)
-    req.user = user!
+    if (!user) return errorHandler({ message: 'Failed to authenticate. User not found.', statusCode: 403 }, next)
+
+    req.user = user
   } catch (err) {
-    errorHandler({ message: 'Failed to authenticate', statusCode: 500, details: err }, next)
+    errorHandler({ message: 'Failed to authenticate.', statusCode: 403, details: err }, next)
   }
   next()
 }
