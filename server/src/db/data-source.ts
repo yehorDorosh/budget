@@ -28,8 +28,8 @@ export const BudgetDataSource = new DataSource({
   password: isDev ? DB_PASSWORD_DEV : DB_PASSWORD,
   database: DB_NAME,
   entities: [User, Category, BudgetItem, Weather],
-  logging: true,
-  synchronize: true
+  logging: isDev,
+  synchronize: isDev
 })
 
 export const userCRUD = new ModelCRUD(User, BudgetDataSource)

@@ -1,0 +1,28 @@
+{
+  "name": "app-budget-builder",
+  "version": "0.1.0",
+  "description": "The scripts which should help to build all app for deploying\"",
+  "main": "index.js",
+  "scripts": {
+    "build:server": "npm --prefix ./server run build",
+    "build:client": "npm --prefix ./client run build",
+    "cp": "gulp",
+    "server:install": "npm --prefix ./build install --production",
+    "build": "npm-run-all build:server build:client cp server:install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yehorDorosh/budget.git"
+  },
+  "author": "Egor Dorosh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yehorDorosh/budget/issues"
+  },
+  "homepage": "https://github.com/yehorDorosh/budget#readme",
+  "devDependencies": {
+    "del": "^7.1.0",
+    "gulp": "^4.0.2",
+    "npm-run-all": "^4.1.5"
+  }
+}

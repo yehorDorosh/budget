@@ -16,15 +16,17 @@ import { Category } from './models/category'
 const app = express()
 
 app.use(express.static(path.join(__dirname, 'public')))
-app.use(express.static(path.join(__dirname, '..', '..', 'client', 'build')))
+if (isDev) app.use(express.static(path.join(__dirname, '..', '..', 'client', 'build')))
 
 app.use(bodyParser.json())
 
-app.get('/api', async (req, res, next) => {
-  const categoryCRUD = new ModelCRUD(Category, BudgetDataSource)
-  const result = await categoryCRUD.findOne({ where: { name: 'car' } }, next)
-  res.status(200).json({ message: 'Hello World form api', result })
-})
+if (isDev) {
+  app.get('/api', async (req, res, next) => {
+    const categoryCRUD = new ModelCRUD(Category, BudgetDataSource)
+    const result = await categoryCRUD.findOne({ where: { name: 'car' } }, next)
+    res.status(200).json({ message: 'Hello World form api', result })
+  })
+}
 
 app.use('/api/user', userRouter)
 app.use('/api/categories', categoriesRouter)
@@ -32,7 +34,11 @@ app.use('/api/budget', budgetItemRouter)
 app.use('/api/weather', weatherRouter)
 
 app.use((req, res) => {
-  res.status(200).sendFile(path.join(__dirname, '..', '..', 'client', 'build', 'index.html'))
+  if (isDev) {
+    res.status(200).sendFile(path.join(__dirname, '..', '..', 'client', 'build', 'index.html'))
+  } else {
+    res.status(200).sendFile(path.join(__dirname, 'public', 'index.html'))
+  }
 })
 
 app.use(expressErrorHandler)
