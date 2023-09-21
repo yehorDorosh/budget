@@ -15,7 +15,8 @@ export enum ResCodes {
   CREATE_BUDGET_ITEM,
   GET_BUDGET_ITEMS,
   UPDATE_BUDGET_ITEM,
-  DELETE_BUDGET_ITEM
+  DELETE_BUDGET_ITEM,
+  GENERAL_RESPONSE
 }
 
 export enum CategoryType {

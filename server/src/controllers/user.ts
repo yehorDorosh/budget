@@ -9,7 +9,7 @@ import { transport } from '../utils/email'
 import { SERVER_JWT_SECRET, SERVER_EMAIL_USER } from '../utils/config'
 import { errorHandler } from '../utils/errors'
 import { User } from '../models/user'
-import { UserCRUD } from '../db/crud'
+import { userCRUD } from '../db/data-source'
 import { SERVER_LOGOUT_TIMER } from '../utils/config'
 
 function generateToken(userId: number, time: string = SERVER_LOGOUT_TIMER!) {
@@ -23,7 +23,7 @@ export const signup: RequestHandler = async (req, res: AppRes<UserPayload>, next
 
   try {
     const hashedPassword = await bcrypt.hash(password, 12)
-    const user = await UserCRUD.add(email, hashedPassword, next)
+    const user = await userCRUD.add({ email, password: hashedPassword }, next)
     if (!user) return errorHandler({ message: 'Failed to create new user', statusCode: 500 }, next)
 
     const token = await generateToken(user.id)
@@ -41,7 +41,7 @@ export const login: RequestHandler = async (req, res: AppRes<UserPayload>, next)
   const password: string = req.body.password
 
   try {
-    const user = await UserCRUD.get({ email }, next)
+    const user = await userCRUD.findOne({ where: { email } }, next)
     if (!user) return errorHandler({ message: 'User not found', statusCode: 403 }, next)
 
     const isEqual = await bcrypt.compare(password, user.password)
@@ -62,7 +62,7 @@ export const sendRestorePasswordEmail: RequestHandler = async (req, res: AppRes,
   const email: string = req.body.email
 
   try {
-    const user = await UserCRUD.get({ email }, next)
+    const user = await userCRUD.findOne({ where: { email } }, next)
     if (!user) return errorHandler({ message: 'User not found', statusCode: 403 }, next)
     const token = await generateToken(user.id, '15m')
 
@@ -96,11 +96,11 @@ export const restorePassword: RequestHandler = async (req, res: AppRes, next) =>
       return errorHandler({ message: 'Not authenticated', statusCode: 401, details: 'Invalid token' }, next)
     }
 
-    user = await UserCRUD.get({ userId: decodedToken.payload.userId as number }, next)
+    user = await userCRUD.findOne({ where: { id: decodedToken.payload.userId as number } }, next)
     if (!user) return errorHandler({ message: 'User not found', statusCode: 403 }, next)
 
     const hashedPassword = await bcrypt.hash(password, 12)
-    UserCRUD.update(user, { password: hashedPassword }, next)
+    userCRUD.update(user, { password: hashedPassword }, next)
 
     res.status(200).json({ message: 'Password was restored', code: ResCodes.RESET_PASSWORD })
   } catch (err) {
@@ -120,13 +120,23 @@ export const getUserInfo: RequestHandler = async (req, res: AppRes<UserPayload>)
 
 export const updateUser: RequestHandler = async (req, res: AppRes<UserPayload>, next) => {
   const user = req.user!
-  const email: string = req.body.email
-  const password: string = req.body.password
+  const email: string | undefined = req.body.email
+  const password: string | undefined = req.body.password
+  const newData: { email?: string; password?: string } = {}
 
   try {
-    const hashedPassword = password ? await bcrypt.hash(password, 12) : undefined
+    let newUser: User | null = null
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 12)
+      newData.password = hashedPassword
+      newUser = await userCRUD.update(user, { password: hashedPassword }, next)
+    }
 
-    const newUser = await UserCRUD.update(user, { email, password: hashedPassword }, next)
+    if (email) {
+      newData.email = email
+      newUser = await userCRUD.update(user, { email }, next)
+    }
+
     if (!newUser) return errorHandler({ message: 'Failed to update user', statusCode: 500 }, next)
 
     const userState: UserState = { id: newUser.id, email: newUser.email, token: null }
@@ -146,9 +156,13 @@ export const deleteUser: RequestHandler = async (req, res: AppRes, next) => {
       return errorHandler({ message: 'Wrong password', statusCode: 403 }, next)
     }
 
-    await UserCRUD.delete(user, next)
+    const result = await userCRUD.delete(user.id, next)
 
-    res.status(200).json({ message: 'User was deleted', code: ResCodes.DELETE_USER })
+    if (result === true) {
+      res.status(200).json({ message: 'User was deleted', code: ResCodes.DELETE_USER })
+    } else {
+      res.status(200).json({ message: 'No user to delete', code: ResCodes.GENERAL_RESPONSE })
+    }
   } catch (err) {
     errorHandler({ message: 'Failed to delete user', details: err }, next)
   }

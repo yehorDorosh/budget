@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import { WeatherCRUD } from '../db/crud'
+import { weatherCRUD } from '../db/data-source'
 import { errorHandler } from '../utils/errors'
 import { Between, FindOperator } from 'typeorm'
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions'
@@ -12,7 +12,7 @@ export const saveWeaterData: RequestHandler = async (req, res, next) => {
   const v: number = req.body.v
 
   try {
-    const weather = await WeatherCRUD.add(id, t, p, v, next)
+    const weather = await weatherCRUD.add({ id, t, p, v }, next)
     if (!weather) return errorHandler({ message: 'addWeather failed. WeatherCRUD.add failed', statusCode: 404 }, next)
 
     res.status(201).json({ message: 'Create new weather data', payload: { weather } })
@@ -41,7 +41,7 @@ export const getWeatherData: RequestHandler = async (req, res, next) => {
   }
 
   try {
-    const weather = await WeatherCRUD.get(options, next)
+    const weather = await weatherCRUD.findMany(options, next)
     if (!weather) return errorHandler({ message: 'getWeather failed. WeatherCRUD.get failed', statusCode: 404 }, next)
 
     res.status(200).json({ message: 'Get weather', payload: { weather } })
@@ -52,7 +52,7 @@ export const getWeatherData: RequestHandler = async (req, res, next) => {
 
 export const getLastWeatherData: RequestHandler = async (req, res, next) => {
   try {
-    const weather = await WeatherCRUD.getLast(next)
+    const weather = await weatherCRUD.getLast(next)
     if (!weather) return errorHandler({ message: 'getWeather failed. WeatherCRUD.getLat failed', statusCode: 404 }, next)
 
     res.status(200).json({ message: 'Get last weather', payload: { weather } })

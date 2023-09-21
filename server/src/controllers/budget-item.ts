@@ -4,10 +4,10 @@ import { RequestHandler } from 'express'
 import { CategoryType, ResCodes } from '../types/enums'
 import { AppRes } from '../types/express/custom-response'
 import { errorHandler } from '../utils/errors'
-import { CategoryCRUD, budgetItemCRUD } from '../db/crud'
+import { budgetItemCRUD } from '../db/data-source'
+import { categoryCRUD } from '../db/data-source'
 
 const parseFilterQuery = (req: Request): BudgetItemsFilters => {
-  console.log(req.query.categoryType)
   const month = req.query.month ? req.query.month.toString() : undefined
   const year = req.query.year ? req.query.year.toString() : undefined
   const active = req.query.active ? +req.query.active : undefined
@@ -26,13 +26,13 @@ export const addBudgetItem: RequestHandler = async (req, res: AppRes<BudgetItems
   const userDate: Date = new Date(req.body.userDate)
 
   try {
-    const category = await CategoryCRUD.getById(categoryId, next)
+    const category = await categoryCRUD.findOne({ where: { id: categoryId } }, next)
     if (!category) return errorHandler({ message: 'addBudgetItem failed. CategoryCRUD.getById failed', statusCode: 404 }, next)
 
-    const budgetItem = await budgetItemCRUD.add(user, category, name, value, userDate, next)
+    const budgetItem = await budgetItemCRUD.add({ user, category, name, value, userDate }, next)
     if (!budgetItem) return errorHandler({ message: 'addBudgetItem failed. BudgetItemCRUD.add failed', statusCode: 404 }, next)
 
-    const budgetItems = await budgetItemCRUD.get(user.id, next, parseFilterQuery(req))
+    const budgetItems = await budgetItemCRUD.findManyWithFilters(user.id, parseFilterQuery(req), next)
 
     res
       .status(201)
@@ -46,7 +46,7 @@ export const getBudgetItems: RequestHandler = async (req, res: AppRes<BudgetItem
   const user = req.user!
 
   try {
-    const budgetItems = await budgetItemCRUD.get(user.id, next, parseFilterQuery(req))
+    const budgetItems = await budgetItemCRUD.findManyWithFilters(user.id, parseFilterQuery(req), next)
     if (!budgetItems) return errorHandler({ message: 'getBudgetItems failed. BudgetItemCRUD.get failed', statusCode: 404 }, next)
 
     res.status(200).json({ message: 'Get budget items', code: ResCodes.GET_BUDGET_ITEMS, payload: { budgetItems } })
@@ -61,10 +61,10 @@ export const deleteBudgetItem: RequestHandler = async (req, res: AppRes<BudgetIt
   if (!budgetItemId) return errorHandler({ message: 'deleteBudgetItem failed. BudgetItemId is null', statusCode: 404 }, next)
 
   try {
-    const budgetItem = await budgetItemCRUD.delete(budgetItemId, next)
-    if (!budgetItem) return errorHandler({ message: 'deleteBudgetItem failed. BudgetItemCRUD.delete failed', statusCode: 404 }, next)
+    const result = await budgetItemCRUD.delete(budgetItemId, next)
+    if (!result) return errorHandler({ message: 'deleteBudgetItem failed. No budget item with this id', statusCode: 404 }, next)
 
-    const budgetItems = await budgetItemCRUD.get(user.id, next, parseFilterQuery(req))
+    const budgetItems = await budgetItemCRUD.findManyWithFilters(user.id, parseFilterQuery(req), next)
     if (!budgetItems) return errorHandler({ message: 'deleteBudgetItem failed. BudgetItemCRUD.get failed', statusCode: 404 }, next)
 
     res.status(200).json({ message: 'Delete budget item', code: ResCodes.DELETE_BUDGET_ITEM, payload: { budgetItems } })
@@ -83,10 +83,16 @@ export const updateBudgetItem: RequestHandler = async (req, res: AppRes<BudgetIt
   const ignore: boolean = req.body.ignore
 
   try {
-    const budgetItem = await budgetItemCRUD.update(budgetItemId, { name, value, userDate, categoryId, ignore }, next)
-    if (!budgetItem) return errorHandler({ message: 'updateBudgetItem failed. BudgetItemCRUD.update failed', statusCode: 404 }, next)
+    const budgetItem = await budgetItemCRUD.findOne({ where: { id: budgetItemId } }, next)
+    if (!budgetItem) return errorHandler({ message: 'updateBudgetItem failed. No budget item with this id', statusCode: 400 }, next)
 
-    const budgetItems = await budgetItemCRUD.get(user.id, next, parseFilterQuery(req))
+    const category = await categoryCRUD.findOne({ where: { id: categoryId } }, next)
+    if (!category) return errorHandler({ message: 'updateBudgetItem failed. No category with this id', statusCode: 400 }, next)
+
+    const updatedBudgetItem = await budgetItemCRUD.update(budgetItem, { name, value, userDate, category, ignore }, next)
+    if (!updatedBudgetItem) return errorHandler({ message: 'updateBudgetItem failed. BudgetItemCRUD.update failed', statusCode: 404 }, next)
+
+    const budgetItems = await budgetItemCRUD.findManyWithFilters(user.id, parseFilterQuery(req), next)
     if (!budgetItems) return errorHandler({ message: 'updateBudgetItem failed. BudgetItemCRUD.get failed', statusCode: 404 }, next)
 
     res.status(200).json({ message: 'Update budget item', code: ResCodes.UPDATE_BUDGET_ITEM, payload: { budgetItems } })

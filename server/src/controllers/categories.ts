@@ -1,10 +1,9 @@
 import { RequestHandler } from 'express'
 
-import { ResCodes } from '../types/enums'
+import { ResCodes, CategoryType } from '../types/enums'
 import { AppRes } from '../types/express/custom-response'
 import { errorHandler } from '../utils/errors'
-import { CategoryCRUD } from '../db/crud'
-import { CategoryType } from '../types/enums'
+import { categoryCRUD } from '../db/data-source'
 
 export const addCategory: RequestHandler = async (req, res: AppRes<CategoriesPayload>, next) => {
   const user = req.user!
@@ -16,10 +15,10 @@ export const addCategory: RequestHandler = async (req, res: AppRes<CategoriesPay
   const categoryType: CategoryType = req.body.categoryType
 
   try {
-    const category = await CategoryCRUD.add(user, name, categoryType, next)
+    const category = await categoryCRUD.add({ user, name, categoryType }, next)
     if (!category) return errorHandler({ message: 'addCategory failed. CategoryCRUD.add failed', statusCode: 403 }, next)
 
-    const categories = await CategoryCRUD.get(user.id, next)
+    const categories = await categoryCRUD.findMany({ where: { user: { id: user.id } }, order: { categoryType: 'DESC', name: 'ASC' } }, next)
 
     res.status(201).json({ message: 'Create new category', code: ResCodes.CREATE_CATEGORY, payload: { categories: categories || [] } })
   } catch (err) {
@@ -31,7 +30,7 @@ export const getCategories: RequestHandler = async (req, res: AppRes<CategoriesP
   const userId = req.userId!
 
   try {
-    const categories = await CategoryCRUD.get(userId, next)
+    const categories = await categoryCRUD.findMany({ where: { user: { id: userId } }, order: { categoryType: 'DESC', name: 'ASC' } }, next)
 
     res
       .status(200)
@@ -50,10 +49,14 @@ export const deleteCategory: RequestHandler = async (req, res: AppRes<Categories
   }
 
   try {
-    const category = await CategoryCRUD.delete(categoryId, next)
-    if (!category) return errorHandler({ message: 'deleteCategory failed. CategoryCRUD.delete failed', statusCode: 403 }, next)
+    const result = await categoryCRUD.delete(categoryId, next)
+    if (!result)
+      return res.status(200).json({
+        message: 'No category to delete',
+        code: ResCodes.GENERAL_RESPONSE
+      })
 
-    const categories = await CategoryCRUD.get(user.id, next)
+    const categories = await categoryCRUD.findMany({ where: { user: { id: user.id } }, order: { categoryType: 'DESC', name: 'ASC' } }, next)
 
     res.status(200).json({
       message: 'Category list successfully provided',
@@ -62,7 +65,7 @@ export const deleteCategory: RequestHandler = async (req, res: AppRes<Categories
     })
   } catch (err) {
     console.log(err)
-    errorHandler({ message: 'Failed to create new user', details: err }, next)
+    errorHandler({ message: 'Failed to create new category', details: err }, next)
   }
 }
 
@@ -77,10 +80,13 @@ export const updateCategory: RequestHandler = async (req, res: AppRes<Categories
   const categoryType: CategoryType = req.body.categoryType
 
   try {
-    const category = await CategoryCRUD.update(categoryId, { name, categoryType }, next)
-    if (!category) return errorHandler({ message: 'updateCategory failed. CategoryCRUD.update failed', statusCode: 403 }, next)
+    const category = await categoryCRUD.findOne({ where: { id: categoryId } }, next)
+    if (!category) return errorHandler({ message: 'updateCategory failed. No category with this id', statusCode: 400 }, next)
 
-    const categories = await CategoryCRUD.get(user.id, next)
+    const updatedCategory = await categoryCRUD.update(category, { name, categoryType }, next)
+    if (!updatedCategory) return errorHandler({ message: 'updateCategory failed. CategoryCRUD.update failed', statusCode: 400 }, next)
+
+    const categories = await categoryCRUD.findMany({ where: { user: { id: user.id } }, order: { categoryType: 'DESC', name: 'ASC' } }, next)
 
     res.status(200).json({
       message: 'Category list successfully provided',
@@ -88,6 +94,6 @@ export const updateCategory: RequestHandler = async (req, res: AppRes<Categories
       payload: { categories: categories || [] }
     })
   } catch (err) {
-    errorHandler({ message: 'Failed to create new user', details: err }, next)
+    errorHandler({ message: 'Failed to update category', details: err }, next)
   }
 }

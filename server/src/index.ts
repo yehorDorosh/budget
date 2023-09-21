@@ -10,7 +10,8 @@ import categoriesRouter from './routes/categories'
 import budgetItemRouter from './routes/budget-item'
 import weatherRouter from './routes/weather'
 import { BudgetDataSource } from './db/data-source'
-import auth from './middleware/auth'
+import { ModelCRUD } from './db/model-crud'
+import { Category } from './models/category'
 
 const app = express()
 
@@ -19,8 +20,10 @@ app.use(express.static(path.join(__dirname, '..', '..', 'client', 'build')))
 
 app.use(bodyParser.json())
 
-app.get('/api', auth, (req, res) => {
-  res.status(200).json({ message: 'Hello World form api' })
+app.get('/api', async (req, res, next) => {
+  const categoryCRUD = new ModelCRUD(Category, BudgetDataSource)
+  const result = await categoryCRUD.findOne({ where: { name: 'car' } }, next)
+  res.status(200).json({ message: 'Hello World form api', result })
 })
 
 app.use('/api/user', userRouter)

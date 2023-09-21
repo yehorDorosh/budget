@@ -2,7 +2,6 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGenerat
 
 import { User } from './user'
 import { Category } from './category'
-// import { CategoryType } from '../types/enums'
 
 @Entity('budget')
 export class BudgetItem {
