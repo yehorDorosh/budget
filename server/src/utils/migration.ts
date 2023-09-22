@@ -40,7 +40,11 @@ async function initDB() {
     database: process.env.DB_NAME || 'budget',
     entities: [User, Category, BudgetItem, Weather],
     logging: true,
-    synchronize: true
+    synchronize: true,
+    ssl: true,
+    extra: {
+      sslMode: 'require'
+    }
   })
 
   try {
