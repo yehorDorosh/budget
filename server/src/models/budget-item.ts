@@ -20,11 +20,11 @@ export class BudgetItem {
   @Column({ type: 'boolean', default: false })
   ignore: boolean
 
-  @ManyToOne(() => User, (user) => user.categories, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.budgetItems, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User
 
-  @ManyToOne(() => Category, (category) => category.budgetItem, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Category, (category) => category.budgetItems, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'category_id' })
   category: Category
 

@@ -20,7 +20,7 @@ export class Category {
   user: User
 
   @OneToMany(() => BudgetItem, (budgetItem) => budgetItem.category)
-  budgetItem: BudgetItem[]
+  budgetItems: BudgetItem[]
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date

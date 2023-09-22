@@ -7,8 +7,10 @@
     "build:server": "npm --prefix ./server run build",
     "build:client": "npm --prefix ./client run build",
     "cp": "gulp",
+    "cp:server": "gulp cpServer",
     "server:install": "npm --prefix ./build install --production",
-    "build": "npm-run-all build:server build:client cp server:install"
+    "build": "npm-run-all build:server build:client cp server:install",
+    "build:fast": "npm-run-all build:server cp:server"
   },
   "repository": {
     "type": "git",

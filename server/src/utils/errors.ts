@@ -37,6 +37,7 @@ export const validationErrorsHandler = (message = 'Validation failed') => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const expressErrorHandler: ErrorRequestHandler = (err: Error, req: Request, res: AppRes, _next: NextFunction) => {
+  console.error(err)
   if (err instanceof ProjectError) {
     res
       .status(err.statusCode)

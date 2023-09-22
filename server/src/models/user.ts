@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 
 import { Category } from './category'
+import { BudgetItem } from './budget-item'
 
 @Entity('users')
 export class User {
@@ -15,6 +16,9 @@ export class User {
 
   @OneToMany(() => Category, (category) => category.user)
   categories: Category[]
+
+  @OneToMany(() => BudgetItem, (budgetItem) => budgetItem.user)
+  budgetItems: BudgetItem[]
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date

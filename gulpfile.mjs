@@ -7,9 +7,9 @@ function cleanDist(cb) {
   cb();
 }
 
-function cpServer() {
+export function cpServer() {
   return src([
-    'server/build/*',
+    'server/build/**/*.js',
     'server/package.json',
     'server/build/.env',
   ]).pipe(dest('build'));

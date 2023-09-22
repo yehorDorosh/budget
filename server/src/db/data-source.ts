@@ -26,10 +26,14 @@ export const BudgetDataSource = new DataSource({
   port: parseInt(isDev ? DB_PORT_DEV! : DB_PORT!),
   username: isDev ? DB_USERNAME_DEV : DB_USERNAME,
   password: isDev ? DB_PASSWORD_DEV : DB_PASSWORD,
-  database: DB_NAME,
+  database: isDev ? 'budget' : DB_NAME,
   entities: [User, Category, BudgetItem, Weather],
-  logging: isDev,
-  synchronize: isDev
+  logging: true,
+  synchronize: true,
+  ssl: !isDev,
+  extra: {
+    sslMode: isDev ? '' : 'require'
+  }
 })
 
 export const userCRUD = new ModelCRUD(User, BudgetDataSource)
