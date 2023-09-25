@@ -148,15 +148,28 @@ async function migrateWeatherData(dataSource: DataSource) {
         return Promise.reject('Migration: weather data is not array')
       }
 
-      for (const weatherItem of weatherData) {
+      const weatherItems = weatherData.map((weatherItem) => {
         const weather = new Weather()
         weather.id = weatherItem.id
         weather.t = weatherItem.t
         weather.p = weatherItem.p
         weather.v = weatherItem.v
         weather.regDate = new Date(weatherItem.reg_date)
-        await dataSource.manager.save(weather)
+        return weather
+      })
+
+      const chunks: Weather[][] = []
+
+      for (let i = 0; i < weatherItems.length; i += 1000) {
+        const chunk: Weather[] = weatherItems.slice(i, i + 1000)
+        chunks.push(chunk)
       }
+
+      for (const [i, chunk] of chunks.entries()) {
+        await dataSource.manager.save(Weather, chunk)
+        console.log(`${i + 1}/${chunks.length}`)
+      }
+
       console.log(`Migration: weather data added`)
       return Promise.resolve()
     }
