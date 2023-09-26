@@ -1,7 +1,9 @@
 import path from 'path'
+import fs from 'fs'
 
 import express from 'express'
 import bodyParser from 'body-parser'
+import morgan from 'morgan'
 
 import { SERVER_PORT, SERVER_PORT_DEV, isDev } from './utils/config'
 import { expressErrorHandler } from './utils/errors'
@@ -14,6 +16,16 @@ import { ModelCRUD } from './db/model-crud'
 import { Category } from './models/category'
 
 const app = express()
+
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'logs', 'server-error.log'), { flags: 'a' })
+app.use(
+  morgan('combined', {
+    stream: accessLogStream,
+    skip(req, res) {
+      return res.statusCode < 400
+    }
+  })
+)
 
 app.use(express.static(path.join(__dirname, 'public')))
 if (isDev) app.use(express.static(path.join(__dirname, '..', '..', 'client', 'build')))

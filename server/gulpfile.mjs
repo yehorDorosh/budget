@@ -7,6 +7,7 @@ import { deleteSync } from 'del'
 import ts from 'gulp-typescript'
 import gulpif from 'gulp-if'
 import sourcemaps from 'gulp-sourcemaps'
+import nodemon from 'gulp-nodemon'
 
 const tsProject = ts.createProject('tsconfig.json')
 const isDev = process.env.NODE_ENV === 'development'
@@ -14,6 +15,10 @@ const isDev = process.env.NODE_ENV === 'development'
 function cleanDist(cb) {
   deleteSync(['./build/*'])
   cb()
+}
+
+function copyEtc() {
+  return src('./src/logs/**/*').pipe(dest('build/logs'))
 }
 
 function copyPublic() {
@@ -37,8 +42,18 @@ function compileTS() {
     .pipe(dest('build'))
 }
 
+function serverWatch() {
+  return nodemon({
+    script: 'build/index.js',
+    watch: 'build',
+    ext: 'js',
+    // env: { NODE_ENV: 'development' },
+    ignore: ['node_modules/**']
+  })
+}
+
 export function dev() {
-  series(cleanDist, copyPublic, copyToPublic, copyEnv, compileTS)()
+  series(cleanDist, copyEtc, copyPublic, copyToPublic, copyEnv, compileTS, serverWatch)()
 
   const tsWatcher = watch('./src/**/*.ts', compileTS)
   tsWatcher.on('unlink', (filepath) => {
@@ -61,6 +76,6 @@ export function dev() {
   }
 }
 
-const build = series(cleanDist, copyPublic, copyToPublic, copyEnv, compileTS)
+const build = series(cleanDist, copyEtc, copyPublic, copyToPublic, copyEnv, compileTS)
 
 export default build
