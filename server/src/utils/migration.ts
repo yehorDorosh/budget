@@ -109,20 +109,34 @@ async function migrateBudgetItems(email: string, userId: number, dataSource: Dat
         return Promise.reject('Migration: user not found')
       }
 
-      for (const importedBudgetItem of budgetItems) {
-        const category = await dataSource.manager.findOneBy(Category, { name: importedBudgetItem.category })
-        if (!category) {
-          console.log(`Migration: category ${importedBudgetItem.category} not found`)
-          continue
-        }
-        const budgetItem = new BudgetItem()
-        budgetItem.user = user
-        budgetItem.category = category
-        budgetItem.name = importedBudgetItem.name
-        budgetItem.value = +importedBudgetItem.amount
-        budgetItem.userDate = new Date(importedBudgetItem.date)
-        await dataSource.manager.save(budgetItem)
+      const budgetInstances = budgetItems
+        .filter((i) => i.category !== 'all')
+        .map(async (importedBudgetItem) => {
+          const category = await dataSource.manager.findOneBy(Category, { name: importedBudgetItem.category })
+          if (!category) {
+            throw new Error(`Migration: category ${importedBudgetItem.category} not found`)
+          }
+          const budgetItem = new BudgetItem()
+          budgetItem.user = user
+          budgetItem.category = category
+          budgetItem.name = importedBudgetItem.name
+          budgetItem.value = +importedBudgetItem.amount
+          budgetItem.userDate = new Date(importedBudgetItem.date)
+          return budgetItem
+        })
+
+      const chunks: BudgetItem[][] = []
+
+      for (let i = 0; i < budgetInstances.length; i += 1000) {
+        const chunk: BudgetItem[] = await Promise.all(budgetInstances.slice(i, i + 1000))
+        chunks.push(chunk)
       }
+
+      for (const [i, chunk] of chunks.entries()) {
+        await dataSource.manager.save(BudgetItem, chunk)
+        console.log(`${i + 1}/${chunks.length}`)
+      }
+
       console.log(`Migration: budget items added`)
       return Promise.resolve()
     }
