@@ -9,8 +9,11 @@
     "cp": "gulp",
     "cp:server": "gulp cpServer",
     "server:install": "npm --prefix ./build install --production",
-    "build": "npm-run-all build:server build:client cp server:install",
-    "build:fast": "npm-run-all build:server cp:server"
+    "build": "npm-run-all build:server build:client cp",
+    "build:fast": "npm-run-all build:server cp:server",
+    "gulp:deploy": "gulp deploy",
+    "deploy": "npm-run-all build gulp:deploy",
+    "shell": "ssh -i id_rsa.pem bitnami@18.134.229.196"
   },
   "repository": {
     "type": "git",
@@ -25,6 +28,7 @@
   "devDependencies": {
     "del": "^7.1.0",
     "gulp": "^4.0.2",
+    "gulp-ssh": "^0.7.0",
     "npm-run-all": "^4.1.5"
   }
 }
