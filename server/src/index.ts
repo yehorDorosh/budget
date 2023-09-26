@@ -61,7 +61,7 @@ async function init() {
   try {
     await BudgetDataSource.initialize()
     console.log('Database initialized')
-    app.listen(isDev ? SERVER_PORT_DEV : SERVER_PORT)
+    app.listen(isDev ? SERVER_PORT_DEV : SERVER_PORT, () => console.log(`Server started on port ${SERVER_PORT}`))
   } catch (err) {
     console.error('Database failed to initialize', err)
   }

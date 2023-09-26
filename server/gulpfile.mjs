@@ -42,18 +42,20 @@ function compileTS() {
     .pipe(dest('build'))
 }
 
-function serverWatch() {
+function serverWatch(done) {
   return nodemon({
     script: 'build/index.js',
     watch: 'build',
     ext: 'js',
     // env: { NODE_ENV: 'development' },
-    ignore: ['node_modules/**']
+    ignore: ['node_modules/**'],
+    delay: 500,
+    done: done
   })
 }
 
-export function dev() {
-  series(cleanDist, copyEtc, copyPublic, copyToPublic, copyEnv, compileTS, serverWatch)()
+export function dev(done) {
+  series(cleanDist, copyEtc, copyPublic, copyToPublic, copyEnv, compileTS, serverWatch)(done)
 
   const tsWatcher = watch('./src/**/*.ts', compileTS)
   tsWatcher.on('unlink', (filepath) => {

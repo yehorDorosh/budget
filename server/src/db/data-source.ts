@@ -28,8 +28,8 @@ export const BudgetDataSource = new DataSource({
   password: isDev ? DB_PASSWORD_DEV : DB_PASSWORD,
   database: isDev ? 'budget' : DB_NAME,
   entities: [User, Category, BudgetItem, Weather],
-  logging: true,
-  synchronize: true,
+  logging: isDev,
+  synchronize: isDev,
   ssl: !isDev,
   extra: {
     sslMode: isDev ? '' : 'require'
