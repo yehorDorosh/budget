@@ -50,6 +50,8 @@ Deploy `build` dir to prod
 
 # Server
 
+[apache setup](https://docs.bitnami.com/general/infrastructure/nodejs/get-started/get-started/#step-3-serve-your-application-through-the-apache-web-server)
+
 Commands execute from root of the project.
 
 ## Connect to server via SSH
@@ -90,3 +92,52 @@ Commands execute from root of the project.
 - `format` Auto prettier all TS
 - `db:up` Up docker container with PostgreSQL DB
 - `db:down` Stop and remove docker container with PostgreSQL DB
+
+# ENV (./server/src/.env)
+
+```
+# Server
+
+# Server development
+
+SERVER_PORT_DEV=3080
+
+# Server production
+
+SERVER_PORT=3000
+SERVER_JWT_SECRET={some pass}
+SERVER_EMAIL_PASS={pass from gmail account. Search App password in security settings and create new one.}
+SERVER_EMAIL_USER={gmail address}
+SERVER_LOGOUT_TIMER={token expired time}
+
+# DB
+
+# DB development
+
+DB_HOST_DEV=localhost
+DB_PORT_DEV=3432
+DB_USERNAME_DEV=admin
+DB_PASSWORD_DEV=secret
+
+# DB production
+
+DB_HOST={prod DB host}
+DB_PORT=5432
+DB_USERNAME={DB user}
+DB_PASSWORD={DB pass}
+DB_NAME=budget
+```
+
+# Migration
+
+## Categories migration
+
+`EMAIL={form user} USER_ID={to user} MIGRATION=categories DB_HOST={} DB_PORT=5432 DB_USERNAME={} DB_PASSWORD={} DB_NAME=budget  node utils/migration.js`
+
+## Budget migration
+
+`EMAIL={from user} USER_ID={to user} MIGRATION=budget DB_HOST={} DB_PORT=5432 DB_USERNAME={} DB_PASSWORD={} DB_NAME=budget  node utils/migration.js`
+
+## Weather migration
+
+`EMAIL={from user} USER_ID={to user} MIGRATION=weather WEATHER_ID={} DB_HOST={} DB_PORT=5432 DB_USERNAME={} DB_PASSWORD={} DB_NAME=budget  node utils/migration.js`
