@@ -117,6 +117,14 @@ const MonthesTrend: FC<Props> = ({ token }) => {
           step={1}
         />
       </BaseForm>
+      <div className="btn-group">
+        <button type="button" className="btn btn-primary" onClick={() => setYear((prev) => prev - 1)}>
+          Previous Year
+        </button>
+        <button type="button" className="btn btn-primary" onClick={() => setYear((prev) => prev + 1)}>
+          Next Year
+        </button>
+      </div>
     </BaseCard>
   )
 }

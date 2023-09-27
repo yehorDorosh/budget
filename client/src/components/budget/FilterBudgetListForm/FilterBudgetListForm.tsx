@@ -130,19 +130,28 @@ const FilterBudgetListForm = () => {
           </BaseCard>
         )}
         {filterType === Filter.YEAR && (
-          <BaseInput
-            id="year"
-            name="year"
-            type="number"
-            label="Year"
-            isValid={true}
-            value={filterYear}
-            onChange={(e) => dispatch(budgetItemActions.setFilterYear(e.target.value))}
-            min={2015}
-            max={2100}
-            step={1}
-            className="mb-3"
-          />
+          <BaseCard className="mb-3">
+            <BaseInput
+              id="year"
+              name="year"
+              type="number"
+              label="Year"
+              isValid={true}
+              value={filterYear}
+              onChange={(e) => dispatch(budgetItemActions.setFilterYear(e.target.value))}
+              min={2015}
+              max={2100}
+              step={1}
+            />
+            <div className="btn-group">
+              <button type="button" className="btn btn-primary" onClick={() => dispatch(budgetItemActions.decreaseYear())}>
+                Previous Year
+              </button>
+              <button type="button" className="btn btn-primary" onClick={() => dispatch(budgetItemActions.increaseYear())}>
+                Next Year
+              </button>
+            </div>
+          </BaseCard>
         )}
       </BaseForm>
       <BaseCard>

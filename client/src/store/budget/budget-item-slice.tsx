@@ -80,6 +80,14 @@ const budgetItemSlice = createSlice({
       date.setMonth(date.getMonth() - 1)
       state.filters.month = formatDateYearMonth(date)
     },
+    increaseYear(state) {
+      if (!state.filters.year) return
+      state.filters.year = String(+state.filters.year + 1)
+    },
+    decreaseYear(state) {
+      if (!state.filters.year) return
+      state.filters.year = String(+state.filters.year - 1)
+    },
     setFilterYear(state, action: PayloadAction<string>) {
       state.filters.year = action.payload
     },
