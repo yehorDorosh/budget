@@ -12,6 +12,9 @@ const BaseInput: FC<BaseInputProps> = ({ id, label, isValid, msg, ...props }) =>
   let attrs
   if (props.type !== 'radio' && props.type !== 'checkbox') {
     input.current?.setCustomValidity(isValid ? '' : msg || 'invalid field')
+  }
+
+  if (props.type === 'password') {
     attrs = (({ value, ...p }) => p)(props) // remove value from props
   } else {
     attrs = props
