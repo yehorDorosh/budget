@@ -1,11 +1,16 @@
-import { Fragment } from 'react'
+import { Fragment, FC } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../../hooks/useReduxTS'
 
 import classes from './HeaderNav.module.scss'
 import { userActions } from '../../../store/user/user-slice'
 
-const HeaderNav = () => {
+interface Props {
+  isOpen: boolean
+  onClick: () => void
+}
+
+const HeaderNav: FC<Props> = ({ isOpen, onClick }) => {
   const isLogin = useAppSelector((state) => state.user.isLogin)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -16,7 +21,7 @@ const HeaderNav = () => {
   }
 
   return (
-    <nav className={classes.nav}>
+    <nav className={`${classes.nav} ${isOpen ? classes.open : ''}`} onClick={() => onClick()}>
       <ul>
         {isLogin ? (
           <Fragment>

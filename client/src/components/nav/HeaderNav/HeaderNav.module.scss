@@ -1,4 +1,21 @@
+@import '../../../styles/variables.scss';
+
 .nav {
+  transform: translateY(-100%);
+  transition: transform 0.3s ease-in-out;
+  position: fixed;
+  inset: 0;
+  background-color: #fff;
+  z-index: 1;
+  padding: 20px;
+
+  @include d {
+    transform: translateY(0);
+    position: static;
+    padding: 0;
+    background-color: transparent;
+  }
+
   ul {
     margin: 0;
     padding: 0;
@@ -6,12 +23,28 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
+    flex-direction: column;
+
+    @include d {
+      flex-direction: row;
+    }
   }
 
-  a {
-    display: inline-block;
-    margin: 0.5rem;
+  a,
+  button {
     text-decoration: none;
+    display: inline-block;
+    font-size: 2rem;
+    margin: 1rem;
+
+    @include d {
+      font-size: 1rem;
+      margin: 0.5rem;
+    }
   }
+}
+
+.open {
+  display: block;
+  transform: translateY(0);
 }
