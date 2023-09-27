@@ -109,6 +109,7 @@ SERVER_JWT_SECRET={some pass}
 SERVER_EMAIL_PASS={pass from gmail account. Search App password in security settings and create new one.}
 SERVER_EMAIL_USER={gmail address}
 SERVER_LOGOUT_TIMER={token expired time}
+SERVER_HOST_NAME={prod host name}
 
 # DB
 

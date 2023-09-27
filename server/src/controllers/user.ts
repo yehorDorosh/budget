@@ -6,7 +6,7 @@ import { AppRes } from '../types/express/custom-response'
 import { ResCodes } from '../types/enums'
 
 import { transport } from '../utils/email'
-import { SERVER_JWT_SECRET, SERVER_EMAIL_USER } from '../utils/config'
+import { SERVER_JWT_SECRET, SERVER_EMAIL_USER, SERVER_HOST_NAME, isDev } from '../utils/config'
 import { errorHandler } from '../utils/errors'
 import { User } from '../models/user'
 import { userCRUD } from '../db/data-source'
@@ -72,7 +72,7 @@ export const sendRestorePasswordEmail: RequestHandler = async (req, res: AppRes,
       subject: 'Restore password',
       html: `<p>
               To restore your password follow by this 
-              <a href="${req.protocol}://${req.headers.host}/restore-password/${token}">
+              <a href="${req.protocol}://${isDev ? req.headers.host : SERVER_HOST_NAME}/restore-password/${token}">
                 link
               </a>
             </p> `
