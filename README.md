@@ -4,7 +4,7 @@ App for log yours expenses and income. Based TS, NodeJS, ReactJS, PostgreSQL.
 
 ## TODO
 
-- FE: Fix reg form validation bug
+-
 
 ## ESLINT and Prettier setup
 
