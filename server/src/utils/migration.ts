@@ -109,21 +109,21 @@ async function migrateBudgetItems(email: string, userId: number, dataSource: Dat
         return Promise.reject('Migration: user not found')
       }
 
-      const budgetInstances = budgetItems
-        .filter((i) => i.category !== 'all')
-        .map(async (importedBudgetItem) => {
-          const category = await dataSource.manager.findOneBy(Category, { name: importedBudgetItem.category })
-          if (!category) {
-            throw new Error(`Migration: category ${importedBudgetItem.category} not found`)
-          }
-          const budgetItem = new BudgetItem()
-          budgetItem.user = user
-          budgetItem.category = category
-          budgetItem.name = importedBudgetItem.name
-          budgetItem.value = +importedBudgetItem.amount
-          budgetItem.userDate = new Date(importedBudgetItem.date)
-          return budgetItem
+      const budgetInstances = budgetItems.map(async (importedBudgetItem) => {
+        const category = await dataSource.manager.findOneBy(Category, {
+          name: importedBudgetItem.category === 'all' ? 'others' : importedBudgetItem.category
         })
+        if (!category) {
+          throw new Error(`Migration: category ${importedBudgetItem.category} not found`)
+        }
+        const budgetItem = new BudgetItem()
+        budgetItem.user = user
+        budgetItem.category = category
+        budgetItem.name = importedBudgetItem.name
+        budgetItem.value = +importedBudgetItem.amount
+        budgetItem.userDate = new Date(importedBudgetItem.date)
+        return budgetItem
+      })
 
       const chunks: BudgetItem[][] = []
 

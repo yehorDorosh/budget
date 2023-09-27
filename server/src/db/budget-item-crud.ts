@@ -40,7 +40,11 @@ export class BudgetItemCRUD extends ModelCRUD<BudgetItem> {
       }
     }
 
-    const budgetItems = await queryBuilder.orderBy('budget.userDate', 'DESC').getMany()
+    const budgetItems = await queryBuilder
+      .orderBy('budget.userDate', 'DESC')
+      .addOrderBy('budget.createdAt', 'DESC')
+      .addOrderBy('budget.id', 'DESC')
+      .getMany()
 
     if (!budgetItems) {
       errorHandler({ message: 'No budget items for this user', statusCode: 400 }, next)
