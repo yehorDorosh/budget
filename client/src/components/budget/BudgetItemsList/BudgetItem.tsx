@@ -28,12 +28,18 @@ const ListItem: FC<Props> = ({ budgetItem, token }) => {
     setOpenForm(true)
   }
 
+  const itemStyle = () => {
+    if (budgetItem.ignore === true) return 'text-bg-secondary'
+    if (budgetItem.category.categoryType === CategoryType.INCOME) return 'text-bg-light'
+    return 'text-bg-success'
+  }
+
   return (
     <Fragment>
       <BaseModal isOpen={openForm} onClose={() => setOpenForm(false)} title="Edit">
         <UpdateBudgetItemForm token={token} currentBudgetItem={budgetItem} onSave={() => setOpenForm(false)} />
       </BaseModal>
-      <BaseCard className={`my-3 ${budgetItem.ignore === true ? 'text-bg-secondary' : 'text-bg-success'}`}>
+      <BaseCard className={`my-3 ${itemStyle()}`}>
         <div className={classes.row}>
           <div className={`${classes.name}`}>{budgetItem.name}</div>
           <div className={`${classes.data}`}>
