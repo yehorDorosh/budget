@@ -15,7 +15,7 @@ const FilterBudgetListForm = () => {
   const filterMonth = useAppSelector((state) => state.budgetItem.filters.month)!
   const filterYear = useAppSelector((state) => state.budgetItem.filters.year)!
   const filterType = useAppSelector((state) => state.budgetItem.filters.active)!
-  const nameFilter = useAppSelector((state) => state.budgetItem.filters.name)!
+  const nameFilter = useAppSelector((state) => state.budgetItem.filters.name) || ''
   const categories = useAppSelector((state) => state.categories.categories)
   const categoryTypeFilter = useAppSelector((state) => state.budgetItem.filters.categoryType)!
   const categoryFilter = useAppSelector((state) => state.budgetItem.filters.category)!
