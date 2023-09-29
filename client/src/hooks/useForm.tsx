@@ -108,7 +108,7 @@ const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, for
           />
         )
       })}
-      <button type="submit" className="btn btn-primary">
+      <button type="submit" className="btn btn-primary" data-testid="submitBtn">
         {formConfig.submitBtnText}
       </button>
     </BaseForm>

@@ -21,7 +21,8 @@ const SignupForm = () => {
         errMsg: 'Please enter a valid email.',
         validator: emailValidator,
         state: emailState,
-        dispatch: emailDispatch
+        dispatch: emailDispatch,
+        attrs: { 'data-testid': 'email' }
       },
       {
         name: 'password',
@@ -31,7 +32,8 @@ const SignupForm = () => {
         errMsg: 'Password should contain at least 8 symbols. At least one char in upper case and at least 1 number.',
         validator: passwordValidator,
         state: passwordState,
-        dispatch: passwordDispatch
+        dispatch: passwordDispatch,
+        attrs: { 'data-testid': 'password' }
       },
       {
         name: 'confirmPassword',
@@ -41,7 +43,8 @@ const SignupForm = () => {
         errMsg: 'Passwords do not match.',
         validator: shouldMatchValidator.bind(null, passwordState.value),
         state: confirmPasswordState,
-        dispatch: confirmPasswordDispatch
+        dispatch: confirmPasswordDispatch,
+        attrs: { 'data-testid': 'confirmPassword' }
       }
     ],
     { submitBtnText: 'Sign Up', submitAction: signUp, submitActionData: { email: emailState.value, password: passwordState.value } },
