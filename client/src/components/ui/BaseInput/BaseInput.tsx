@@ -1,4 +1,4 @@
-import React, { FC, useRef } from 'react'
+import React, { FC, useRef, useEffect } from 'react'
 
 interface BaseInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string
@@ -10,9 +10,12 @@ interface BaseInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 const BaseInput: FC<BaseInputProps> = ({ id, label, isValid, msg, ...props }) => {
   const input = useRef<HTMLInputElement>(null)
   let attrs
-  if (props.type !== 'radio' && props.type !== 'checkbox') {
-    input.current?.setCustomValidity(isValid ? '' : msg || 'invalid field')
-  }
+
+  useEffect(() => {
+    if (props.type !== 'radio' && props.type !== 'checkbox') {
+      input.current?.setCustomValidity(isValid ? '' : msg || 'invalid field')
+    }
+  }, [isValid, msg, props.type])
 
   if (props.type === 'password') {
     attrs = (({ value, ...p }) => p)(props) // remove value from props
@@ -21,12 +24,12 @@ const BaseInput: FC<BaseInputProps> = ({ id, label, isValid, msg, ...props }) =>
   }
 
   const text = (
-    <div className={`mb-3 ${isValid === false ? 'was-validated' : ''}`}>
+    <div className={`mb-3 ${isValid === false ? 'was-validated' : ''}`} data-testid="base-input">
       <label htmlFor={id} className="form-label">
         {label}
       </label>
-      <div className={`input-group ${isValid !== undefined ? 'has-validation' : ''}`}>
-        <input ref={input} id={id} className="form-control" {...attrs} />
+      <div className={`input-group ${isValid !== undefined ? 'has-validation' : ''}`} data-testid="input-formatter">
+        <input ref={input} id={id} className="form-control" data-testid="input" {...attrs} />
         {!isValid && msg && (
           <div className="invalid-feedback" data-testid="invalid-msg">
             {msg}
@@ -38,7 +41,7 @@ const BaseInput: FC<BaseInputProps> = ({ id, label, isValid, msg, ...props }) =>
 
   const radio = (
     <div className="mb-3 form-check">
-      <input id={id} className="form-check-input" {...props} />
+      <input id={id} className="form-check-input" data-testid="input" {...props} />
       <label htmlFor={id} className="form-check-label">
         {label}
       </label>
@@ -47,7 +50,7 @@ const BaseInput: FC<BaseInputProps> = ({ id, label, isValid, msg, ...props }) =>
 
   const checkbox = (
     <div className="mb-3 form-check">
-      <input id={id} className="form-check-input" {...props} />
+      <input id={id} className="form-check-input" data-testid="input" {...props} />
       <label htmlFor={id} className="form-check-label">
         {label}
       </label>
