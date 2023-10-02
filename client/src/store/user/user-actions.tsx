@@ -16,12 +16,12 @@ export const loginAndAutoLogout: SimpleStoreAtion = ({ token }) => {
 
     if (!isLogin) dispatch(userActions.login())
 
-    if (!autoLogoutTimer) {
+    if (!autoLogoutTimer && expiryDate) {
       dispatch(
         userActions.setAutoLogoutTimer(
           setInterval(() => {
             // console.log(expiryDate! - Date.now() / 1000)
-            if (expiryDate && Date.now() >= expiryDate * 1000) {
+            if (Date.now() >= expiryDate * 1000) {
               dispatch(userActions.logout())
             }
           }, 1000)

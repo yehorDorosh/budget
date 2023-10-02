@@ -27,7 +27,11 @@ const BaseInput: FC<BaseInputProps> = ({ id, label, isValid, msg, ...props }) =>
       </label>
       <div className={`input-group ${isValid !== undefined ? 'has-validation' : ''}`}>
         <input ref={input} id={id} className="form-control" {...attrs} />
-        {!isValid && msg && <div className="invalid-feedback">{msg}</div>}
+        {!isValid && msg && (
+          <div className="invalid-feedback" data-testid="invalid-msg">
+            {msg}
+          </div>
+        )}
       </div>
     </div>
   )
