@@ -2,8 +2,13 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import BurgerButton from './BurgerButton'
 import userEvent from '@testing-library/user-event'
+import { cleanup } from '@testing-library/react'
 
 describe('BurgerButton', () => {
+  afterAll(() => {
+    cleanup()
+  })
+
   test('Should fire onClick callback.', () => {
     const onClick = jest.fn()
     render(<BurgerButton id="burger" onClick={onClick} />)
