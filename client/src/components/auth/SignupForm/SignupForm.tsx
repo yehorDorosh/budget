@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 
 import { emailValidator, passwordValidator, shouldMatchValidator } from '../../../utils/validators'
-import useField from '../../../hooks/useField'
+import useField from '../../../hooks/useFiled/useField'
 import useForm from '../../../hooks/useForm'
 import { signUp } from '../../../store/user/user-actions'
 import BaseCard from '../../ui/BaseCard/BaseCard'

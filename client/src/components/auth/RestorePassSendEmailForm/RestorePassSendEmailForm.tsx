@@ -1,7 +1,7 @@
 import { FC, useState } from 'react'
 
 import { notEmpty } from '../../../utils/validators'
-import useField from '../../../hooks/useField'
+import useField from '../../../hooks/useFiled/useField'
 import useForm from '../../../hooks/useForm'
 import { getRestoreEmail } from '../../../store/user/user-actions'
 import { ResCodes } from '../../../types/enum'

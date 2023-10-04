@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-import useField from '../../../hooks/useField'
+import useField from '../../../hooks/useFiled/useField'
 import useForm from '../../../hooks/useForm'
 import { notEmpty } from '../../../utils/validators'
 import { addCategory } from '../../../store/categories/categories-actions'

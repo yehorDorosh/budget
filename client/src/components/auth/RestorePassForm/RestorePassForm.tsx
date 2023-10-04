@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import * as jose from 'jose'
 
-import useField from '../../../hooks/useField'
+import useField from '../../../hooks/useFiled/useField'
 import useForm from '../../../hooks/useForm'
 import { passwordValidator } from '../../../utils/validators'
 import { restorePassword } from '../../../store/user/user-actions'

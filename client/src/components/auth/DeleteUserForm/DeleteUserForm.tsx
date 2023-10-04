@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 
-import useField from '../../../hooks/useField'
+import useField from '../../../hooks/useFiled/useField'
 import useForm from '../../../hooks/useForm'
 import { notEmpty } from '../../../utils/validators'
 import { ResCodes } from '../../../types/enum'

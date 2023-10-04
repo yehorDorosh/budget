@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { ActionResult, StoreAction, isActionPayload, isAxiosErrorPayload, isRegularErrorObject } from '../types/store-actions'
-import { FieldState } from './useField'
+import { FieldState } from './useFiled/useField'
 import { useAppDispatch } from './useReduxTS'
-import { Action as UseFieldActions } from './useField'
+import { Action as UseFieldActions } from './useFiled/useField'
 import { StoreActionData } from '../types/store-actions'
 
 /**

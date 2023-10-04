@@ -1,7 +1,7 @@
 import BaseForm from '../components/ui/BaseForm/BaseForm'
 import BaseInput from '../components/ui/BaseInput/BaseInput'
 import SelectInput, { SelectOption } from '../components/ui/SelectInput/SelectInput'
-import { FieldState, Action as UseFieldAction } from './useField'
+import { FieldState, Action as UseFieldAction } from './useFiled/useField'
 import useSubmit from './useFormSubmit'
 import { StoreAction, isActionPayload, isAxiosErrorPayload } from '../types/store-actions'
 import { StoreActionData } from '../types/store-actions'
