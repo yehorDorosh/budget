@@ -47,6 +47,37 @@ export const handlers = [
       ctx.status(201),
       ctx.delay(100)
     )
+  }),
+
+  rest.post('/api/user/login', async (req, res, ctx) => {
+    const body = await req.json()
+
+    if (body.email === 'user@email.com' && body.password === '123') {
+      return res(
+        ctx.json({
+          message: 'Login success.',
+          code: ResCodes.LOGIN,
+          payload: {
+            user: {
+              id: '1',
+              email: 'user@email.com',
+              token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEifQ.BQmWM1mXBfpTw_Tv-yR3qodI0OoRmrm3Tlz6ZR60Yi4'
+            }
+          }
+        }),
+        ctx.status(201),
+        ctx.delay(100)
+      )
+    } else {
+      return res(
+        ctx.json({
+          message: 'Wrong credentials',
+          code: ResCodes.ERORR
+        }),
+        ctx.status(401),
+        ctx.delay(100)
+      )
+    }
   })
 ]
 

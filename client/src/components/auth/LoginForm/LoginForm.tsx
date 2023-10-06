@@ -22,7 +22,8 @@ const LoginForm = () => {
         errMsg: 'Field is required.',
         validator: notEmpty,
         state: emailState,
-        dispatch: emailDispatch
+        dispatch: emailDispatch,
+        attrs: { 'data-testid': 'email' }
       },
       {
         name: 'password',
@@ -32,7 +33,8 @@ const LoginForm = () => {
         errMsg: 'Field is required.',
         validator: notEmpty,
         state: passwordState,
-        dispatch: passwordDispatch
+        dispatch: passwordDispatch,
+        attrs: { 'data-testid': 'password' }
       }
     ],
     {
