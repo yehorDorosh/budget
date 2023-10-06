@@ -5,10 +5,26 @@ import { ResCodes } from '../types/enum'
 import { rest } from 'msw'
 import store from '../store'
 import { StoreAction } from '../types/store-actions'
+import { useAppDispatch } from '../hooks/useReduxTS'
+import { userActions } from '../store/user/user-slice'
 
-export function RenderWithProviders({ children }: PropsWithChildren<{}>) {
+function SetUserData() {
+  const dispatch = useAppDispatch()
+  dispatch(
+    userActions.setUserData({
+      id: 1,
+      email: 'user@email.com',
+      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEifQ.BQmWM1mXBfpTw_Tv-yR3qodI0OoRmrm3Tlz6ZR60Yi4',
+      autoLogoutTimer: null
+    })
+  )
+  return null
+}
+
+export function RenderWithProviders({ children, setUserData }: PropsWithChildren<{ setUserData?: boolean }>) {
   return (
     <Provider store={store}>
+      {setUserData && <SetUserData />}
       <BrowserRouter>{children}</BrowserRouter>
     </Provider>
   )
@@ -126,7 +142,7 @@ export const handlers = [
     } else {
       return res(
         ctx.json({
-          message: 'Wrong password.',
+          message: 'Failed to delete user. Wrong password',
           code: ResCodes.ERORR
         }),
         ctx.status(401),
