@@ -1,12 +1,12 @@
-import BaseForm from '../components/ui/BaseForm/BaseForm'
-import BaseInput from '../components/ui/BaseInput/BaseInput'
-import SelectInput, { SelectOption } from '../components/ui/SelectInput/SelectInput'
-import { FieldState, Action as UseFieldAction } from './useFiled/useField'
-import useSubmit from './useFormSubmit/useFormSubmit'
-import { StoreAction, isActionPayload, isAxiosErrorPayload } from '../types/store-actions'
-import { StoreActionData } from '../types/store-actions'
+import BaseForm from '../../components/ui/BaseForm/BaseForm'
+import BaseInput from '../../components/ui/BaseInput/BaseInput'
+import SelectInput, { SelectOption } from '../../components/ui/SelectInput/SelectInput'
+import { FieldState, Action as UseFieldAction } from '../useFiled/useField'
+import useSubmit from '../useFormSubmit/useFormSubmit'
+import { StoreAction, isActionPayload, isAxiosErrorPayload } from '../../types/store-actions'
+import { StoreActionData } from '../../types/store-actions'
 
-interface FieldConfig {
+export interface FieldConfig {
   id?: string
   name: string
   type: string
@@ -21,7 +21,7 @@ interface FieldConfig {
   attrs?: { [key: string]: string | boolean }
 }
 
-interface FormConfig<T = void> {
+export interface FormConfig<T = void> {
   submitBtnText: string
   submitAction: StoreAction<T>
   submitActionData: StoreActionData
@@ -74,6 +74,7 @@ const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, for
       isLoading={isLoading}
       errors={validationErrorsBE || formConfig.errMsg}
       className={fieldsConfig.some((field) => field.validator !== null) ? 'needs-validation' : ''}
+      data-testid="useForm"
     >
       {fieldsConfig.map((field, i) => {
         return field.type === 'select' ? (

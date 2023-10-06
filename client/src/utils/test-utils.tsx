@@ -3,8 +3,8 @@ import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import { ResCodes } from '../types/enum'
 import { rest } from 'msw'
-
 import store from '../store'
+import { StoreAction } from '../types/store-actions'
 
 export function RenderWithProviders({ children }: PropsWithChildren<{}>) {
   return (
@@ -49,3 +49,13 @@ export const handlers = [
     )
   })
 ]
+
+export function mockAction<T>(payload: T): StoreAction<T> {
+  return jest.fn(() => async () => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(payload)
+      }, 100)
+    })
+  }) as unknown as StoreAction<T>
+}

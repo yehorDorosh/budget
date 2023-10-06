@@ -2,7 +2,7 @@ import { FC, useState } from 'react'
 
 import { notEmpty } from '../../../utils/validators'
 import useField from '../../../hooks/useFiled/useField'
-import useForm from '../../../hooks/useForm'
+import useForm from '../../../hooks/useForm/useForm'
 import { getRestoreEmail } from '../../../store/user/user-actions'
 import { ResCodes } from '../../../types/enum'
 import BaseCard from '../../ui/BaseCard/BaseCard'

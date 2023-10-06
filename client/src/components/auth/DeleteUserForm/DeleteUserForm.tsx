@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 
 import useField from '../../../hooks/useFiled/useField'
-import useForm from '../../../hooks/useForm'
+import useForm from '../../../hooks/useForm/useForm'
 import { notEmpty } from '../../../utils/validators'
 import { ResCodes } from '../../../types/enum'
 import { deleteUser } from '../../../store/user/user-actions'

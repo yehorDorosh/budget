@@ -4,22 +4,13 @@ import { act } from 'react-dom/test-utils'
 import { RenderWithProviders } from '../../utils/test-utils'
 import { StoreAction, AxiosErrorPayload, ActionPayload, RegularErrorObject } from '../../types/store-actions'
 import { ResCodes } from '../../types/enum'
+import { mockAction } from '../../utils/test-utils'
 
 const mockedNavigation = jest.fn()
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockedNavigation
 }))
-
-function mockAction<T>(payload: T): StoreAction<T> {
-  return jest.fn(() => async () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(payload)
-      }, 100)
-    })
-  }) as unknown as StoreAction<T>
-}
 
 describe('useFormSubmit', () => {
   let fields: any[]
@@ -118,6 +109,16 @@ describe('useFormSubmit', () => {
     })
 
     expect(action).toBeCalled()
+  })
+
+  test('Should call action with correct data', async () => {
+    const { result } = renderHook(() => useFormSubmit(), { wrapper: RenderWithProviders })
+
+    await act(async () => {
+      await result.current.submit(fields, fieldsDispatch, action, { id: 1 })
+    })
+
+    expect(action).toBeCalledWith({ id: 1 })
   })
 
   test('Should set isLoading to true before action call.', async () => {

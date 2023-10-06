@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 
 import { login } from '../../../store/user/user-actions'
 import useField from '../../../hooks/useFiled/useField'
-import useForm from '../../../hooks/useForm'
+import useForm from '../../../hooks/useForm/useForm'
 import { notEmpty } from '../../../utils/validators'
 import BaseCard from '../../ui/BaseCard/BaseCard'
 

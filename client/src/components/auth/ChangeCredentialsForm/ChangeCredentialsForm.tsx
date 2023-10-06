@@ -2,7 +2,7 @@ import { FC } from 'react'
 
 import { notEmpty, emailValidator, passwordValidator } from '../../../utils/validators'
 import useField from '../../../hooks/useFiled/useField'
-import useForm from '../../../hooks/useForm'
+import useForm from '../../../hooks/useForm/useForm'
 import { updateUser } from '../../../store/user/user-actions'
 import { ResCodes } from '../../../types/enum'
 import { EmailOrPassword } from '../../../types/store-actions'
