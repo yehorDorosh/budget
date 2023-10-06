@@ -42,6 +42,26 @@ describe('ChangeCredentialsForm', () => {
     expect(inputEmail).toBeValid()
   })
 
+  test('Input should be valid after submit.', async () => {
+    render(
+      <RenderWithProviders>
+        <ChangeCredentialsForm fieldName="password" token="token" onEdit={() => {}} />
+      </RenderWithProviders>
+    )
+    const inputPassword = screen.getByLabelText(/password/i)
+    const submitBtn = screen.getByRole('button', { name: /change password/i })
+
+    act(() => {
+      userEvent.type(inputPassword, 'qwerTy123')
+    })
+
+    await act(() => {
+      userEvent.click(submitBtn)
+    })
+
+    expect(inputPassword).toBeValid()
+  })
+
   test('Email input field should be invaild.', () => {
     render(
       <RenderWithProviders>
@@ -125,5 +145,47 @@ describe('ChangeCredentialsForm', () => {
     await waitFor(() => {
       expect(onEdit).toBeCalledWith('user@email.com')
     })
+  })
+
+  test('The loader should be displayed after submit and dissapear after data was sbumitted.', async () => {
+    render(
+      <RenderWithProviders>
+        <ChangeCredentialsForm fieldName="email" token="token" onEdit={() => {}} />
+      </RenderWithProviders>
+    )
+    const inputEmail = screen.getByLabelText(/email/i)
+    const submitBtn = screen.getByRole('button', { name: /change email/i })
+
+    act(() => {
+      userEvent.type(inputEmail, 'user@email.com')
+    })
+
+    await act(() => {
+      userEvent.click(submitBtn)
+    })
+
+    await waitFor(() => {
+      expect(screen.getByTestId('loader')).toBeInTheDocument()
+    })
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loader')).not.toBeInTheDocument()
+    })
+  })
+
+  test('Input should be invalid after submit.', async () => {
+    render(
+      <RenderWithProviders>
+        <ChangeCredentialsForm fieldName="password" token="token" onEdit={() => {}} />
+      </RenderWithProviders>
+    )
+    const inputPassword = screen.getByLabelText(/password/i)
+    const submitBtn = screen.getByRole('button', { name: /change password/i })
+
+    await act(() => {
+      userEvent.click(submitBtn)
+    })
+
+    expect(inputPassword).toBeInvalid()
   })
 })

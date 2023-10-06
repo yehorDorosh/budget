@@ -109,6 +109,30 @@ export const handlers = [
         ctx.delay(100)
       )
     }
+  }),
+
+  rest.patch('/api/user/delete-user', async (req, res, ctx) => {
+    const body = await req.json()
+
+    if (body.password === '123') {
+      return res(
+        ctx.json({
+          message: 'Delete user.',
+          code: ResCodes.DELETE_USER
+        }),
+        ctx.status(200),
+        ctx.delay(100)
+      )
+    } else {
+      return res(
+        ctx.json({
+          message: 'Wrong password.',
+          code: ResCodes.ERORR
+        }),
+        ctx.status(401),
+        ctx.delay(100)
+      )
+    }
   })
 ]
 
