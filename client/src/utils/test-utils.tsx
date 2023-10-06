@@ -78,6 +78,37 @@ export const handlers = [
         ctx.delay(100)
       )
     }
+  }),
+
+  rest.put('/api/user/update-user', async (req, res, ctx) => {
+    const body = await req.json()
+
+    if (body.email === 'user@email.com') {
+      return res(
+        ctx.json({
+          message: 'Update user.',
+          code: ResCodes.UPDATE_USER,
+          payload: {
+            user: {
+              id: '1',
+              email: body.email,
+              token: null
+            }
+          }
+        }),
+        ctx.status(200),
+        ctx.delay(100)
+      )
+    } else {
+      return res(
+        ctx.json({
+          message: 'Feild to update user.',
+          code: ResCodes.ERORR
+        }),
+        ctx.status(500),
+        ctx.delay(100)
+      )
+    }
   })
 ]
 
