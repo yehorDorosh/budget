@@ -7,6 +7,7 @@ import store from '../store'
 import { StoreAction } from '../types/store-actions'
 import { useAppDispatch } from '../hooks/useReduxTS'
 import { userActions } from '../store/user/user-slice'
+import ErrorBoundary from '../components/errors/ErrorBoundary'
 
 function SetUserData() {
   const dispatch = useAppDispatch()
@@ -25,7 +26,9 @@ export function RenderWithProviders({ children, setUserData }: PropsWithChildren
   return (
     <Provider store={store}>
       {setUserData && <SetUserData />}
-      <BrowserRouter>{children}</BrowserRouter>
+      <BrowserRouter>
+        <ErrorBoundary>{children}</ErrorBoundary>
+      </BrowserRouter>
     </Provider>
   )
 }
@@ -149,7 +152,57 @@ export const handlers = [
         ctx.delay(100)
       )
     }
-  })
+  }),
+
+  rest.post(
+    '/api/user/restore-password/eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsImV4cCI6OTk5OTk5OTk5OX0.ff54M0aPirA6PkGxBcIxIQQIxKhEiOKED9SsFa4VXE8',
+    async (req, res, ctx) => {
+      return res(
+        ctx.json({
+          message: 'Password was restored.',
+          code: ResCodes.RESET_PASSWORD
+        }),
+        ctx.status(200),
+        ctx.delay(100)
+      )
+    }
+  ),
+
+  rest.post(
+    '/api/user/restore-password/eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsImV4cCI6OTk5OTk5OTk5fQ.k6BPC1eOSJ-tFIIfRsEMkffrVxln6EjIRfURY2a5lZ0',
+    async (req, res, ctx) => {
+      return res(
+        ctx.json({
+          message: 'Failed to restore password.',
+          code: ResCodes.ERORR
+        }),
+        ctx.status(401),
+        ctx.delay(100)
+      )
+    }
+  ),
+
+  rest.post(
+    '/api/user/restore-password/eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsImV4cCI6OTk5OTk5OTk5OX0.ff54M0aPirA6PkGxBcIxIQQIxKhEiOKED9SsFa4VXE7',
+    async (req, res, ctx) => {
+      return res(
+        ctx.json({
+          message: 'Failed to restore password.',
+          code: ResCodes.ERORR,
+          error: {
+            cause: 'Failed to restore password.',
+            details: {
+              code: 'ERR_JWS_SIGNATURE_VERIFICATION_FAILED',
+              message: 'signature verification failed',
+              name: 'JWSSignatureVerificationFailed'
+            }
+          }
+        }),
+        ctx.status(401),
+        ctx.delay(100)
+      )
+    }
+  )
 ]
 
 export function mockAction<T>(payload: T): StoreAction<T> {

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import * as jose from 'jose'
 
@@ -17,11 +17,16 @@ const SignupForm: React.FC<Props> = ({ token }) => {
   const navigate = useNavigate()
   const { fieldState: passwordState, fieldDispatch: passwordDispatch } = useField()
   const [tokenExpired, setTokenExpired] = useState(false)
-  try {
-    jose.decodeJwt(token)
-  } catch (e) {
-    throw new Error('Invalid token')
-  }
+  useEffect(() => {
+    try {
+      jose.decodeJwt(token)
+    } catch (e) {
+      if (e instanceof Error) {
+        e.message = 'Invalid token'
+        navigate('/400', { replace: true, state: { data: { error: e } } })
+      }
+    }
+  })
   const { formMarkup } = useForm(
     [
       {
@@ -51,6 +56,9 @@ const SignupForm: React.FC<Props> = ({ token }) => {
       },
       onGetResponse: (res) => {
         if (res.data.code === ResCodes.RESET_PASSWORD) navigate('/login', { replace: true })
+      },
+      onReject: (res, isAxiosErrorPayload) => {
+        navigate('/400', { replace: true, state: { data: isAxiosErrorPayload ? res : { error: res } } })
       }
     }
   )
