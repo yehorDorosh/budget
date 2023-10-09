@@ -39,7 +39,7 @@ const RestorePassSendEmailForm: FC<Props> = ({ onSendEmail }) => {
         if (res.data.code === ResCodes.SEND_RESTORE_PASSWORD_EMAIL) onSendEmail(emailState.value)
       },
       onReject: (res, isAxiosErr) => {
-        if (isAxiosErr && res.status === 403) setUserNotFound(true)
+        if (isAxiosErr && res.status >= 400 && res.status < 500) setUserNotFound(true)
       }
     }
   )

@@ -202,7 +202,30 @@ export const handlers = [
         ctx.delay(100)
       )
     }
-  )
+  ),
+
+  rest.post('/api/user/restore-password', async (req, res, ctx) => {
+    const body = await req.json()
+    if (body.email === 'user@email.com') {
+      return res(
+        ctx.json({ message: 'Restore password email was sent.', code: ResCodes.SEND_RESTORE_PASSWORD_EMAIL }),
+        ctx.status(200),
+        ctx.delay(100)
+      )
+    }
+
+    return res(
+      ctx.json({
+        message: 'Internal server error.',
+        code: ResCodes.ERORR,
+        error: {
+          cause: 'Failed to send email to restore password. User not found.'
+        }
+      }),
+      ctx.status(401),
+      ctx.delay(100)
+    )
+  })
 ]
 
 export function mockAction<T>(payload: T): StoreAction<T> {
