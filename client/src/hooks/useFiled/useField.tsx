@@ -12,7 +12,7 @@ export type Action =
   | { type: 'set'; payload: FieldState }
   | { type: 'validate'; validation: ValidationFunction }
 
-const useField = (defaultValue = '') => {
+const useField = (defaultValue = '', clearable = true) => {
   const fieldInitialState: FieldState = {
     value: defaultValue,
     touched: defaultValue ? true : false,
@@ -26,7 +26,7 @@ const useField = (defaultValue = '') => {
       case 'set':
         return { ...state, value: action.payload.value, touched: action.payload.touched }
       case 'clear':
-        if (defaultValue) return state
+        if (defaultValue || !clearable) return state
         return { ...state, value: '', touched: false, isValid: true }
       case 'validate':
         return { ...state, isValid: action.validation(state.value) }

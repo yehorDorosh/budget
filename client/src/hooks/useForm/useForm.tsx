@@ -89,7 +89,6 @@ const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, for
             name={field.name}
             onChange={inputHandler}
             value={field.state.touched ? field.state.value : field.defaultValue ? field.defaultValue : ''}
-            required={field.validator !== null}
             {...field.attrs}
           />
         ) : (
@@ -104,7 +103,6 @@ const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, for
             name={field.name}
             onChange={inputHandler}
             value={field.state.touched && field.type !== 'radio' ? field.state.value : field.defaultValue ? field.defaultValue : ''}
-            required={field.validator !== null}
             {...field.attrs}
           />
         )

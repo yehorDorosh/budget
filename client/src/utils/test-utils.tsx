@@ -1,12 +1,13 @@
 import React, { PropsWithChildren } from 'react'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
-import { ResCodes } from '../types/enum'
+import { ResCodes, CategoryType } from '../types/enum'
 import { rest } from 'msw'
 import store from '../store'
 import { StoreAction } from '../types/store-actions'
 import { useAppDispatch } from '../hooks/useReduxTS'
 import { userActions } from '../store/user/user-slice'
+import { categoriesActions } from '../store/categories/categories-slice'
 import ErrorBoundary from '../components/errors/ErrorBoundary'
 
 function SetUserData() {
@@ -22,10 +23,21 @@ function SetUserData() {
   return null
 }
 
-export function RenderWithProviders({ children, setUserData }: PropsWithChildren<{ setUserData?: boolean }>) {
+function SetCategories() {
+  const dispatch = useAppDispatch()
+  dispatch(categoriesActions.setCategories([{ id: 1, name: 'car', categoryType: CategoryType.EXPENSE }]))
+  return null
+}
+
+export function RenderWithProviders({
+  children,
+  setUserData,
+  setCategories
+}: PropsWithChildren<{ setUserData?: boolean; setCategories?: boolean }>) {
   return (
     <Provider store={store}>
       {setUserData && <SetUserData />}
+      {setCategories && <SetCategories />}
       <BrowserRouter>
         <ErrorBoundary>{children}</ErrorBoundary>
       </BrowserRouter>
@@ -223,6 +235,30 @@ export const handlers = [
         }
       }),
       ctx.status(401),
+      ctx.delay(100)
+    )
+  }),
+
+  rest.post('/api/budget/add-budget-item', async (req, res, ctx) => {
+    return res(
+      ctx.json({
+        message: 'Create new budget item.',
+        code: ResCodes.CREATE_BUDGET_ITEM,
+        payload: {
+          budgetItems:
+            [
+              {
+                id: '1',
+                name: 'fuel',
+                value: '123',
+                createAt: '01-01-23',
+                updateAt: '01-01-23',
+                category: { id: '1', categoryType: CategoryType.EXPENSE }
+              }
+            ] || []
+        }
+      }),
+      ctx.status(201),
       ctx.delay(100)
     )
   })
