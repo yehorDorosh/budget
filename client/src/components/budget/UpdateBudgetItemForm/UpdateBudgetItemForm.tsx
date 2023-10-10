@@ -136,7 +136,7 @@ const UpdateBudgetItemForm: FC<Props> = ({ token, currentBudgetItem, onSave }) =
       onGetResponse: () => onSave()
     }
   )
-  return <BaseCard>{formMarkup}</BaseCard>
+  return <BaseCard data-testid="update-budget-item-form">{formMarkup}</BaseCard>
 }
 
 export default UpdateBudgetItemForm

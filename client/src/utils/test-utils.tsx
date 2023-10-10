@@ -45,6 +45,17 @@ export function RenderWithProviders({
   )
 }
 
+const budgetItems = [
+  {
+    id: '1',
+    name: 'fuel',
+    value: '123',
+    createAt: '01-01-23',
+    updateAt: '01-01-23',
+    category: { id: '1', categoryType: CategoryType.EXPENSE }
+  }
+]
+
 export const handlers = [
   rest.post('/api/user/signup', async (req, res, ctx) => {
     const body = await req.json()
@@ -245,20 +256,22 @@ export const handlers = [
         message: 'Create new budget item.',
         code: ResCodes.CREATE_BUDGET_ITEM,
         payload: {
-          budgetItems:
-            [
-              {
-                id: '1',
-                name: 'fuel',
-                value: '123',
-                createAt: '01-01-23',
-                updateAt: '01-01-23',
-                category: { id: '1', categoryType: CategoryType.EXPENSE }
-              }
-            ] || []
+          budgetItems
         }
       }),
       ctx.status(201),
+      ctx.delay(100)
+    )
+  }),
+
+  rest.delete('/api/budget/delete-budget-item', async (req, res, ctx) => {
+    return res(
+      ctx.json({
+        message: 'Budget item deleted successfuly.',
+        code: ResCodes.DELETE_BUDGET_ITEM,
+        payload: { budgetItems }
+      }),
+      ctx.status(200),
       ctx.delay(100)
     )
   })
