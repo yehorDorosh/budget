@@ -47,12 +47,20 @@ export function RenderWithProviders({
 
 const budgetItems = [
   {
-    id: '1',
+    id: 1,
     name: 'fuel',
-    value: '123',
-    createAt: '01-01-23',
-    updateAt: '01-01-23',
-    category: { id: '1', categoryType: CategoryType.EXPENSE }
+    ignore: false,
+    category: { id: 1, name: 'car', categoryType: CategoryType.EXPENSE },
+    userDate: '2023-01-01',
+    value: 10
+  },
+  {
+    id: 2,
+    name: 'beer',
+    ignore: false,
+    category: { id: 2, name: 'alcohol', categoryType: CategoryType.EXPENSE },
+    userDate: '2023-02-01',
+    value: 5
   }
 ]
 
@@ -271,6 +279,26 @@ export const handlers = [
         code: ResCodes.DELETE_BUDGET_ITEM,
         payload: { budgetItems }
       }),
+      ctx.status(200),
+      ctx.delay(100)
+    )
+  }),
+
+  rest.get('/api/budget/get-budget-item', async (req, res, ctx) => {
+    const filterName = req.url.searchParams.get('name')
+    const filterMonth = req.url.searchParams.get('month')
+    let filteredData = budgetItems
+
+    if (filterName) {
+      filteredData = budgetItems.filter((_) => _.name === filterName)
+    }
+
+    if (filterMonth === '2023-10' && !filterName) {
+      filteredData = budgetItems
+    }
+
+    return res(
+      ctx.json({ message: 'Budget items provided successfuly.', code: ResCodes.GET_BUDGET_ITEMS, payload: { budgetItems: filteredData } }),
       ctx.status(200),
       ctx.delay(100)
     )
