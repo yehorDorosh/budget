@@ -1,5 +1,5 @@
 import BudgetItem from './BudgetItem'
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { act } from 'react-dom/test-utils'
 import { setupServer } from 'msw/node'
@@ -101,7 +101,9 @@ describe('BudgetItem', () => {
       userEvent.click(deleteBtn)
     })
 
-    expect(mockDispatch).toBeCalled()
+    await waitFor(() => {
+      expect(mockDispatch).toHaveBeenCalledWith(expect.any(Function))
+    })
   })
 
   test('Should has class text-bg-secondary for ignore item', async () => {

@@ -50,7 +50,6 @@ describe('BudgetResult', () => {
       }
     ]
     store.dispatch(budgetItemActions.setBudgetItems(budgetItems))
-    store.dispatch(budgetItemActions.setActiveFilter(0))
   })
 
   beforeEach(() => {
