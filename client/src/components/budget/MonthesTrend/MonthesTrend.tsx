@@ -76,9 +76,16 @@ const MonthesTrend: FC<Props> = ({ token }) => {
       <div className={classes.trendContainer}>
         {expensesByMonth.map((value, i) => (
           <div key={i} className={classes.column}>
-            <p className={[classes.value, classes.expense].join(' ')}>{value.toFixed(2)}</p>
-            <p className={[classes.value, classes.income].join(' ')}>{incomesByMonth[i].toFixed(2)}</p>
-            <p className={[classes.value, incomesByMonth[i] - value < 0 ? classes.expense : classes.income].join(' ')}>
+            <p className={[classes.value, classes.expense].join(' ')} data-testid={`expense-${i}`}>
+              {value.toFixed(2)}
+            </p>
+            <p className={[classes.value, classes.income].join(' ')} data-testid={`income-${i}`}>
+              {incomesByMonth[i].toFixed(2)}
+            </p>
+            <p
+              className={[classes.value, incomesByMonth[i] - value < 0 ? classes.expense : classes.income].join(' ')}
+              data-testid={`total-${i}`}
+            >
               {(incomesByMonth[i] - value).toFixed(2)}
             </p>
             <div className={classes.columnTrend}>

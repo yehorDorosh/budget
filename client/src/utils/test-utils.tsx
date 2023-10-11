@@ -45,7 +45,7 @@ export function RenderWithProviders({
   )
 }
 
-const budgetItems = [
+export const mockedBudgetItems = [
   {
     id: 1,
     name: 'fuel',
@@ -61,6 +61,30 @@ const budgetItems = [
     category: { id: 2, name: 'alcohol', categoryType: CategoryType.EXPENSE },
     userDate: '2023-02-01',
     value: 5
+  },
+  {
+    id: 3,
+    name: 'book',
+    ignore: false,
+    category: { id: 3, name: 'educaton', categoryType: CategoryType.EXPENSE },
+    userDate: '2023-02-01',
+    value: 3
+  },
+  {
+    id: 4,
+    name: 'fuel',
+    ignore: false,
+    category: { id: 1, name: 'car', categoryType: CategoryType.EXPENSE },
+    userDate: '2023-02-01',
+    value: 15
+  },
+  {
+    id: 5,
+    name: 'bank',
+    ignore: false,
+    category: { id: 2, name: 'salary', categoryType: CategoryType.INCOME },
+    userDate: '2023-02-01',
+    value: 500
   }
 ]
 
@@ -264,7 +288,7 @@ export const handlers = [
         message: 'Create new budget item.',
         code: ResCodes.CREATE_BUDGET_ITEM,
         payload: {
-          budgetItems
+          budgetItems: mockedBudgetItems
         }
       }),
       ctx.status(201),
@@ -277,7 +301,7 @@ export const handlers = [
       ctx.json({
         message: 'Budget item deleted successfuly.',
         code: ResCodes.DELETE_BUDGET_ITEM,
-        payload: { budgetItems }
+        payload: { budgetItems: mockedBudgetItems }
       }),
       ctx.status(200),
       ctx.delay(100)
@@ -287,14 +311,14 @@ export const handlers = [
   rest.get('/api/budget/get-budget-item', async (req, res, ctx) => {
     const filterName = req.url.searchParams.get('name')
     const filterMonth = req.url.searchParams.get('month')
-    let filteredData = budgetItems
+    let filteredData = mockedBudgetItems
 
     if (filterName) {
-      filteredData = budgetItems.filter((_) => _.name === filterName)
+      filteredData = mockedBudgetItems.filter((_) => _.name === filterName)
     }
 
-    if (filterMonth === '2023-10' && !filterName) {
-      filteredData = budgetItems
+    if (filterMonth === '2023-01' && !filterName) {
+      filteredData = mockedBudgetItems.slice(0, 1)
     }
 
     return res(

@@ -35,11 +35,11 @@ describe('BudgetItemsList', () => {
     )
 
     await waitFor(() => {
-      expect(screen.getAllByTestId('budget-item')).toHaveLength(2)
+      expect(screen.getAllByTestId('budget-item')).toHaveLength(5)
     })
   })
 
-  test('Should render only one BudgetItem component after filter name changed.', async () => {
+  test('Should render only four BudgetItem component after filter name changed.', async () => {
     render(
       <RenderWithProviders>
         <BudgetItemsList token="token" />
@@ -47,7 +47,7 @@ describe('BudgetItemsList', () => {
     )
 
     await waitFor(() => {
-      expect(screen.getAllByTestId('budget-item')).toHaveLength(2)
+      expect(screen.getAllByTestId('budget-item')).toHaveLength(5)
     })
 
     await act(() => {
@@ -59,11 +59,11 @@ describe('BudgetItemsList', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getAllByTestId('budget-item')).toHaveLength(1)
+      expect(screen.getAllByTestId('budget-item')).toHaveLength(2)
     })
   })
 
-  test('Should render 2 itmes if filter month changed to 2023-10.', async () => {
+  test('Should render 1 items if filter month changed to 2023-01.', async () => {
     render(
       <RenderWithProviders>
         <BudgetItemsList token="token" />
@@ -71,7 +71,7 @@ describe('BudgetItemsList', () => {
     )
 
     await act(() => {
-      store.dispatch(budgetItemActions.setFilterMonth('2023-10'))
+      store.dispatch(budgetItemActions.setFilterMonth('2023-01'))
     })
 
     // await act(async () => {
@@ -79,7 +79,7 @@ describe('BudgetItemsList', () => {
     // })
 
     await waitFor(() => {
-      expect(screen.getAllByTestId('budget-item')).toHaveLength(2)
+      expect(screen.getAllByTestId('budget-item')).toHaveLength(1)
     })
   })
 })
