@@ -96,7 +96,7 @@ export const updateBudgetItem: RequestHandler = async (req, res: AppRes<BudgetIt
     const budgetItems = await budgetItemCRUD.findManyWithFilters(user.id, parseFilterQuery(req), next)
 
     res.status(200).json({
-      message: 'Budget item was updated successfuly.',
+      message: 'Budget item was updated successfully.',
       code: ResCodes.UPDATE_BUDGET_ITEM,
       payload: { budgetItems: budgetItems || [] }
     })

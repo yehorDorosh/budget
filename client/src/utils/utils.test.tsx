@@ -2,10 +2,10 @@ import { emailValidator, passwordValidator, notEmptyValidator, shouldMatchValida
 import objectToQueryString from './query'
 import { errorHandler } from './errors'
 import axios from 'axios'
-import { isAxiosErrorPayload } from '../types/store-actions'
-import { getCurrentYearMonth, formatDateYearMonth } from './date'
+import { isRegularErrorObject } from '../types/store-actions'
+import { getCurrentYearMonth, formatDateYearMonth, isDateValid } from './date'
 
-describe('utils functons tests', () => {
+describe('utils functions tests', () => {
   describe('validators', () => {
     test('emailValidator', () => {
       expect(emailValidator('')).toBe(false)
@@ -47,6 +47,7 @@ describe('utils functons tests', () => {
 
   describe('errorHandler', () => {
     test('Should return specific obj if error is axios error', async () => {
+      jest.spyOn(axios, 'get').mockRejectedValue(new Error('test'))
       let error: any
 
       try {
@@ -56,7 +57,8 @@ describe('utils functons tests', () => {
         error.response = { data: { message: 'test' } }
       }
 
-      expect(isAxiosErrorPayload(errorHandler(error))).toBe(true)
+      expect(isRegularErrorObject(errorHandler(error))).toBe(true)
+      jest.spyOn(axios, 'get').mockRestore()
     })
 
     test('Should return regular obj error if error is regular error', async () => {
@@ -87,6 +89,12 @@ describe('utils functons tests', () => {
       const month = date.getMonth() + 1
 
       expect(formatDateYearMonth(date)).toEqual(`${year}-${month}`)
+    })
+
+    test('isDateValid', () => {
+      expect(isDateValid('2021-01')).toBe(true)
+      expect(isDateValid('')).toBe(false)
+      expect(isDateValid('22')).toBe(false)
     })
   })
 })

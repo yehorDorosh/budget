@@ -10,3 +10,7 @@ export const formatDateYearMonth = (date: Date) => {
   const month = (date.getMonth() + 1).toString().padStart(2, '0')
   return `${year}-${month}`
 }
+
+export function isDateValid(dateStr: string) {
+  return !isNaN(new Date(dateStr).getTime())
+}

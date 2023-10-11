@@ -10,6 +10,15 @@ import store from '../../../store'
 describe('BudgetItem', () => {
   const server = setupServer(...handlers)
 
+  const budgetItem = {
+    id: 1,
+    name: 'fuel',
+    ignore: false,
+    category: { id: 1, name: 'car', categoryType: CategoryType.EXPENSE },
+    userDate: '2023-01-01',
+    value: 10
+  }
+
   beforeAll(() => {
     const portalRoot = document.createElement('div')
     portalRoot.setAttribute('id', 'modal-root')
@@ -30,17 +39,7 @@ describe('BudgetItem', () => {
   test('Should render BudgetItem component.', async () => {
     render(
       <RenderWithProviders>
-        <BudgetItem
-          token="token"
-          budgetItem={{
-            id: 1,
-            name: 'fuel',
-            ignore: false,
-            category: { id: 1, name: 'car', categoryType: CategoryType.EXPENSE },
-            userDate: '2023-01-01',
-            value: 10
-          }}
-        />
+        <BudgetItem token="token" budgetItem={budgetItem} />
       </RenderWithProviders>
     )
 
@@ -53,17 +52,7 @@ describe('BudgetItem', () => {
   test('Should open modal window.', async () => {
     render(
       <RenderWithProviders>
-        <BudgetItem
-          token="token"
-          budgetItem={{
-            id: 1,
-            name: 'fuel',
-            ignore: false,
-            category: { id: 1, name: 'car', categoryType: CategoryType.EXPENSE },
-            userDate: '2023-01-01',
-            value: 10
-          }}
-        />
+        <BudgetItem token="token" budgetItem={budgetItem} />
       </RenderWithProviders>
     )
 
@@ -76,22 +65,62 @@ describe('BudgetItem', () => {
     expect(screen.getByTestId('update-budget-item-form')).toBeInTheDocument()
   })
 
+  test('Should close modal window.', async () => {
+    render(
+      <RenderWithProviders>
+        <BudgetItem token="token" budgetItem={budgetItem} />
+      </RenderWithProviders>
+    )
+
+    const editBtn = screen.getByText(/edit/i)
+
+    act(() => {
+      userEvent.click(editBtn)
+    })
+
+    expect(screen.getByTestId('update-budget-item-form')).toBeInTheDocument()
+
+    const closeBtn = screen.getByTestId('close-btn')
+
+    act(() => {
+      userEvent.click(closeBtn)
+    })
+
+    expect(screen.queryByTestId('update-budget-item-form')).not.toBeInTheDocument()
+  })
+
+  test('Should close modal window after submit', async () => {
+    render(
+      <RenderWithProviders>
+        <BudgetItem token="token" budgetItem={budgetItem} />
+      </RenderWithProviders>
+    )
+
+    const editBtn = screen.getByText(/edit/i)
+
+    act(() => {
+      userEvent.click(editBtn)
+    })
+
+    expect(screen.getByTestId('update-budget-item-form')).toBeInTheDocument()
+
+    const closeBtn = screen.getByRole('button', { name: /save budget item/i })
+
+    await act(() => {
+      userEvent.click(closeBtn)
+    })
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('update-budget-item-form')).not.toBeInTheDocument()
+    })
+  })
+
   test('Should delete item', async () => {
     const mockDispatch = jest.spyOn(store, 'dispatch')
 
     render(
       <RenderWithProviders>
-        <BudgetItem
-          token="token"
-          budgetItem={{
-            id: 1,
-            name: 'fuel',
-            ignore: false,
-            category: { id: 1, name: 'car', categoryType: CategoryType.EXPENSE },
-            userDate: '2023-01-01',
-            value: 10
-          }}
-        />
+        <BudgetItem token="token" budgetItem={budgetItem} />
       </RenderWithProviders>
     )
 

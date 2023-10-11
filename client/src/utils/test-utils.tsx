@@ -326,6 +326,18 @@ export const handlers = [
       ctx.status(200),
       ctx.delay(100)
     )
+  }),
+
+  rest.put('/api/budget/update-budget-item', async (req, res, ctx) => {
+    return res(
+      ctx.json({
+        message: 'Budget item was updated successfully.',
+        code: ResCodes.UPDATE_BUDGET_ITEM,
+        payload: { budgetItems: mockedBudgetItems }
+      }),
+      ctx.status(200),
+      ctx.delay(100)
+    )
   })
 ]
 

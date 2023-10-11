@@ -18,7 +18,7 @@ const BaseModal: FC<Props> = ({ children, isOpen, onClose, title }) => {
           <div className="modal-content">
             <div className="modal-header">
               {title && <h5 className="modal-title">{title}</h5>}
-              <button type="button" className="btn-close" aria-label="Close" onClick={() => onClose()}></button>
+              <button type="button" className="btn-close" aria-label="Close" onClick={() => onClose()} data-testid="close-btn"></button>
             </div>
             <div className="modal-body">{children}</div>
           </div>
