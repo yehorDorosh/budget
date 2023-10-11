@@ -322,7 +322,7 @@ export const handlers = [
     }
 
     return res(
-      ctx.json({ message: 'Budget items provided successfuly.', code: ResCodes.GET_BUDGET_ITEMS, payload: { budgetItems: filteredData } }),
+      ctx.json({ message: 'Budget items provided successfully.', code: ResCodes.GET_BUDGET_ITEMS, payload: { budgetItems: filteredData } }),
       ctx.status(200),
       ctx.delay(100)
     )
@@ -336,6 +336,21 @@ export const handlers = [
         payload: { budgetItems: mockedBudgetItems }
       }),
       ctx.status(200),
+      ctx.delay(100)
+    )
+  }),
+
+  rest.post('/api/categories/add-category', async (req, res, ctx) => {
+    const body = await req.json()
+    return res(
+      ctx.json({
+        message: 'Create new category.',
+        code: ResCodes.CREATE_CATEGORY,
+        payload: {
+          categories: [{ id: 1, name: body.name, categoryType: body.categoryType }]
+        }
+      }),
+      ctx.status(201),
       ctx.delay(100)
     )
   })
