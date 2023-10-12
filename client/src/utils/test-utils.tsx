@@ -359,6 +359,32 @@ export const handlers = [
       ctx.status(201),
       ctx.delay(100)
     )
+  }),
+
+  rest.delete('/api/categories/delete-category', async (req, res, ctx) => {
+    const id = req.url.searchParams.get('id')
+    return res(
+      ctx.json({
+        message: 'Category was deleted successfully',
+        code: ResCodes.DELETE_CATEGORY,
+        payload: { categories: [{ id, name: 'kids', categoryType: CategoryType.EXPENSE }] }
+      }),
+      ctx.status(200),
+      ctx.delay(100)
+    )
+  }),
+
+  rest.put('/api/categories/update-category', async (req, res, ctx) => {
+    const body = await req.json()
+    return res(
+      ctx.json({
+        message: 'Category was updated successfully.',
+        code: ResCodes.UPDATE_CATEGORY,
+        payload: { categories: [{ id: body.id, name: body.name, categoryType: body.categoryType }] }
+      }),
+      ctx.status(200),
+      ctx.delay(100)
+    )
   })
 ]
 

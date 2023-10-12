@@ -54,7 +54,7 @@ export const deleteCategory: RequestHandler = async (req, res: AppRes<Categories
 
     res.status(200).json({
       message: 'Category was deleted successfully.',
-      code: ResCodes.GET_CATEGORIES,
+      code: ResCodes.DELETE_CATEGORY,
       payload: { categories: categories || [] }
     })
   } catch (err) {

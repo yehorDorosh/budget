@@ -69,7 +69,7 @@ const UpdateCategoryForm: FC<Props> = ({ token, id, defaultName, defaultCategory
     }
   )
 
-  return <BaseCard>{formMarkup}</BaseCard>
+  return <BaseCard data-testid="update-category-from">{formMarkup}</BaseCard>
 }
 
 export default UpdateCategoryForm
