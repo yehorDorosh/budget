@@ -21,7 +21,7 @@ const HeaderNav: FC<Props> = ({ isOpen, onClick }) => {
   }
 
   return (
-    <nav className={`${classes.nav} ${isOpen ? classes.open : ''}`} onClick={() => onClick()}>
+    <nav className={`${classes.nav} ${isOpen ? classes.open : 'mb-closed'}`} onClick={() => onClick()} data-testid="header-nav">
       <ul>
         {isLogin ? (
           <Fragment>

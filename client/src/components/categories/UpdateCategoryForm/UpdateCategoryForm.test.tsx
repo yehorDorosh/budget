@@ -7,7 +7,7 @@ import { RenderWithProviders, handlers } from '../../../utils/test-utils'
 import store from '../../../store'
 import { CategoryType } from '../../../types/enum'
 
-describe('UpdateBudgetItemForm', () => {
+describe('UpdateCategoryForm', () => {
   const server = setupServer(...handlers)
 
   beforeAll(() => {

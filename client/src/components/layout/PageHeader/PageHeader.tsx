@@ -10,7 +10,7 @@ const PageHeader = () => {
   const [openMenu, setOpenMenu] = useState(false)
   return (
     <header className={classes.header}>
-      <NavLink to="/">
+      <NavLink to="/" data-testid="logo">
         <img className={classes.logo} src="/logo192.png" alt="site logo" />
       </NavLink>
       <HeaderNav isOpen={openMenu} onClick={() => setOpenMenu(false)} />

@@ -8,7 +8,7 @@ import { CategoryType } from '../../../types/enum'
 import store from '../../../store'
 import { categoriesActions } from '../../../store/categories/categories-slice'
 
-describe('BudgetItem', () => {
+describe('CategoryListItem', () => {
   const server = setupServer(...handlers)
 
   beforeAll(() => {

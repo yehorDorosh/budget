@@ -5,7 +5,7 @@ import { RenderWithProviders, handlers, mockedCategories } from '../../../utils/
 import store from '../../../store'
 import { categoriesActions } from '../../../store/categories/categories-slice'
 
-describe('BudgetItemsList', () => {
+describe('CategoriesItemsList', () => {
   const server = setupServer(...handlers)
 
   beforeAll(() => {
