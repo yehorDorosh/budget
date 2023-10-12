@@ -165,7 +165,7 @@ export const handlers = [
     } else {
       return res(
         ctx.json({
-          message: 'Feild to update user.',
+          message: 'Failed to update user.',
           code: ResCodes.ERORR
         }),
         ctx.status(500),
@@ -295,11 +295,13 @@ export const handlers = [
   }),
 
   rest.delete('/api/budget/delete-budget-item', async (req, res, ctx) => {
+    const id = req.url.searchParams.get('id')
+
     return res(
       ctx.json({
-        message: 'Budget item deleted successfuly.',
+        message: 'Budget item deleted successfully.',
         code: ResCodes.DELETE_BUDGET_ITEM,
-        payload: { budgetItems: mockedBudgetItems }
+        payload: { budgetItems: id ? mockedBudgetItems.filter((_, i) => i > 0) : mockedBudgetItems }
       }),
       ctx.status(200),
       ctx.delay(100)
@@ -327,11 +329,17 @@ export const handlers = [
   }),
 
   rest.put('/api/budget/update-budget-item', async (req, res, ctx) => {
+    const newBudgetItems = [...mockedBudgetItems]
+    const body = await req.json()
+    newBudgetItems[0].name = body.name
+    newBudgetItems[0].value = body.value
+    newBudgetItems[0].userDate = formatDateYearMonthDay(new Date(body.userDate))
+    newBudgetItems[0].category.id = body.categoryId
     return res(
       ctx.json({
         message: 'Budget item was updated successfully.',
         code: ResCodes.UPDATE_BUDGET_ITEM,
-        payload: { budgetItems: mockedBudgetItems }
+        payload: { budgetItems: newBudgetItems }
       }),
       ctx.status(200),
       ctx.delay(100)

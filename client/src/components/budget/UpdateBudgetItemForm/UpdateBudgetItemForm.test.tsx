@@ -13,6 +13,12 @@ describe('UpdateBudgetItemForm', () => {
 
   beforeAll(() => {
     server.listen()
+    store.dispatch(
+      categoriesActions.setCategories([
+        { id: 1, name: 'car', categoryType: CategoryType.EXPENSE },
+        { id: 3, name: 'education', categoryType: CategoryType.EXPENSE }
+      ])
+    )
   })
 
   afterEach(() => {
@@ -109,10 +115,8 @@ describe('UpdateBudgetItemForm', () => {
   })
 
   test('Category input field should be valid.', async () => {
-    store.dispatch(categoriesActions.setCategories([{ id: 1, name: 'car', categoryType: CategoryType.EXPENSE }]))
-
     render(
-      <RenderWithProviders setCategories={true}>
+      <RenderWithProviders>
         <UpdateBudgetItemForm token={'token'} currentBudgetItem={mockedBudgetItems[0]} onSave={() => {}} />
       </RenderWithProviders>
     )
@@ -129,7 +133,7 @@ describe('UpdateBudgetItemForm', () => {
 
   test('Category input should be invalid', async () => {
     render(
-      <RenderWithProviders setCategories={true}>
+      <RenderWithProviders>
         <UpdateBudgetItemForm token={'token'} currentBudgetItem={mockedBudgetItems[0]} onSave={() => {}} />
       </RenderWithProviders>
     )
@@ -227,5 +231,40 @@ describe('UpdateBudgetItemForm', () => {
     await waitFor(() => {
       expect(eventHandler).toBeCalledTimes(1)
     })
+  })
+
+  test('Check that data correctly send to the server.', async () => {
+    render(
+      <RenderWithProviders>
+        <UpdateBudgetItemForm token={'token'} currentBudgetItem={mockedBudgetItems[0]} onSave={() => {}} />
+      </RenderWithProviders>
+    )
+
+    const submitBtn = screen.getByRole('button', { name: /Save budget item/i })
+    const inputName = screen.getByLabelText(/name/i)
+    const inputValue = screen.getByLabelText(/value/i)
+    const inputDate = screen.getByLabelText(/date/i)
+    const inputCategory = screen.getByLabelText(/category/i)
+
+    act(() => {
+      userEvent.clear(inputName)
+      userEvent.type(inputName, 'book')
+      userEvent.clear(inputValue)
+      userEvent.type(inputValue, '100')
+      userEvent.selectOptions(inputCategory, 'education')
+      userEvent.clear(inputDate)
+      userEvent.type(inputDate, '2023-03-01')
+    })
+
+    await act(() => {
+      userEvent.click(submitBtn)
+    })
+
+    await waitFor(() => {
+      expect(store.getState().budgetItem.budgetItems[0].name).toBe('book')
+    })
+    expect(store.getState().budgetItem.budgetItems[0].value).toBe(100)
+    expect(store.getState().budgetItem.budgetItems[0].userDate).toBe('2023-03-01')
+    expect(store.getState().budgetItem.budgetItems[0].category.id).toBe(3)
   })
 })

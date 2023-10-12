@@ -133,6 +133,10 @@ describe('BudgetItem', () => {
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalledWith(expect.any(Function))
     })
+
+    await waitFor(() => {
+      expect(store.getState().budgetItem.budgetItems).toHaveLength(4)
+    })
   })
 
   test('Should has class text-bg-secondary for ignore item', async () => {
