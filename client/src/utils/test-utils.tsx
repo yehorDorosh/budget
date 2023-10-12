@@ -7,8 +7,8 @@ import store from '../store'
 import { StoreAction } from '../types/store-actions'
 import { useAppDispatch } from '../hooks/useReduxTS'
 import { userActions } from '../store/user/user-slice'
-import { categoriesActions } from '../store/categories/categories-slice'
 import ErrorBoundary from '../components/errors/ErrorBoundary'
+import { formatDateYearMonthDay } from './date'
 
 function SetUserData() {
   const dispatch = useAppDispatch()
@@ -23,21 +23,10 @@ function SetUserData() {
   return null
 }
 
-function SetCategories() {
-  const dispatch = useAppDispatch()
-  dispatch(categoriesActions.setCategories([{ id: 1, name: 'car', categoryType: CategoryType.EXPENSE }]))
-  return null
-}
-
-export function RenderWithProviders({
-  children,
-  setUserData,
-  setCategories
-}: PropsWithChildren<{ setUserData?: boolean; setCategories?: boolean }>) {
+export function RenderWithProviders({ children, setUserData }: PropsWithChildren<{ setUserData?: boolean }>) {
   return (
     <Provider store={store}>
       {setUserData && <SetUserData />}
-      {setCategories && <SetCategories />}
       <BrowserRouter>
         <ErrorBoundary>{children}</ErrorBoundary>
       </BrowserRouter>
@@ -66,7 +55,7 @@ export const mockedBudgetItems = [
     id: 3,
     name: 'book',
     ignore: false,
-    category: { id: 3, name: 'educaton', categoryType: CategoryType.EXPENSE },
+    category: { id: 3, name: 'education', categoryType: CategoryType.EXPENSE },
     userDate: '2023-02-01',
     value: 3
   },
@@ -283,12 +272,21 @@ export const handlers = [
   }),
 
   rest.post('/api/budget/add-budget-item', async (req, res, ctx) => {
+    const body = await req.json()
+    const newBudgetItem = {
+      id: 6,
+      name: body.name,
+      ignore: false,
+      category: { id: body.categoryId, name: 'education', categoryType: CategoryType.EXPENSE },
+      userDate: formatDateYearMonthDay(new Date(body.userDate)),
+      value: body.value
+    }
     return res(
       ctx.json({
         message: 'Create new budget item.',
         code: ResCodes.CREATE_BUDGET_ITEM,
         payload: {
-          budgetItems: mockedBudgetItems
+          budgetItems: [newBudgetItem, ...mockedBudgetItems]
         }
       }),
       ctx.status(201),

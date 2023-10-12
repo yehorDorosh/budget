@@ -3,7 +3,7 @@ import objectToQueryString from './query'
 import { errorHandler } from './errors'
 import axios from 'axios'
 import { isRegularErrorObject } from '../types/store-actions'
-import { getCurrentYearMonth, formatDateYearMonth, isDateValid } from './date'
+import { getCurrentYearMonth, formatDateYearMonth, isDateValid, formatDateYearMonthDay } from './date'
 
 describe('utils functions tests', () => {
   describe('validators', () => {
@@ -95,6 +95,15 @@ describe('utils functions tests', () => {
       expect(isDateValid('2021-01')).toBe(true)
       expect(isDateValid('')).toBe(false)
       expect(isDateValid('22')).toBe(false)
+    })
+
+    test('formatDateYearMonthDay', () => {
+      const date = new Date()
+      const year = date.getFullYear()
+      const month = date.getMonth() + 1
+      const day = date.getDate()
+
+      expect(formatDateYearMonthDay(date)).toEqual(`${year}-${month}-${day}`)
     })
   })
 })

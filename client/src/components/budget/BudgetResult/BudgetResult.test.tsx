@@ -80,7 +80,7 @@ describe('BudgetResult', () => {
     expect(alcohol[0]).toHaveTextContent('alcohol')
     expect(alcohol[1]).toHaveTextContent('5.00')
 
-    expect(education[0]).toHaveTextContent('educaton')
+    expect(education[0]).toHaveTextContent('education')
     expect(education[1]).toHaveTextContent('3.00')
   })
 })
