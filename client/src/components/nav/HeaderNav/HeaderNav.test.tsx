@@ -5,13 +5,8 @@ import store from '../../../store'
 import { userActions } from '../../../store/user/user-slice'
 
 describe('HeaderNav', () => {
-  const originalInnerWidth = global.innerWidth
-  const originalInnerHeight = global.innerHeight
-
   afterEach(() => {
     cleanup()
-    global.innerWidth = originalInnerWidth
-    global.innerHeight = originalInnerHeight
   })
 
   afterAll(() => {

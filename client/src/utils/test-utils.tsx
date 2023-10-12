@@ -391,6 +391,18 @@ export const handlers = [
       ctx.status(200),
       ctx.delay(100)
     )
+  }),
+
+  rest.get('/api/categories/get-categories', async (req, res, ctx) => {
+    return res(
+      ctx.json({
+        message: 'Category list successfully provided.',
+        code: ResCodes.GET_CATEGORIES,
+        payload: { categories: mockedCategories }
+      }),
+      ctx.status(200),
+      ctx.delay(100)
+    )
   })
 ]
 

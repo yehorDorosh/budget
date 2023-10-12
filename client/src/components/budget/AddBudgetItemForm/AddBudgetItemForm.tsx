@@ -112,7 +112,7 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
       }
     }
   )
-  return <BaseCard>{formMarkup}</BaseCard>
+  return <BaseCard data-testid="add-budget-item-form">{formMarkup}</BaseCard>
 }
 
 export default AddBudgetItemForm

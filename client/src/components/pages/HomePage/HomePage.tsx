@@ -1,7 +1,7 @@
 import { Fragment, useEffect } from 'react'
-import { useAppSelector, useAppDispatch } from '../../hooks/useReduxTS'
-import AddBudgetItemForm from '../budget/AddBudgetItemForm/AddBudgetItemForm'
-import { getCategories } from '../../store/categories/categories-actions'
+import { useAppSelector, useAppDispatch } from '../../../hooks/useReduxTS'
+import AddBudgetItemForm from '../../budget/AddBudgetItemForm/AddBudgetItemForm'
+import { getCategories } from '../../../store/categories/categories-actions'
 
 const HomePage = () => {
   const dispatch = useAppDispatch()
