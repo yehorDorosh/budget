@@ -77,6 +77,12 @@ export const mockedBudgetItems = [
   }
 ]
 
+export const mockedCategories = [
+  { id: 1, name: 'car', categoryType: CategoryType.EXPENSE },
+  { id: 2, name: 'salary', categoryType: CategoryType.INCOME },
+  { id: 3, name: 'education', categoryType: CategoryType.EXPENSE }
+]
+
 export const handlers = [
   rest.post('/api/user/signup', async (req, res, ctx) => {
     const body = await req.json()
