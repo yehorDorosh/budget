@@ -34,7 +34,7 @@ const BudgetResult = () => {
   const expensesList = Object.entries(itemsByCategory).sort((a, b) => b[1] - a[1])
 
   return (
-    <BaseCard className="mb-4">
+    <BaseCard className="mb-4" data-testid="budget-result">
       <div className={classes.resultContainer}>
         <div className={classes.column}>
           <h3>Summary</h3>

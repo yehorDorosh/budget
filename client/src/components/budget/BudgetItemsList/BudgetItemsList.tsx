@@ -40,7 +40,7 @@ const BudgetItemsList: FC<Props> = ({ token }) => {
     }
   }, [token, filters.year, filters.active, filters.month, filters.categoryType, filters.category, filters.ignore])
   return (
-    <BaseCard>
+    <BaseCard data-testid="budget-item-list">
       {budgetItems.length !== 0 &&
         budgetItems.map((budgetItem) => <BudgetItem key={budgetItem.id} token={token} budgetItem={budgetItem} />)}
     </BaseCard>
