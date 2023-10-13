@@ -5,7 +5,7 @@ import SignupPage from '../components/pages/SignupPage'
 import LoginPage from '../components/pages/LoginPage'
 import HomePage from '../components/pages/HomePage/HomePage'
 import RouterErrorBoundary from '../components/errors/RouterErrorBoundary'
-import ErrorPage from '../components/pages/ErrorPage'
+import ErrorPage from '../components/pages/ErrorPage/ErrorPage'
 import RestorePassSendEmailPage from '../components/pages/RestorePassSendEmailPage'
 import RestorePassPage from '../components/pages/RestorePassPage'
 import ProfilePage from '../components/pages/ProfilePage'
@@ -14,7 +14,7 @@ import BudgetPage from '../components/pages/BudgetPage/BudgetPage'
 import CategoriesPage from '../components/pages/CategoriesPage/CategoriesPage'
 import WeatherPage from '../components/pages/WeatherPage'
 
-const router = createBrowserRouter([
+export const routesConfig = [
   {
     path: '/',
     element: <DefaultTemplate />,
@@ -79,6 +79,8 @@ const router = createBrowserRouter([
     path: '/400',
     element: <ErrorPage />
   }
-])
+]
+
+const router = createBrowserRouter(routesConfig)
 
 export default router

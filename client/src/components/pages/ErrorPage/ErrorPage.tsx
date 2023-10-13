@@ -1,9 +1,9 @@
 import React, { FC } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { ActionResult, isAxiosErrorPayload, isRegularErrorObject } from '../../types/store-actions'
-import ErrorTemplate from '../templates/ErrorTemplate'
-import ErrorList from '../ui/ErrorList/ErrorList'
+import { ActionResult, isAxiosErrorPayload, isRegularErrorObject } from '../../../types/store-actions'
+import ErrorTemplate from '../../templates/ErrorTemplate'
+import ErrorList from '../../ui/ErrorList/ErrorList'
 
 interface Props {
   message?: string

@@ -7,7 +7,7 @@ import { setupServer } from 'msw/node'
 import { handlers } from '../../../utils/test-utils'
 import { categoriesActions } from '../../../store/categories/categories-slice'
 
-describe('HomePage', () => {
+describe('CategoriesPage', () => {
   const server = setupServer(...handlers)
 
   beforeAll(() => {

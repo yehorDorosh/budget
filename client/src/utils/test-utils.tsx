@@ -403,6 +403,24 @@ export const handlers = [
       ctx.status(200),
       ctx.delay(100)
     )
+  }),
+
+  rest.get('/api/error', async (req, res, ctx) => {
+    return res(
+      ctx.json({
+        message: 'Internal server error.',
+        code: ResCodes.ERORR,
+        error: {
+          cause: 'Mocked error.'
+        },
+        validationErrors: [
+          { location: 'body', msg: 'Mocked error.', path: 'email', type: 'field', value: '' },
+          { location: 'body', msg: 'Mocked error.', path: 'password', type: 'field', value: '' }
+        ]
+      }),
+      ctx.status(422),
+      ctx.delay(100)
+    )
   })
 ]
 

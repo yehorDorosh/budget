@@ -8,7 +8,7 @@ import { handlers } from '../../../utils/test-utils'
 import { categoriesActions } from '../../../store/categories/categories-slice'
 import { act } from 'react-dom/test-utils'
 
-describe('HomePage', () => {
+describe('BudgetPage', () => {
   const server = setupServer(...handlers)
 
   beforeAll(() => {
