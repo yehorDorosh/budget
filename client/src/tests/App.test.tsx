@@ -12,4 +12,5 @@ test('renders learn react link', () => {
   )
   const linkElement = screen.getByText(/home page/i)
   expect(linkElement).toBeInTheDocument()
+  expect(screen.getByTestId('header')).toBeInTheDocument()
 })
