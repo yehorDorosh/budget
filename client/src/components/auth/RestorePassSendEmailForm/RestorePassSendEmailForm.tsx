@@ -44,7 +44,7 @@ const RestorePassSendEmailForm: FC<Props> = ({ onSendEmail }) => {
     }
   )
 
-  return <BaseCard>{formMarkup}</BaseCard>
+  return <BaseCard data-testid="restore-pass-send-email-form">{formMarkup}</BaseCard>
 }
 
 export default RestorePassSendEmailForm

@@ -22,7 +22,7 @@ describe('RestorePassSendEmailForm', () => {
     cleanup()
   })
 
-  test('Email input field should be vaild.', async () => {
+  test('Email input field should be valid.', async () => {
     render(
       <RenderWithProviders>
         <RestorePassSendEmailForm onSendEmail={() => {}} />
@@ -71,7 +71,7 @@ describe('RestorePassSendEmailForm', () => {
     expect(inputEmail).toBeInvalid()
   })
 
-  test('The Loading component should be displayed after submit and desapear after response.', async () => {
+  test('The Loading component should be displayed after submit and disappear after response.', async () => {
     render(
       <RenderWithProviders>
         <RestorePassSendEmailForm onSendEmail={() => {}} />
@@ -104,11 +104,11 @@ describe('RestorePassSendEmailForm', () => {
         <RestorePassSendEmailForm onSendEmail={onSendEmail} />
       </RenderWithProviders>
     )
-    const inputEmail = screen.getByLabelText(/email/i)
+    const input = screen.getByLabelText(/email/i)
     const submitBtn = screen.getByRole('button', { name: /send email/i })
 
     act(() => {
-      userEvent.type(inputEmail, 'user@email.com')
+      userEvent.type(input, 'user@email.com')
     })
 
     await act(() => {
