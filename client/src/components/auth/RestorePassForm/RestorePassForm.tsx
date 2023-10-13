@@ -64,7 +64,7 @@ const SignupForm: React.FC<Props> = ({ token }) => {
   )
 
   return (
-    <BaseCard>
+    <BaseCard data-testid="restore-pass-form">
       {tokenExpired && (
         <p>
           <span className="error">

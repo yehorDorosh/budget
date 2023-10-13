@@ -1,7 +1,7 @@
 import { Fragment } from 'react'
 import { useParams } from 'react-router-dom'
 
-import RestorePassForm from '../auth/RestorePassForm/RestorePassForm'
+import RestorePassForm from '../../auth/RestorePassForm/RestorePassForm'
 
 const RestorePassPage = () => {
   const { token } = useParams()
