@@ -53,7 +53,7 @@ const SignupForm = () => {
     }
   )
 
-  return <BaseCard>{formMarkup}</BaseCard>
+  return <BaseCard data-testid="signup-form">{formMarkup}</BaseCard>
 }
 
 export default SignupForm

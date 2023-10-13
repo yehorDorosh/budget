@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 
 import DefaultTemplate from '../components/templates/DefaultTemplate'
-import SignupPage from '../components/pages/SignupPage'
+import SignupPage from '../components/pages/SignupPage/SignupPage'
 import LoginPage from '../components/pages/LoginPage/LoginPage'
 import HomePage from '../components/pages/HomePage/HomePage'
 import RouterErrorBoundary from '../components/errors/RouterErrorBoundary'
