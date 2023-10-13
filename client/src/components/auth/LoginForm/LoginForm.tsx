@@ -53,7 +53,7 @@ const LoginForm = () => {
   )
 
   return (
-    <BaseCard>
+    <BaseCard data-testid="login-form">
       {formMarkup}
       <p className="text-center">
         <NavLink to="/restore-password">Forgot password?</NavLink>
