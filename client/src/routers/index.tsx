@@ -11,7 +11,7 @@ import RestorePassPage from '../components/pages/RestorePassPage'
 import ProfilePage from '../components/pages/ProfilePage'
 import RequireAuth from '../components/auth/RequireAuth/RequireAuth'
 import BudgetPage from '../components/pages/BudgetPage/BudgetPage'
-import CategoriesPage from '../components/pages/CategoriesPage'
+import CategoriesPage from '../components/pages/CategoriesPage/CategoriesPage'
 import WeatherPage from '../components/pages/WeatherPage'
 
 const router = createBrowserRouter([

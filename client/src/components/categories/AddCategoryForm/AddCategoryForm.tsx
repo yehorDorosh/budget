@@ -58,7 +58,11 @@ const AddCategoryForm: FC<Props> = ({ token }) => {
     }
   )
 
-  return <BaseCard className="mb-4">{formMarkup}</BaseCard>
+  return (
+    <BaseCard className="mb-4" data-testid="add-category-form">
+      {formMarkup}
+    </BaseCard>
+  )
 }
 
 export default AddCategoryForm
