@@ -9,7 +9,7 @@ import BurgerButton from '../../ui/BurgerButton/BurgerButton'
 const PageHeader = () => {
   const [openMenu, setOpenMenu] = useState(false)
   return (
-    <header className={classes.header}>
+    <header className={classes.header} data-testid="header">
       <NavLink to="/" data-testid="logo">
         <img className={classes.logo} src="/logo192.png" alt="site logo" />
       </NavLink>
