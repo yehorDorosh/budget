@@ -12,7 +12,7 @@ import ProfilePage from '../components/pages/ProfilePage/ProfilePage'
 import RequireAuth from '../components/auth/RequireAuth/RequireAuth'
 import BudgetPage from '../components/pages/BudgetPage/BudgetPage'
 import CategoriesPage from '../components/pages/CategoriesPage/CategoriesPage'
-import WeatherPage from '../components/pages/WeatherPage'
+import WeatherPage from '../components/pages/WeatherPage/WeatherPage'
 
 export const routesConfig = [
   {

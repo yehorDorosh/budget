@@ -1,7 +1,7 @@
 import { Fragment, useEffect } from 'react'
 
-import { useAppDispatch, useAppSelector } from '../../hooks/useReduxTS'
-import { getLastWeather } from '../../store/weather/weather-actions'
+import { useAppDispatch, useAppSelector } from '../../../hooks/useReduxTS'
+import { getLastWeather } from '../../../store/weather/weather-actions'
 
 const WeatherPage = () => {
   const dispatch = useAppDispatch()
@@ -28,7 +28,7 @@ const WeatherPage = () => {
         <tbody>
           {weather &&
             weather.map((w, i) => (
-              <tr key={w.dbId}>
+              <tr key={w.dbId} data-testid="last-weather-item">
                 <td>{w.id}</td>
                 <td>{w.t}</td>
                 <td>{w.p}</td>
