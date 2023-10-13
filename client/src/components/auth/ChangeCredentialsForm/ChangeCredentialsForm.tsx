@@ -52,7 +52,7 @@ const ChangeCredentialsForm: FC<Props> = ({ fieldName, token, onEdit: onEditEmai
     }
   )
 
-  return <BaseCard>{formMarkup}</BaseCard>
+  return <BaseCard data-testid="change-credential-form">{formMarkup}</BaseCard>
 }
 
 export default ChangeCredentialsForm

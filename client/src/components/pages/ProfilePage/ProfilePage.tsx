@@ -1,10 +1,10 @@
 import React, { Fragment, useState } from 'react'
-import { useAppSelector } from '../../hooks/useReduxTS'
+import { useAppSelector } from '../../../hooks/useReduxTS'
 
-import ChangeCredentialsForm from '../auth/ChangeCredentialsForm/ChangeCredentialsForm'
-import DeleteUserForm from '../auth/DeleteUserForm/DeleteUserForm'
+import ChangeCredentialsForm from '../../auth/ChangeCredentialsForm/ChangeCredentialsForm'
+import DeleteUserForm from '../../auth/DeleteUserForm/DeleteUserForm'
 
-const ProgilePage = () => {
+const ProfilePage = () => {
   const email = useAppSelector((state) => state.user.email)
   const token = useAppSelector((state) => state.user.token)
   const [openEmailForm, setOpenEmailForm] = useState(false)
@@ -57,4 +57,4 @@ const ProgilePage = () => {
   )
 }
 
-export default ProgilePage
+export default ProfilePage

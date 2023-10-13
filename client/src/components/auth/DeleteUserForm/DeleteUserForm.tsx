@@ -55,7 +55,7 @@ const DeleteUserForm: FC<Props> = ({ token }) => {
       <BaseModal isOpen={wrongCredentials} onClose={() => setWrongCredentials(false)} title="Error">
         Wrong password!
       </BaseModal>
-      <BaseCard>{formMarkup}</BaseCard>
+      <BaseCard data-testid="delete-user-form">{formMarkup}</BaseCard>
     </Fragment>
   )
 }

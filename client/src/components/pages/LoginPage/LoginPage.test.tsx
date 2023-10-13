@@ -7,7 +7,7 @@ describe('LoginPage', () => {
     cleanup()
   })
 
-  test('Should render Categories Page.', async () => {
+  test('Should render Login Page.', async () => {
     render(
       <RenderWithProviders>
         <LoginPage />
