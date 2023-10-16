@@ -105,6 +105,49 @@ describe('CategoryListItem', () => {
     })
   })
 
+  test('Should open delete modal window.', async () => {
+    render(
+      <RenderWithProviders>
+        <ListItem id={1} value="car" categoryType={CategoryType.EXPENSE} token="token" />
+      </RenderWithProviders>
+    )
+
+    const deleteBtn = screen.getByText(/delete/i)
+
+    await act(() => {
+      userEvent.click(deleteBtn)
+    })
+
+    expect(screen.getByTestId('modal')).toBeInTheDocument()
+    expect(screen.getByText(/delete category/i)).toBeInTheDocument()
+  })
+
+  test('Should close delete modal window.', async () => {
+    render(
+      <RenderWithProviders>
+        <ListItem id={1} value="car" categoryType={CategoryType.EXPENSE} token="token" />
+      </RenderWithProviders>
+    )
+
+    const deleteBtn = screen.getByText(/delete/i)
+
+    await act(() => {
+      userEvent.click(deleteBtn)
+    })
+
+    expect(screen.getByTestId('modal')).toBeInTheDocument()
+
+    const closeBtn = screen.getByTestId('reject')
+
+    await act(() => {
+      userEvent.click(closeBtn)
+    })
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('modal')).not.toBeInTheDocument()
+    })
+  })
+
   test('Should delete item', async () => {
     store.dispatch(categoriesActions.setCategories([]))
     const mockDispatch = jest.spyOn(store, 'dispatch')
@@ -119,6 +162,12 @@ describe('CategoryListItem', () => {
 
     await act(() => {
       userEvent.click(deleteBtn)
+    })
+
+    const acceptBtn = screen.getByTestId('accept')
+
+    await act(() => {
+      userEvent.click(acceptBtn)
     })
 
     await waitFor(() => {

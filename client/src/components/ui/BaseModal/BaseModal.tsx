@@ -33,10 +33,10 @@ const BaseModal: FC<Props> = ({ children, isOpen, onClose, title, footer }) => {
             <div className="modal-body">{children}</div>
             {footer && (
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => footer.reject.onClick()}>
+                <button type="button" className="btn btn-secondary" onClick={() => footer.reject.onClick()} data-testid="reject">
                   {footer.reject.text}
                 </button>
-                <button type="button" className="btn btn-primary" onClick={() => footer.accept.onClick()}>
+                <button type="button" className="btn btn-primary" onClick={() => footer.accept.onClick()} data-testid="accept">
                   {footer.accept.text}
                 </button>
               </div>

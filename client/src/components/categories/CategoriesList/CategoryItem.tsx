@@ -18,6 +18,7 @@ interface Props {
 const ListItem: FC<Props> = ({ id, value, categoryType, token }) => {
   const dispatch = useAppDispatch()
   const [openForm, setOpenForm] = useState(false)
+  const [openDeleteModal, setOpenDeleteModal] = useState(false)
 
   const deleteHandler = () => {
     dispatch(deleteCategory({ token, id }))
@@ -38,6 +39,18 @@ const ListItem: FC<Props> = ({ id, value, categoryType, token }) => {
           onSave={() => setOpenForm(false)}
         />
       </BaseModal>
+      <BaseModal
+        isOpen={openDeleteModal}
+        onClose={() => setOpenDeleteModal(false)}
+        title="Delete Category"
+        footer={{
+          reject: { text: 'Cancel', onClick: () => setOpenDeleteModal(false) },
+          accept: { text: 'Delete', onClick: deleteHandler }
+        }}
+      >
+        <p>Are you sure you want to delete this category?</p>
+        <p>All budget items in this category also will be deleted!</p>
+      </BaseModal>
       <BaseCard
         className={`my-3 ${categoryType === CategoryType.EXPENSE ? 'text-bg-dark' : 'text-bg-success'}`}
         data-testid="category-item"
@@ -49,7 +62,7 @@ const ListItem: FC<Props> = ({ id, value, categoryType, token }) => {
             <button className="btn btn-warning me-3 my-1" onClick={editBtnHandler}>
               Edit
             </button>
-            <button className="btn btn-danger my-1" onClick={deleteHandler}>
+            <button className="btn btn-danger my-1" onClick={() => setOpenDeleteModal(true)}>
               Delete
             </button>
           </div>
