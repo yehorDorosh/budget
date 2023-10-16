@@ -1,8 +1,8 @@
 import { Fragment } from 'react'
 
-import SignupForm from '../auth/SignupForm/SignupForm'
+import SignupForm from '../../auth/SignupForm/SignupForm'
 
-const SugnupPage = () => {
+const SignupPage = () => {
   return (
     <Fragment>
       <h1 className="text-center">Sign Up</h1>
@@ -11,4 +11,4 @@ const SugnupPage = () => {
   )
 }
 
-export default SugnupPage
+export default SignupPage

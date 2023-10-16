@@ -1,9 +1,9 @@
 import { Fragment, useEffect } from 'react'
-import AddCategoryForm from '../categories/AddCategoryForm/AddCategoryForm'
-import { useAppSelector } from '../../hooks/useReduxTS'
-import CategoriesList from '../categories/CategoriesList/CategoriesList'
-import { getCategories } from '../../store/categories/categories-actions'
-import { useAppDispatch } from '../../hooks/useReduxTS'
+import AddCategoryForm from '../../categories/AddCategoryForm/AddCategoryForm'
+import { useAppSelector } from '../../../hooks/useReduxTS'
+import CategoriesList from '../../categories/CategoriesList/CategoriesList'
+import { getCategories } from '../../../store/categories/categories-actions'
+import { useAppDispatch } from '../../../hooks/useReduxTS'
 
 const CategoriesPage = () => {
   const dispatch = useAppDispatch()

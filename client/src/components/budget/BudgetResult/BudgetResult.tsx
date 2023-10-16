@@ -34,7 +34,7 @@ const BudgetResult = () => {
   const expensesList = Object.entries(itemsByCategory).sort((a, b) => b[1] - a[1])
 
   return (
-    <BaseCard className="mb-4">
+    <BaseCard className="mb-4" data-testid="budget-result">
       <div className={classes.resultContainer}>
         <div className={classes.column}>
           <h3>Summary</h3>
@@ -48,15 +48,15 @@ const BudgetResult = () => {
             <tbody>
               <tr className="table-light">
                 <td>Income</td>
-                <td>{sumIncomes.toFixed(2)}</td>
+                <td data-testid="total-income">{sumIncomes.toFixed(2)}</td>
               </tr>
               <tr className="table-light">
                 <td>Expenses</td>
-                <td>{sumExpenses.toFixed(2)}</td>
+                <td data-testid="total-expense">{sumExpenses.toFixed(2)}</td>
               </tr>
               <tr className="table-light">
                 <td>Total</td>
-                <td>{total.toFixed(2)}</td>
+                <td data-testid="total">{total.toFixed(2)}</td>
               </tr>
             </tbody>
           </table>
@@ -73,7 +73,7 @@ const BudgetResult = () => {
             <tbody>
               {expensesList.map((budgetItem) => {
                 return (
-                  <tr key={budgetItem[0]} className="table-light">
+                  <tr key={budgetItem[0]} className="table-light" data-testid="expense-list-item">
                     <td>{budgetItem[0]}</td>
                     <td>{budgetItem[1].toFixed(2)}</td>
                   </tr>

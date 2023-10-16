@@ -1,12 +1,12 @@
 import { Fragment, useEffect } from 'react'
 
-import { useAppSelector, useAppDispatch } from '../../hooks/useReduxTS'
-import BudgetItemsList from '../budget/BudgetItemsList/BudgetItemsList'
+import { useAppSelector, useAppDispatch } from '../../../hooks/useReduxTS'
+import BudgetItemsList from '../../budget/BudgetItemsList/BudgetItemsList'
 // import AddBudgetItemForm from '../budget/AddBudgetItemForm/AddBudgetItemForm'
-import { getCategories } from '../../store/categories/categories-actions'
-import FilterBudgetListForm from '../budget/FilterBudgetListForm/FilterBudgetListForm'
-import BudgetResult from '../budget/BudgetResult/BudgetResult'
-import MonthesTrend from '../budget/MonthesTrend/MonthesTrend'
+import { getCategories } from '../../../store/categories/categories-actions'
+import FilterBudgetListForm from '../../budget/FilterBudgetListForm/FilterBudgetListForm'
+import BudgetResult from '../../budget/BudgetResult/BudgetResult'
+import MonthesTrend from '../../budget/MonthesTrend/MonthesTrend'
 
 const BudgetPage = () => {
   const dispatch = useAppDispatch()

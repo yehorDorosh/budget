@@ -17,7 +17,7 @@ const BaseForm: FC<BaseFormProps> = ({ children, isLoading, errors, className, .
         {errors && <ErrorList errors={errors} />}
         {children}
         {isLoading && (
-          <div className={classes.loaderBg}>
+          <div className={classes.loaderBg} data-testid="loader">
             <div className={classes.loader}></div>
           </div>
         )}

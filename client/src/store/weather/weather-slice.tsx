@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface Weather {
   dbId: number
-  id: 'string'
+  id: string
   t: number
   p: number
   v: number | null

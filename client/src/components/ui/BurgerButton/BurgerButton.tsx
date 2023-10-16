@@ -13,7 +13,7 @@ const BurgerButton: FC<Props> = ({ id, className, onClick, isOpen }) => {
   return (
     <div className={`${classes.burger} ${className} ${isOpen ? classes.open : ''}`}>
       <label htmlFor={id}>
-        <input type="checkbox" id={id} onChange={() => onClick()} checked={isOpen} />
+        <input type="checkbox" id={id} onChange={() => onClick()} checked={isOpen} data-testid="burger" />
         <span></span>
         <span></span>
         <span></span>

@@ -1,20 +1,20 @@
 import { createBrowserRouter } from 'react-router-dom'
 
 import DefaultTemplate from '../components/templates/DefaultTemplate'
-import SignupPage from '../components/pages/SignupPage'
-import LoginPage from '../components/pages/LoginPage'
-import HomePage from '../components/pages/HomePage'
+import SignupPage from '../components/pages/SignupPage/SignupPage'
+import LoginPage from '../components/pages/LoginPage/LoginPage'
+import HomePage from '../components/pages/HomePage/HomePage'
 import RouterErrorBoundary from '../components/errors/RouterErrorBoundary'
-import ErrorPage from '../components/pages/ErrorPage'
-import RestorePassSendEmailPage from '../components/pages/RestorePassSendEmailPage'
-import RestorePassPage from '../components/pages/RestorePassPage'
-import ProfilePage from '../components/pages/ProfilePage'
+import ErrorPage from '../components/pages/ErrorPage/ErrorPage'
+import RestorePassSendEmailPage from '../components/pages/RestorePassSendEmailPage/RestorePassSendEmailPage'
+import RestorePassPage from '../components/pages/RestorePassPage/RestorePassPage'
+import ProfilePage from '../components/pages/ProfilePage/ProfilePage'
 import RequireAuth from '../components/auth/RequireAuth/RequireAuth'
-import BudgetPage from '../components/pages/BudgetPage'
-import CategoriesPage from '../components/pages/CategoriesPage'
-import WeatherPage from '../components/pages/WeatherPage'
+import BudgetPage from '../components/pages/BudgetPage/BudgetPage'
+import CategoriesPage from '../components/pages/CategoriesPage/CategoriesPage'
+import WeatherPage from '../components/pages/WeatherPage/WeatherPage'
 
-const router = createBrowserRouter([
+export const routesConfig = [
   {
     path: '/',
     element: <DefaultTemplate />,
@@ -74,7 +74,13 @@ const router = createBrowserRouter([
   {
     path: '/500',
     element: <ErrorPage />
+  },
+  {
+    path: '/400',
+    element: <ErrorPage />
   }
-])
+]
+
+const router = createBrowserRouter(routesConfig)
 
 export default router

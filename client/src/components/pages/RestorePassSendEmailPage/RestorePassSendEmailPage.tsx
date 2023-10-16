@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react'
 
-import RestorePassSendEmailForm from '../auth/RestorePassSendEmailForm/RestorePassSendEmailForm'
+import RestorePassSendEmailForm from '../../auth/RestorePassSendEmailForm/RestorePassSendEmailForm'
 
 const RestorePassSendEmailPage = () => {
   const [email, setEmail] = useState<string | undefined>()
@@ -13,7 +13,7 @@ const RestorePassSendEmailPage = () => {
     <Fragment>
       <h1>Restore password</h1>
       {email ? (
-        <p>The email with instructions on how to reset your password was sent to the email address {email}</p>
+        <p data-testid="msg">The email with instructions on how to reset your password was sent to the email address {email}</p>
       ) : (
         <RestorePassSendEmailForm onSendEmail={sendEmailHandler} />
       )}

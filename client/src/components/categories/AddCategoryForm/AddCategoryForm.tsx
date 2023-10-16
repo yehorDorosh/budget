@@ -1,7 +1,7 @@
 import { FC } from 'react'
 
-import useField from '../../../hooks/useField'
-import useForm from '../../../hooks/useForm'
+import useField from '../../../hooks/useFiled/useField'
+import useForm from '../../../hooks/useForm/useForm'
 import { notEmpty } from '../../../utils/validators'
 import { addCategory } from '../../../store/categories/categories-actions'
 import { CategoryType } from '../../../types/enum'
@@ -58,7 +58,11 @@ const AddCategoryForm: FC<Props> = ({ token }) => {
     }
   )
 
-  return <BaseCard className="mb-4">{formMarkup}</BaseCard>
+  return (
+    <BaseCard className="mb-4" data-testid="add-category-form">
+      {formMarkup}
+    </BaseCard>
+  )
 }
 
 export default AddCategoryForm

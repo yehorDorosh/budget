@@ -1,7 +1,7 @@
 import { FC } from 'react'
 
-import useField from '../../../hooks/useField'
-import useForm from '../../../hooks/useForm'
+import useField from '../../../hooks/useFiled/useField'
+import useForm from '../../../hooks/useForm/useForm'
 import { notEmpty } from '../../../utils/validators'
 import { addBudgetItem } from '../../../store/budget/budget-item-actions'
 import { useAppSelector } from '../../../hooks/useReduxTS'
@@ -17,7 +17,7 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
   const { fieldState: nameState, fieldDispatch: nameDispatch } = useField()
   const { fieldState: valueState, fieldDispatch: valueDispatch } = useField()
   const { fieldState: dateState, fieldDispatch: dateDispatch } = useField(currentDate)
-  const { fieldState: categoryState, fieldDispatch: categoryDispatch } = useField()
+  const { fieldState: categoryState, fieldDispatch: categoryDispatch } = useField(undefined, false)
   const { fieldState: categoryTypeState, fieldDispatch: categoryTypeDispatch } = useField(CategoryType.EXPENSE)
   const categories = useAppSelector((state) => state.categories.categories)
   const filters = useAppSelector((state) => state.budgetItem.filters)
@@ -112,7 +112,7 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
       }
     }
   )
-  return <BaseCard>{formMarkup}</BaseCard>
+  return <BaseCard data-testid="add-budget-item-form">{formMarkup}</BaseCard>
 }
 
 export default AddBudgetItemForm

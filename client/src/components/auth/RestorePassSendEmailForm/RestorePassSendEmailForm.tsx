@@ -1,8 +1,8 @@
 import { FC, useState } from 'react'
 
 import { notEmpty } from '../../../utils/validators'
-import useField from '../../../hooks/useField'
-import useForm from '../../../hooks/useForm'
+import useField from '../../../hooks/useFiled/useField'
+import useForm from '../../../hooks/useForm/useForm'
 import { getRestoreEmail } from '../../../store/user/user-actions'
 import { ResCodes } from '../../../types/enum'
 import BaseCard from '../../ui/BaseCard/BaseCard'
@@ -39,12 +39,12 @@ const RestorePassSendEmailForm: FC<Props> = ({ onSendEmail }) => {
         if (res.data.code === ResCodes.SEND_RESTORE_PASSWORD_EMAIL) onSendEmail(emailState.value)
       },
       onReject: (res, isAxiosErr) => {
-        if (isAxiosErr && res.status === 403) setUserNotFound(true)
+        if (isAxiosErr && res.status >= 400 && res.status < 500) setUserNotFound(true)
       }
     }
   )
 
-  return <BaseCard>{formMarkup}</BaseCard>
+  return <BaseCard data-testid="restore-pass-send-email-form">{formMarkup}</BaseCard>
 }
 
 export default RestorePassSendEmailForm

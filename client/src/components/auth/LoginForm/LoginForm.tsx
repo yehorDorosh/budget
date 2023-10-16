@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
 import { login } from '../../../store/user/user-actions'
-import useField from '../../../hooks/useField'
-import useForm from '../../../hooks/useForm'
+import useField from '../../../hooks/useFiled/useField'
+import useForm from '../../../hooks/useForm/useForm'
 import { notEmpty } from '../../../utils/validators'
 import BaseCard from '../../ui/BaseCard/BaseCard'
 
@@ -22,7 +22,8 @@ const LoginForm = () => {
         errMsg: 'Field is required.',
         validator: notEmpty,
         state: emailState,
-        dispatch: emailDispatch
+        dispatch: emailDispatch,
+        attrs: { 'data-testid': 'email' }
       },
       {
         name: 'password',
@@ -32,7 +33,8 @@ const LoginForm = () => {
         errMsg: 'Field is required.',
         validator: notEmpty,
         state: passwordState,
-        dispatch: passwordDispatch
+        dispatch: passwordDispatch,
+        attrs: { 'data-testid': 'password' }
       }
     ],
     {
@@ -51,7 +53,7 @@ const LoginForm = () => {
   )
 
   return (
-    <BaseCard>
+    <BaseCard data-testid="login-form">
       {formMarkup}
       <p className="text-center">
         <NavLink to="/restore-password">Forgot password?</NavLink>

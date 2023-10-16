@@ -6,10 +6,11 @@
   "scripts": {
     "build:server": "npm --prefix ./server run build",
     "build:client": "npm --prefix ./client run build",
+    "test:client": "npm --prefix ./client run test:all",
     "cp": "gulp",
     "cp:server": "gulp cpServer",
     "server:install": "npm --prefix ./build install --production",
-    "build": "npm-run-all build:server build:client cp",
+    "build": "npm-run-all build:server test:client build:client cp",
     "build:fast": "npm-run-all build:server cp:server",
     "gulp:deploy": "gulp deploy",
     "deploy": "npm-run-all build gulp:deploy",

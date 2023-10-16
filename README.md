@@ -81,7 +81,8 @@ Commands execute from root of the project.
 
 - `start` Run dev server for FE
 - `build` Build only client to client `build` dir
-- `test` Run tests in `tests` dir
+- `test` Run tests in watch mode.
+- `test:all` Run all tests. Use it before deploy.
 
 ## Server scripts
 

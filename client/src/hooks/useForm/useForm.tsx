@@ -1,12 +1,12 @@
-import BaseForm from '../components/ui/BaseForm/BaseForm'
-import BaseInput from '../components/ui/BaseInput/BaseInput'
-import SelectInput, { SelectOption } from '../components/ui/SelectInput/SelectInput'
-import { FieldState, Action as UseFieldAction } from './useField'
-import useSubmit from './useFormSubmit'
-import { StoreAction, isActionPayload, isAxiosErrorPayload } from '../types/store-actions'
-import { StoreActionData } from '../types/store-actions'
+import BaseForm from '../../components/ui/BaseForm/BaseForm'
+import BaseInput from '../../components/ui/BaseInput/BaseInput'
+import SelectInput, { SelectOption } from '../../components/ui/SelectInput/SelectInput'
+import { FieldState, Action as UseFieldAction } from '../useFiled/useField'
+import useSubmit from '../useFormSubmit/useFormSubmit'
+import { StoreAction, isActionPayload, isAxiosErrorPayload } from '../../types/store-actions'
+import { StoreActionData } from '../../types/store-actions'
 
-interface FieldConfig {
+export interface FieldConfig {
   id?: string
   name: string
   type: string
@@ -21,7 +21,7 @@ interface FieldConfig {
   attrs?: { [key: string]: string | boolean }
 }
 
-interface FormConfig<T = void> {
+export interface FormConfig<T = void> {
   submitBtnText: string
   submitAction: StoreAction<T>
   submitActionData: StoreActionData
@@ -74,6 +74,7 @@ const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, for
       isLoading={isLoading}
       errors={validationErrorsBE || formConfig.errMsg}
       className={fieldsConfig.some((field) => field.validator !== null) ? 'needs-validation' : ''}
+      data-testid="useForm"
     >
       {fieldsConfig.map((field, i) => {
         return field.type === 'select' ? (
@@ -88,7 +89,6 @@ const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, for
             name={field.name}
             onChange={inputHandler}
             value={field.state.touched ? field.state.value : field.defaultValue ? field.defaultValue : ''}
-            required={field.validator !== null}
             {...field.attrs}
           />
         ) : (
@@ -103,12 +103,11 @@ const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, for
             name={field.name}
             onChange={inputHandler}
             value={field.state.touched && field.type !== 'radio' ? field.state.value : field.defaultValue ? field.defaultValue : ''}
-            required={field.validator !== null}
             {...field.attrs}
           />
         )
       })}
-      <button type="submit" className="btn btn-primary">
+      <button type="submit" className="btn btn-primary" data-testid="submitBtn">
         {formConfig.submitBtnText}
       </button>
     </BaseForm>

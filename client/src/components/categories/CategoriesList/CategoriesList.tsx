@@ -11,7 +11,7 @@ const CategoriesList: FC<Props> = ({ token }) => {
   const categories = useAppSelector((state) => state.categories.categories)
 
   return (
-    <BaseCard>
+    <BaseCard data-testid="categories-list">
       <div>
         {categories.map((item) => {
           return <CategoryItem key={item.id} id={item.id} value={item.name} categoryType={item.categoryType} token={token} />

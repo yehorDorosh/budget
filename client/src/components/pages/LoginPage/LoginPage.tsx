@@ -1,8 +1,8 @@
 import { Fragment } from 'react'
 
-import LoginForm from '../auth/LoginForm/LoginForm'
+import LoginForm from '../../auth/LoginForm/LoginForm'
 
-const SugnupPage = () => {
+const LoginPage = () => {
   return (
     <Fragment>
       <h1>Login</h1>
@@ -11,4 +11,4 @@ const SugnupPage = () => {
   )
 }
 
-export default SugnupPage
+export default LoginPage

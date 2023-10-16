@@ -1,13 +1,14 @@
 import { FC } from 'react'
 
-import useField from '../../../hooks/useField'
-import useForm from '../../../hooks/useForm'
+import useField from '../../../hooks/useFiled/useField'
+import useForm from '../../../hooks/useForm/useForm'
 import { notEmpty } from '../../../utils/validators'
 import { updateBudgetItem } from '../../../store/budget/budget-item-actions'
 import { useAppSelector } from '../../../hooks/useReduxTS'
 import { CategoryType } from '../../../types/enum'
 import { BudgetItem } from '../../../store/budget/budget-item-slice'
 import BaseCard from '../../ui/BaseCard/BaseCard'
+import { isDateValid } from '../../../utils/date'
 
 interface Props {
   token: string
@@ -126,7 +127,7 @@ const UpdateBudgetItemForm: FC<Props> = ({ token, currentBudgetItem, onSave }) =
         id: currentBudgetItem.id,
         name: nameState.value,
         value: +valueState.value,
-        userDate: new Date(dateState.value).toISOString(),
+        userDate: isDateValid(dateState.value) ? new Date(dateState.value).toISOString() : currentBudgetItem.userDate,
         categoryId: +categoryState.value,
         filters: filters,
         ignore: ignoreState.value === 'true'
@@ -136,7 +137,7 @@ const UpdateBudgetItemForm: FC<Props> = ({ token, currentBudgetItem, onSave }) =
       onGetResponse: () => onSave()
     }
   )
-  return <BaseCard>{formMarkup}</BaseCard>
+  return <BaseCard data-testid="update-budget-item-form">{formMarkup}</BaseCard>
 }
 
 export default UpdateBudgetItemForm

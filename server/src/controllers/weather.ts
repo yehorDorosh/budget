@@ -44,7 +44,7 @@ export const getWeatherData: RequestHandler = async (req, res, next) => {
   try {
     const weather = await weatherCRUD.findMany(options, next)
 
-    res.status(200).json({ message: 'Get weather successfuly.', payload: { weather: weather || [] } })
+    res.status(200).json({ message: 'Get weather successfully.', payload: { weather: weather || [] } })
   } catch (err) {
     errorHandler({ message: 'Failed to get weather.', details: err }, next)
   }
@@ -54,7 +54,7 @@ export const getLastWeatherData: RequestHandler = async (req, res, next) => {
   try {
     const weather = await weatherCRUD.getLast(next)
 
-    res.status(200).json({ message: 'Get last weather successfuly.', payload: { weather: weather || [] } })
+    res.status(200).json({ message: 'Get last weather successfully.', payload: { weather: weather || [] } })
   } catch (err) {
     errorHandler({ message: 'Failed to get last weather.', details: err }, next)
   }
