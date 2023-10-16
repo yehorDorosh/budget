@@ -42,7 +42,7 @@ const ListItem: FC<Props> = ({ id, value, categoryType, token }) => {
       <BaseModal
         isOpen={openDeleteModal}
         onClose={() => setOpenDeleteModal(false)}
-        title="Delete Category"
+        title={`Delete Category ${value}?`}
         footer={{
           reject: { text: 'Cancel', onClick: () => setOpenDeleteModal(false) },
           accept: { text: 'Delete', onClick: deleteHandler }
