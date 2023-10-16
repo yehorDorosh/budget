@@ -456,6 +456,26 @@ export const handlers = [
       ctx.status(200),
       ctx.delay(100)
     )
+  }),
+
+  rest.get('/api/weather', async (req, res, ctx) => {
+    return res(
+      ctx.json({
+        message: 'Get weather successfully.',
+        payload: {
+          weather: [
+            { id: '1', t: 10, p: 1000, v: 4, regDate: '2023-09-14 00:00:00', dbId: 1 },
+            { id: '2nd-floor', t: 15, p: 1000, v: 4, regDate: '2023-09-14 00:00:00', dbId: 2 },
+            { id: 'out-of-door', t: 20, p: 1000, v: 4, regDate: '2023-09-14 00:00:00', dbId: 3 },
+            { id: '1', t: 11, p: 1000, v: 4, regDate: '2023-09-15 00:00:00', dbId: 4 },
+            { id: '2nd-floor', t: 16, p: 1000, v: 4, regDate: '2023-09-15 00:00:00', dbId: 5 },
+            { id: 'out-of-door', t: 21, p: 1000, v: 4, regDate: '2023-09-15 00:00:00', dbId: 6 }
+          ]
+        }
+      }),
+      ctx.status(200),
+      ctx.delay(100)
+    )
   })
 ]
 
