@@ -2,11 +2,12 @@ import store from '..'
 import { budgetItemActions } from './budget-item-slice'
 import { mockedBudgetItems } from '../../utils/test-utils'
 import { CategoryType, QueryFilter } from '../../types/enum'
-import { addBudgetItem } from './budget-item-actions'
+import { addBudgetItem, getBudgetItems, deleteBudgetItem, updateBudgetItem } from './budget-item-actions'
 import { setupServer } from 'msw/node'
 import { handlers } from '../../utils/test-utils'
 import { isActionPayload } from '../../types/store-actions'
 import axios from 'axios'
+import { ReducerType } from '../../types/enum'
 
 describe('BudgetItem Store', () => {
   describe('reducers', () => {
@@ -191,6 +192,90 @@ describe('BudgetItem Store', () => {
       })
 
       jest.spyOn(axios, 'post').mockRestore()
+    })
+
+    test('Should get budget items.', async () => {
+      const res = await store.dispatch(getBudgetItems({ token: 'token' }))
+
+      expect(store.getState().budgetItem.budgetItems.length).toEqual(5)
+      expect(store.getState().budgetItem.trendBudgetItems.length).toEqual(0)
+
+      expect(res).toHaveProperty('data')
+      expect(res).toHaveProperty('status')
+    })
+
+    test('Should get budget items for month trend.', async () => {
+      await store.dispatch(getBudgetItems({ token: 'token' }, ReducerType.BudgetItemsTrend))
+
+      expect(store.getState().budgetItem.budgetItems.length).toEqual(0)
+      expect(store.getState().budgetItem.trendBudgetItems.length).toEqual(5)
+    })
+
+    test('Should get axios error when getting budget items.', async () => {
+      jest.spyOn(axios, 'get').mockRejectedValueOnce(new Error('test error'))
+
+      const res = await store.dispatch(getBudgetItems({ token: 'token' }))
+
+      expect(res).toEqual({
+        error: new Error('test error')
+      })
+
+      jest.spyOn(axios, 'get').mockRestore()
+    })
+
+    test('Should delete budget item.', async () => {
+      const res = await store.dispatch(deleteBudgetItem({ token: 'token', id: 1, filters: {} }))
+
+      expect(store.getState().budgetItem.budgetItems.length).toEqual(4)
+
+      expect(res).toHaveProperty('data')
+      expect(res).toHaveProperty('status')
+    })
+
+    test('Should get axios error when deleting budget item.', async () => {
+      jest.spyOn(axios, 'delete').mockRejectedValueOnce(new Error('test error'))
+
+      const res = await store.dispatch(deleteBudgetItem({ token: 'token', id: 1, filters: {} }))
+
+      expect(res).toEqual({
+        error: new Error('test error')
+      })
+
+      jest.spyOn(axios, 'delete').mockRestore()
+    })
+
+    test('Should update budget item.', async () => {
+      const res = await store.dispatch(
+        updateBudgetItem({ token: 'token', id: 1, categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01', filters: {} })
+      )
+
+      expect(store.getState().budgetItem.budgetItems.length).toEqual(5)
+
+      expect(store.getState().budgetItem.budgetItems[0]).toEqual({
+        id: 1,
+        category: { categoryType: 'expense', id: 21, name: 'car' },
+        name: 'test',
+        value: 111,
+        userDate: '2021-01-01',
+        ignore: false
+      })
+
+      expect(res).toHaveProperty('data')
+      expect(res).toHaveProperty('status')
+    })
+
+    test('Should get axios error when updating budget item.', async () => {
+      jest.spyOn(axios, 'put').mockRejectedValueOnce(new Error('test error'))
+
+      const res = await store.dispatch(
+        updateBudgetItem({ token: 'token', id: 1, categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01', filters: {} })
+      )
+
+      expect(res).toEqual({
+        error: new Error('test error')
+      })
+
+      jest.spyOn(axios, 'put').mockRestore()
     })
   })
 })
