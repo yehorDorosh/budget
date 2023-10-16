@@ -8,11 +8,21 @@ interface Props {
   isOpen: boolean
   onClose: Function
   title?: string
+  footer?: {
+    accept: {
+      text: string
+      onClick: Function
+    }
+    reject: {
+      text: string
+      onClick: Function
+    }
+  }
 }
 
-const BaseModal: FC<Props> = ({ children, isOpen, onClose, title }) => {
+const BaseModal: FC<Props> = ({ children, isOpen, onClose, title, footer }) => {
   const modalMarkup = (
-    <div className={classes.overllay} data-testid="modal">
+    <div className={classes.overlay} data-testid="modal">
       <div className={`modal ${classes.modal}`}>
         <div className="modal-dialog">
           <div className="modal-content">
@@ -21,6 +31,16 @@ const BaseModal: FC<Props> = ({ children, isOpen, onClose, title }) => {
               <button type="button" className="btn-close" aria-label="Close" onClick={() => onClose()} data-testid="close-btn"></button>
             </div>
             <div className="modal-body">{children}</div>
+            {footer && (
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => footer.reject.onClick()}>
+                  {footer.reject.text}
+                </button>
+                <button type="button" className="btn btn-primary" onClick={() => footer.accept.onClick()}>
+                  {footer.accept.text}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

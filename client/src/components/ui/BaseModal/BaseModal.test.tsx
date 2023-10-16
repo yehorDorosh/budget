@@ -72,4 +72,61 @@ describe('BaseModal', () => {
     expect(onClose).toHaveBeenCalled()
     expect(screen.queryByTestId('modal')).not.toBeInTheDocument()
   })
+
+  test('Should render modal with footer.', () => {
+    const footer = {
+      accept: {
+        text: 'Accept',
+        onClick: jest.fn()
+      },
+      reject: {
+        text: 'Reject',
+        onClick: jest.fn()
+      }
+    }
+
+    render(
+      <RenderWithProviders>
+        <BaseModal isOpen={true} onClose={() => {}} footer={footer}>
+          <div>Modal content</div>
+        </BaseModal>
+      </RenderWithProviders>
+    )
+
+    const modalAcceptBtn = screen.getByText('Accept')
+    const modalRejectBtn = screen.getByText('Reject')
+
+    expect(modalAcceptBtn).toBeInTheDocument()
+    expect(modalRejectBtn).toBeInTheDocument()
+  })
+
+  test('Should call accept and reject functions.', () => {
+    const footer = {
+      accept: {
+        text: 'Accept',
+        onClick: jest.fn()
+      },
+      reject: {
+        text: 'Reject',
+        onClick: jest.fn()
+      }
+    }
+
+    render(
+      <RenderWithProviders>
+        <BaseModal isOpen={true} onClose={() => {}} footer={footer}>
+          <div>Modal content</div>
+        </BaseModal>
+      </RenderWithProviders>
+    )
+
+    const modalAcceptBtn = screen.getByText('Accept')
+    const modalRejectBtn = screen.getByText('Reject')
+
+    fireEvent.click(modalAcceptBtn)
+    fireEvent.click(modalRejectBtn)
+
+    expect(footer.accept.onClick).toHaveBeenCalled()
+    expect(footer.reject.onClick).toHaveBeenCalled()
+  })
 })
