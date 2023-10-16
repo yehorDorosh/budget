@@ -149,6 +149,24 @@ export const handlers = [
     }
   }),
 
+  rest.get('/api/user/get-user', async (req, res, ctx) => {
+    return res(
+      ctx.json({
+        message: 'User info was sent successfully.',
+        code: ResCodes.SEND_USER,
+        payload: {
+          user: {
+            id: '1',
+            email: 'email',
+            token: null
+          }
+        }
+      }),
+      ctx.status(200),
+      ctx.delay(100)
+    )
+  }),
+
   rest.put('/api/user/update-user', async (req, res, ctx) => {
     const body = await req.json()
 
