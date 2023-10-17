@@ -30,7 +30,7 @@ describe('RestorePassForm', () => {
     cleanup()
   })
 
-  test('Password input field should be vaild.', async () => {
+  test('Password input field should be valid.', async () => {
     render(
       <RenderWithProviders>
         <RestorePassForm token={token} />
@@ -81,7 +81,7 @@ describe('RestorePassForm', () => {
     expect(inputPassword).toBeInvalid()
   })
 
-  test('The Loader should be displayed after submit and dissapear.', async () => {
+  test('The Loader should be displayed after submit and disappear.', async () => {
     render(
       <RenderWithProviders>
         <RestorePassForm token={token} />

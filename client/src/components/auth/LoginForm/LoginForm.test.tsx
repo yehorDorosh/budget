@@ -29,7 +29,7 @@ describe('LoginForm', () => {
     cleanup()
   })
 
-  test('Email input field should be vaild.', () => {
+  test('Email input field should be valid.', () => {
     render(
       <RenderWithProviders>
         <LoginForm />
@@ -46,7 +46,7 @@ describe('LoginForm', () => {
     expect(screen.queryByTestId('invalid-msg')).not.toBeInTheDocument()
   })
 
-  test('Email input field should be invaild.', () => {
+  test('Email input field should be invalid.', () => {
     render(
       <RenderWithProviders>
         <LoginForm />
@@ -64,7 +64,7 @@ describe('LoginForm', () => {
     expect(screen.getByTestId('invalid-msg')).toBeInTheDocument()
   })
 
-  test('Password input field should be vaild.', () => {
+  test('Password input field should be valid.', () => {
     render(
       <RenderWithProviders>
         <LoginForm />
@@ -81,7 +81,7 @@ describe('LoginForm', () => {
     expect(screen.queryByTestId('invalid-msg')).not.toBeInTheDocument()
   })
 
-  test('Password input field should be invaild.', () => {
+  test('Password input field should be invalid.', () => {
     render(
       <RenderWithProviders>
         <LoginForm />
@@ -137,7 +137,7 @@ describe('LoginForm', () => {
     expect(inputPassword).toBeValid()
   })
 
-  test('The loader should be displayed after submit and dissapear after data was sbumitted.', async () => {
+  test('The loader should be displayed after submit and disappear after data was submitted.', async () => {
     render(
       <RenderWithProviders>
         <LoginForm />
@@ -165,7 +165,7 @@ describe('LoginForm', () => {
     })
   })
 
-  test('Redirect to home page after successfull login.', async () => {
+  test('Redirect to home page after successful login.', async () => {
     render(
       <RenderWithProviders>
         <LoginForm />

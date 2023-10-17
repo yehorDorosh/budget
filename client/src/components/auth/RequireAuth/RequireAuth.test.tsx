@@ -32,7 +32,7 @@ describe('RequireAuth', () => {
     })
   })
 
-  test('Should render children localstorage token is present.', async () => {
+  test('Should render children local storage token is present.', async () => {
     localStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEifQ.BQmWM1mXBfpTw_Tv-yR3qodI0OoRmrm3Tlz6ZR60Yi4')
 
     render(

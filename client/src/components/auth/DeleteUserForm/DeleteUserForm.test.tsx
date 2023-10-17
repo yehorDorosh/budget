@@ -25,7 +25,7 @@ describe('DeleteUserForm', () => {
     cleanup()
   })
 
-  test('Password input field should be vaild.', () => {
+  test('Password input field should be valid.', () => {
     render(
       <RenderWithProviders>
         <DeleteUserForm token="token" />
@@ -41,7 +41,7 @@ describe('DeleteUserForm', () => {
     expect(inputPassword).toBeValid()
   })
 
-  test('Password input field should be invaild.', () => {
+  test('Password input field should be invalid.', () => {
     render(
       <RenderWithProviders>
         <DeleteUserForm token="token" />
@@ -91,7 +91,7 @@ describe('DeleteUserForm', () => {
     expect(inputPassword).toBeValid()
   })
 
-  test('The loader should be displayed after submit and dissapear after data was sbumitted.', async () => {
+  test('The loader should be displayed after submit and disappear after data was submitted.', async () => {
     render(
       <RenderWithProviders>
         <DeleteUserForm token="token" />

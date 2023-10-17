@@ -66,4 +66,4 @@ export type StoreAction<T = void> = (
   reducerType?: ReducerType
 ) => (dispatch: AppDispatch, getState: () => RootState) => Promise<ActionResult<T>>
 
-export type SimpleStoreAtion = (data: StoreActionData) => (dispatch: AppDispatch, getState: () => RootState) => void
+export type SimpleStoreAction = (data: StoreActionData) => (dispatch: AppDispatch, getState: () => RootState) => void

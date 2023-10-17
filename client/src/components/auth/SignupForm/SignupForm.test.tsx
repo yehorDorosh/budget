@@ -30,7 +30,7 @@ describe('SignupForm', () => {
     cleanup()
   })
 
-  test('Email input field should be vaild.', () => {
+  test('Email input field should be valid.', () => {
     render(
       <RenderWithProviders>
         <SignupForm />
@@ -47,7 +47,7 @@ describe('SignupForm', () => {
     expect(screen.queryByTestId('invalid-msg')).not.toBeInTheDocument()
   })
 
-  test('Email input field should be invaild.', () => {
+  test('Email input field should be invalid.', () => {
     render(
       <RenderWithProviders>
         <SignupForm />
@@ -56,7 +56,7 @@ describe('SignupForm', () => {
     const inputEmail = screen.getByTestId('email')
 
     act(() => {
-      userEvent.type(inputEmail, 'emailuser.com')
+      userEvent.type(inputEmail, 'email-user.com')
     })
 
     expect(inputEmail).toBeInTheDocument()
@@ -64,7 +64,7 @@ describe('SignupForm', () => {
     expect(screen.getByTestId('invalid-msg')).toBeInTheDocument()
   })
 
-  test('Password input field should be vaild.', () => {
+  test('Password input field should be valid.', () => {
     render(
       <RenderWithProviders>
         <SignupForm />
@@ -81,7 +81,7 @@ describe('SignupForm', () => {
     expect(screen.queryByTestId('invalid-msg')).not.toBeInTheDocument()
   })
 
-  test('Password input field should be invaild.', () => {
+  test('Password input field should be invalid.', () => {
     render(
       <RenderWithProviders>
         <SignupForm />
@@ -98,7 +98,7 @@ describe('SignupForm', () => {
     expect(screen.getByTestId('invalid-msg')).toBeInTheDocument()
   })
 
-  test('Confirm password input field should be vaild.', () => {
+  test('Confirm password input field should be valid.', () => {
     render(
       <RenderWithProviders>
         <SignupForm />
@@ -117,7 +117,7 @@ describe('SignupForm', () => {
     expect(screen.queryByTestId('invalid-msg')).not.toBeInTheDocument()
   })
 
-  test('Confirm password input field should be invaild.', () => {
+  test('Confirm password input field should be invalid.', () => {
     render(
       <RenderWithProviders>
         <SignupForm />
@@ -148,7 +148,7 @@ describe('SignupForm', () => {
     const submitBtn = screen.getByTestId('submitBtn')
 
     act(() => {
-      userEvent.type(inputEmail, 'useremail.com')
+      userEvent.type(inputEmail, 'user-email.com')
       userEvent.type(inputPassword, 'qwerty78')
       userEvent.type(inputConfirmPassword, 'Qwerty78x')
       submitBtn.click()
@@ -161,7 +161,7 @@ describe('SignupForm', () => {
     expect(screen.getAllByTestId('invalid-msg')).toHaveLength(3)
   })
 
-  test('All inputs should be valid and the loader should be visible after form was submited and dissapeare after response was getted.', async () => {
+  test('All inputs should be valid and the loader should be visible after form was submitted and disappear after response was got.', async () => {
     render(
       <RenderWithProviders>
         <SignupForm />
@@ -193,7 +193,7 @@ describe('SignupForm', () => {
     })
   })
 
-  test('Rediretc to main page after successfull sign up.', async () => {
+  test('Redirect to main page after successful sign up.', async () => {
     render(
       <RenderWithProviders>
         <SignupForm />

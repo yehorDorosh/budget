@@ -186,7 +186,7 @@ describe('FilterBudgetListForm', () => {
     expect(screen.queryByLabelText(/month/i)).not.toBeInTheDocument()
   })
 
-  test('If Month form input was changed then should changed the filterm month state.', async () => {
+  test('If Month form input was changed then should changed the filter month state.', async () => {
     render(
       <RenderWithProviders>
         <FilterBudgetListForm />
@@ -219,7 +219,7 @@ describe('FilterBudgetListForm', () => {
     expect(store.getState().budgetItem.filters.month).toBe('2023-01')
   })
 
-  test('If Year form input was changed then should changed the filterm year state.', async () => {
+  test('If Year form input was changed then should changed the filter year state.', async () => {
     render(
       <RenderWithProviders>
         <FilterBudgetListForm />

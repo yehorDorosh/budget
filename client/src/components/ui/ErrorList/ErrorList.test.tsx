@@ -24,7 +24,7 @@ describe('ErrorList', () => {
         msg: 'error1',
         path: 'email',
         type: 'string.base',
-        value: 'emailuser.com'
+        value: 'email-user.com'
       },
       {
         location: 'body',

@@ -214,7 +214,7 @@ describe('useForm', () => {
     })
   })
 
-  test('Dont call onReject event if regular error', async () => {
+  test("Don't call onReject event if regular error", async () => {
     const onReject = jest.fn()
     formConfig.submitAction = mockAction({ error: new Error('test') })
 

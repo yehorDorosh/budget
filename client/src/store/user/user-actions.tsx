@@ -1,11 +1,11 @@
 import axios from 'axios'
 import * as jose from 'jose'
 
-import { StoreAction, SimpleStoreAtion } from '../../types/store-actions'
+import { StoreAction, SimpleStoreAction } from '../../types/store-actions'
 import { userActions } from './user-slice'
 import { errorHandler } from '../../utils/errors'
 
-export const loginAndAutoLogout: SimpleStoreAtion = ({ token }) => {
+export const loginAndAutoLogout: SimpleStoreAction = ({ token }) => {
   return (dispatch, getState) => {
     if (!token) return dispatch(userActions.logout())
 
