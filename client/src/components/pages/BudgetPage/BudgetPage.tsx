@@ -6,7 +6,7 @@ import BudgetItemsList from '../../budget/BudgetItemsList/BudgetItemsList'
 import { getCategories } from '../../../store/categories/categories-actions'
 import FilterBudgetListForm from '../../budget/FilterBudgetListForm/FilterBudgetListForm'
 import BudgetResult from '../../budget/BudgetResult/BudgetResult'
-import MonthesTrend from '../../budget/MonthesTrend/MonthesTrend'
+import MonthsTrend from '../../budget/MonthsTrend/MonthsTrend'
 
 const BudgetPage = () => {
   const dispatch = useAppDispatch()
@@ -21,7 +21,7 @@ const BudgetPage = () => {
     <Fragment>
       <h1>Budget</h1>
       {/* <AddBudgetItemForm token={token} /> */}
-      <MonthesTrend token={token} />
+      <MonthsTrend token={token} />
       <BudgetResult />
       <FilterBudgetListForm />
       <BudgetItemsList token={token} />

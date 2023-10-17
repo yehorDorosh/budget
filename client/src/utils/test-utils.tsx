@@ -141,7 +141,7 @@ export const handlers = [
       return res(
         ctx.json({
           message: 'Wrong credentials',
-          code: ResCodes.ERORR
+          code: ResCodes.ERROR
         }),
         ctx.status(401),
         ctx.delay(100)
@@ -190,7 +190,7 @@ export const handlers = [
       return res(
         ctx.json({
           message: 'Failed to update user.',
-          code: ResCodes.ERORR
+          code: ResCodes.ERROR
         }),
         ctx.status(500),
         ctx.delay(100)
@@ -214,7 +214,7 @@ export const handlers = [
       return res(
         ctx.json({
           message: 'Failed to delete user. Wrong password',
-          code: ResCodes.ERORR
+          code: ResCodes.ERROR
         }),
         ctx.status(401),
         ctx.delay(100)
@@ -242,7 +242,7 @@ export const handlers = [
       return res(
         ctx.json({
           message: 'Failed to restore password.',
-          code: ResCodes.ERORR
+          code: ResCodes.ERROR
         }),
         ctx.status(401),
         ctx.delay(100)
@@ -256,7 +256,7 @@ export const handlers = [
       return res(
         ctx.json({
           message: 'Failed to restore password.',
-          code: ResCodes.ERORR,
+          code: ResCodes.ERROR,
           error: {
             cause: 'Failed to restore password.',
             details: {
@@ -285,7 +285,7 @@ export const handlers = [
     return res(
       ctx.json({
         message: 'Internal server error.',
-        code: ResCodes.ERORR,
+        code: ResCodes.ERROR,
         error: {
           cause: 'Failed to send email to restore password. User not found.'
         }
@@ -427,7 +427,7 @@ export const handlers = [
     return res(
       ctx.json({
         message: 'Internal server error.',
-        code: ResCodes.ERORR,
+        code: ResCodes.ERROR,
         error: {
           cause: 'Mocked error.'
         },

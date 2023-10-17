@@ -4,16 +4,16 @@ import BaseForm from '../../ui/BaseForm/BaseForm'
 import BaseInput from '../../ui/BaseInput/BaseInput'
 import { useAppDispatch, useAppSelector } from '../../../hooks/useReduxTS'
 import { getBudgetItems } from '../../../store/budget/budget-item-actions'
-import { CategoryType, Monthes, QueryFilter, ReducerType } from '../../../types/enum'
+import { CategoryType, Months, QueryFilter, ReducerType } from '../../../types/enum'
 
-import classes from './MonthesTrend.module.scss'
+import classes from './MonthsTrend.module.scss'
 import BaseCard from '../../ui/BaseCard/BaseCard'
 
 interface Props {
   token: string
 }
 
-const MonthesTrend: FC<Props> = ({ token }) => {
+const MonthsTrend: FC<Props> = ({ token }) => {
   const dispatch = useAppDispatch()
   const [year, setYear] = useState(new Date().getFullYear())
   const budgetItemsTrend = useAppSelector((state) => state.budgetItem.trendBudgetItems).filter((item) => !item.ignore)
@@ -36,7 +36,7 @@ const MonthesTrend: FC<Props> = ({ token }) => {
 
   const max = Math.max(...expensesByMonth, ...incomesByMonth)
   const isCurrentYear = new Date().getFullYear() === +year
-  const monthesAmount = isCurrentYear ? new Date().getMonth() + 1 : 12
+  const monthsAmount = isCurrentYear ? new Date().getMonth() + 1 : 12
 
   const sumExpenses = budgetItemsTrend.reduce((acc, budgetItem) => {
     if (budgetItem.category.categoryType === CategoryType.EXPENSE) {
@@ -52,8 +52,8 @@ const MonthesTrend: FC<Props> = ({ token }) => {
     return acc
   }, 0)
 
-  const averageYearExpenses = sumExpenses / monthesAmount
-  const averageYearIncomes = sumIncomes / monthesAmount
+  const averageYearExpenses = sumExpenses / monthsAmount
+  const averageYearIncomes = sumIncomes / monthsAmount
 
   const yearHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setYear(Number(e.target.value))
@@ -106,7 +106,7 @@ const MonthesTrend: FC<Props> = ({ token }) => {
                 style={{ top: `${max ? 100 - (averageYearIncomes * 100) / max : 100}%` }}
               ></div>
             </div>
-            <p className={classes.month}>{Monthes[i]}</p>
+            <p className={classes.month}>{Months[i]}</p>
           </div>
         ))}
       </div>
@@ -136,4 +136,4 @@ const MonthesTrend: FC<Props> = ({ token }) => {
   )
 }
 
-export default MonthesTrend
+export default MonthsTrend

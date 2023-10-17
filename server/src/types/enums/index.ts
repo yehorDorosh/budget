@@ -1,5 +1,5 @@
 export enum ResCodes {
-  ERORR,
+  ERROR,
   VALIDATION_ERROR,
   CREATE_USER,
   LOGIN,

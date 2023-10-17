@@ -41,9 +41,9 @@ export const expressErrorHandler: ErrorRequestHandler = (err: Error, req: Reques
   if (err instanceof ProjectError) {
     res
       .status(err.statusCode)
-      .json({ message: 'Internal server error', code: ResCodes.ERORR, error: { cause: err.message, details: err.details } })
+      .json({ message: 'Internal server error', code: ResCodes.ERROR, error: { cause: err.message, details: err.details } })
   } else {
-    res.status(500).json({ message: 'Internal server error', code: ResCodes.ERORR, error: { cause: err.message } })
+    res.status(500).json({ message: 'Internal server error', code: ResCodes.ERROR, error: { cause: err.message } })
   }
 }
 

@@ -75,7 +75,7 @@ Commands execute from root of the project.
 - `build:fast` Build only server to server `build` dir and Copy only from server `build` dir to root `build` dir.
 - `gulp:deploy` Copy root `build` dir to server dir `/opt/bitnami/projects/budget/`. Install npm dependencies and restart nodeJS server.
 - `deploy` Build only server to server `build` dir and Build only client to client `build` dir. Copy from server `build` dir to root `build` dir. After that copy client `build` dir to root `build/public` dir. Copy root `build` dir to server dir `/opt/bitnami/projects/budget/`. Install npm dependencies and restart nodeJS server.
-- `shell` Connetct to server via SSH
+- `shell` Connect to server via SSH
 
 ## Client scripts
 

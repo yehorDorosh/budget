@@ -1,4 +1,4 @@
-import MonthesTrend from './MonthesTrend'
+import MonthsTrend from './MonthsTrend'
 import { cleanup, render, screen, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { act } from 'react-dom/test-utils'
@@ -7,7 +7,7 @@ import { RenderWithProviders, handlers, mockedBudgetItems } from '../../../utils
 import store from '../../../store'
 import { budgetItemActions } from '../../../store/budget/budget-item-slice'
 
-describe('MonthesTrend', () => {
+describe('MonthsTrend', () => {
   const server = setupServer(...handlers)
 
   beforeAll(() => {
@@ -29,7 +29,7 @@ describe('MonthesTrend', () => {
   test('Year from should work correctly.', async () => {
     render(
       <RenderWithProviders>
-        <MonthesTrend token="token" />
+        <MonthsTrend token="token" />
       </RenderWithProviders>
     )
 
@@ -60,7 +60,7 @@ describe('MonthesTrend', () => {
 
     render(
       <RenderWithProviders>
-        <MonthesTrend token="token" />
+        <MonthsTrend token="token" />
       </RenderWithProviders>
     )
 
@@ -79,7 +79,7 @@ describe('MonthesTrend', () => {
 
     render(
       <RenderWithProviders>
-        <MonthesTrend token="token" />
+        <MonthsTrend token="token" />
       </RenderWithProviders>
     )
 

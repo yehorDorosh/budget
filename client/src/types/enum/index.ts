@@ -1,5 +1,5 @@
 export enum ResCodes {
-  ERORR,
+  ERROR,
   VALIDATION_ERROR,
   CREATE_USER,
   LOGIN,
@@ -35,7 +35,7 @@ export enum ReducerType {
   BudgetItemsTrend
 }
 
-export enum Monthes {
+export enum Months {
   January = 0,
   February = 1,
   March = 2,

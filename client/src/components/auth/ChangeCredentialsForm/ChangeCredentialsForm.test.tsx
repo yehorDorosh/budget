@@ -22,7 +22,7 @@ describe('ChangeCredentialsForm', () => {
     cleanup()
   })
 
-  test('Email input field should be vaild.', () => {
+  test('Email input field should be valid.', () => {
     render(
       <RenderWithProviders>
         <ChangeCredentialsForm
@@ -62,7 +62,7 @@ describe('ChangeCredentialsForm', () => {
     expect(inputPassword).toBeValid()
   })
 
-  test('Email input field should be invaild.', () => {
+  test('Email input field should be invalid.', () => {
     render(
       <RenderWithProviders>
         <ChangeCredentialsForm
@@ -83,7 +83,7 @@ describe('ChangeCredentialsForm', () => {
     expect(screen.getByTestId('invalid-msg')).toBeInTheDocument()
   })
 
-  test('Password input field should be vaild.', () => {
+  test('Password input field should be valid.', () => {
     render(
       <RenderWithProviders>
         <ChangeCredentialsForm
@@ -103,7 +103,7 @@ describe('ChangeCredentialsForm', () => {
     expect(inputEmail).toBeValid()
   })
 
-  test('Password input field should be invaild.', () => {
+  test('Password input field should be invalid.', () => {
     render(
       <RenderWithProviders>
         <ChangeCredentialsForm
@@ -147,7 +147,7 @@ describe('ChangeCredentialsForm', () => {
     })
   })
 
-  test('The loader should be displayed after submit and dissapear after data was sbumitted.', async () => {
+  test('The loader should be displayed after submit and disappear after data was submitted.', async () => {
     render(
       <RenderWithProviders>
         <ChangeCredentialsForm fieldName="email" token="token" onEdit={() => {}} />
