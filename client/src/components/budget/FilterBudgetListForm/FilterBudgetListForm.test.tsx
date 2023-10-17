@@ -47,11 +47,8 @@ describe('FilterBudgetListForm', () => {
     expect(radioBtn).toBeInTheDocument()
     expect(radioBtn).toBeChecked()
 
-    // await waitFor(() => {
-    //   expect(mockDispatch).toHaveBeenCalledWith(budgetItemActions.setFilterCategoryType(CategoryType.EXPENSE))
-    // })
-
     expect(store.getState().budgetItem.filters.categoryType).toBe(CategoryType.EXPENSE)
+    expect(store.getState().budgetItem.filters.category).toBe(0)
   })
 
   test('Should call action when category filter changed to Income.', async () => {

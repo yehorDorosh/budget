@@ -31,6 +31,7 @@ const FilterBudgetListForm = () => {
 
   const categoryTypeFilterHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(budgetItemActions.setFilterCategoryType(e.target.value))
+    dispatch(budgetItemActions.setFilterCategory(''))
   }
 
   const categoryFilterHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
