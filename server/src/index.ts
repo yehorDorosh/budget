@@ -66,3 +66,5 @@ async function init() {
     console.error('Database failed to initialize', err)
   }
 }
+
+export default app

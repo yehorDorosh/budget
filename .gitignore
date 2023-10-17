@@ -7,4 +7,5 @@ node_modules/
 notice.txt
 *.pem
 /logs/
+/server/logs/*
 /dump

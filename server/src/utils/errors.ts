@@ -39,9 +39,14 @@ export const validationErrorsHandler = (message = 'Validation failed') => {
 export const expressErrorHandler: ErrorRequestHandler = (err: Error, req: Request, res: AppRes, _next: NextFunction) => {
   console.error(err)
   if (err instanceof ProjectError) {
-    res
-      .status(err.statusCode)
-      .json({ message: 'Internal server error', code: ResCodes.ERROR, error: { cause: err.message, details: err.details } })
+    let details = ''
+    if (err.details instanceof Error) {
+      details = err.details.message
+    } else if (typeof err.details === 'string') {
+      details = err.details
+    }
+
+    res.status(err.statusCode).json({ message: 'Internal server error', code: ResCodes.ERROR, error: { cause: err.message, details } })
   } else {
     res.status(500).json({ message: 'Internal server error', code: ResCodes.ERROR, error: { cause: err.message } })
   }
