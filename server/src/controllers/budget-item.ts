@@ -48,9 +48,11 @@ export const getBudgetItems: RequestHandler = async (req, res: AppRes<BudgetItem
   try {
     const budgetItems = await budgetItemCRUD.findManyWithFilters(user.id, parseFilterQuery(req), next)
 
-    res
-      .status(200)
-      .json({ message: 'Budget items provided successfuly.', code: ResCodes.GET_BUDGET_ITEMS, payload: { budgetItems: budgetItems || [] } })
+    res.status(200).json({
+      message: 'Budget items provided successfully.',
+      code: ResCodes.GET_BUDGET_ITEMS,
+      payload: { budgetItems: budgetItems || [] }
+    })
   } catch (err) {
     errorHandler({ message: 'Failed to get budget items', details: err }, next)
   }
@@ -66,9 +68,11 @@ export const deleteBudgetItem: RequestHandler = async (req, res: AppRes<BudgetIt
 
     const budgetItems = await budgetItemCRUD.findManyWithFilters(user.id, parseFilterQuery(req), next)
 
-    res
-      .status(200)
-      .json({ message: 'Budget item deleted successfuly.', code: ResCodes.DELETE_BUDGET_ITEM, payload: { budgetItems: budgetItems || [] } })
+    res.status(200).json({
+      message: 'Budget item deleted successfully.',
+      code: ResCodes.DELETE_BUDGET_ITEM,
+      payload: { budgetItems: budgetItems || [] }
+    })
   } catch (err) {
     errorHandler({ message: 'Failed to delete budget item.', details: err }, next)
   }
@@ -85,10 +89,10 @@ export const updateBudgetItem: RequestHandler = async (req, res: AppRes<BudgetIt
 
   try {
     const budgetItem = await budgetItemCRUD.findOne({ where: { id: budgetItemId } }, next)
-    if (!budgetItem) return errorHandler({ message: 'Failed to update budget item. Item doesnt exist.' }, next)
+    if (!budgetItem) return errorHandler({ message: 'Failed to update budget item. Item does not exist.' }, next)
 
     const category = await categoryCRUD.findOne({ where: { id: categoryId } }, next)
-    if (!category) return errorHandler({ message: 'Failed to update budget item. Category for this budget item doesnt exist.' }, next)
+    if (!category) return errorHandler({ message: 'Failed to update budget item. Category for this budget item does not exist.' }, next)
 
     const updatedBudgetItem = await budgetItemCRUD.update(budgetItem, { name, value, userDate, category, ignore }, next)
     if (!updatedBudgetItem) return errorHandler({ message: 'Failed to update budget item.' }, next)

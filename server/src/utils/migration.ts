@@ -59,7 +59,7 @@ async function migrateCategories(type: CategoryType, email: string, userId: numb
   try {
     const { data, status } = await axios.get<CategoryResponse>(`http://35.178.207.100/api/category.php?email=${email}&categoryType=${type}`)
     if (status === 200 && !data.error) {
-      console.log('Migration: categories recived')
+      console.log('Migration: categories received')
       const categories = JSON.parse(data.data)
       if (!Array.isArray(categories)) {
         console.log('Migration: categories is not array')
@@ -96,7 +96,7 @@ async function migrateBudgetItems(email: string, userId: number, dataSource: Dat
   try {
     const { data, status } = await axios.get<BudgetItemResponse>(`http://35.178.207.100/api/budget.php?email=${email}`)
     if (status === 200 && !data.error) {
-      console.log('Migration: budget items recived')
+      console.log('Migration: budget items received')
       const budgetItems = data.data
       if (!Array.isArray(budgetItems)) {
         console.log('Migration: budget items is not array')
@@ -155,7 +155,7 @@ async function migrateWeatherData(dataSource: DataSource) {
       `http://35.178.207.100/api/weather.php?id=${process.env.WEATHER_ID}&dateFrom=2021-11-02 00:00:00&dateTo=${nowString}`
     )
     if (status === 200) {
-      console.log('Migration: weather data recived')
+      console.log('Migration: weather data received')
       const weatherData = data.data
       if (!Array.isArray(weatherData)) {
         console.log('Migration: weather data is not array')
@@ -199,22 +199,22 @@ const migration = async () => {
   const newUserId = process.env.USER_ID && +process.env.USER_ID
 
   if (!email) {
-    console.log('Migration: EMAIL env var dosnt set')
+    console.log('Migration: EMAIL env var does not set')
     return
   }
 
   if (!newUserId) {
-    console.log('Migration: USER_ID env var dosnt set')
+    console.log('Migration: USER_ID env var does not set')
     return
   }
 
   if (!process.env.MIGRATION) {
-    console.log('Migration: MIGRATION env var dosnt set')
+    console.log('Migration: MIGRATION env var does not set')
     return
   }
 
   if (process.env.MIGRATION === 'weather' && !process.env.WEATHER_ID) {
-    console.log('Migration: WEATHER_ID env var dosnt set')
+    console.log('Migration: WEATHER_ID env var does not set')
     return
   }
 
@@ -235,7 +235,7 @@ const migration = async () => {
         await migrateWeatherData(dataSource)
         break
       default:
-        console.log('Migration: MIGRATION env var dosnt set')
+        console.log('Migration: MIGRATION env var does not set')
     }
   } catch (error) {
     console.log(error)

@@ -5,7 +5,7 @@ import { Between, FindOperator } from 'typeorm'
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions'
 import { Weather } from '../models/weather'
 
-export const saveWeaterData: RequestHandler = async (req, res, next) => {
+export const saveWeatherData: RequestHandler = async (req, res, next) => {
   const id: string = req.body.id
   const t: number = req.body.t
   const p: number = req.body.p
@@ -15,7 +15,7 @@ export const saveWeaterData: RequestHandler = async (req, res, next) => {
     const weather = await weatherCRUD.add({ id, t, p, v }, next)
     if (!weather) return errorHandler({ message: 'Failed to create weather item.' }, next)
 
-    res.status(201).json({ message: 'New weather data created successfuly.', payload: { weather } })
+    res.status(201).json({ message: 'New weather data created successfully.', payload: { weather } })
   } catch (err) {
     errorHandler({ message: 'Failed to create weather item.', details: err }, next)
   }

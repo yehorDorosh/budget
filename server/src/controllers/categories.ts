@@ -71,7 +71,8 @@ export const updateCategory: RequestHandler = async (req, res: AppRes<Categories
 
   try {
     const category = await categoryCRUD.findOne({ where: { id: categoryId } }, next)
-    if (!category) return errorHandler({ message: 'Failed to update category. Category with this id doesnt exist.', statusCode: 400 }, next)
+    if (!category)
+      return errorHandler({ message: 'Failed to update category. Category with this id does not exist.', statusCode: 400 }, next)
 
     const updatedCategory = await categoryCRUD.update(category, { name, categoryType }, next)
     if (!updatedCategory) return errorHandler({ message: 'Failed to update category.' }, next)
