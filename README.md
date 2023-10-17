@@ -143,3 +143,22 @@ DB_NAME=budget
 ## Weather migration
 
 `EMAIL={from user} USER_ID={to user} MIGRATION=weather WEATHER_ID={} DB_HOST={} DB_PORT=5432 DB_USERNAME={} DB_PASSWORD={} DB_NAME=budget  node utils/migration.js`
+
+# Dump DB
+
+### Make DB dump from prod.
+
+`pg_dump -Fc -v -d postgres://[user]:[password]@ep-long-resonance-58313585.eu-central-1.aws.neon.tech/budget -f ./dump/budgetdump.bak`
+
+### Drop all current tables on dev env.
+
+```
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS categories CASCADE;
+DROP TABLE IF EXISTS budget;
+DROP TABLE IF EXISTS weather;
+```
+
+### Import prod DB to dev env.
+
+`pg_restore -v -d postgres://[user]:[password]@localhost:3432/budget ./dump/budgetdump.bak`
