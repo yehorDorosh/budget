@@ -446,4 +446,172 @@ describe('userAPI', () => {
       Object.defineProperty(global, 'console', { value: originalConsole })
     })
   })
+
+  describe('updateUser', () => {
+    test('Should update user with status 200.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(newUser)
+
+      const response = await request(app)
+        .put('/api/user/update-user')
+        .set('Authorization', 'Bearer token')
+        .send({ email: newUser.email, password: newUser.password })
+
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({
+        message: 'User was updated.',
+        code: ResCodes.UPDATE_USER,
+        payload: { user: { ...newUser, token: null, password: undefined } }
+      })
+    })
+
+    test('Should update user with status 200, because of send only email.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(newUser)
+
+      const response = await request(app).put('/api/user/update-user').set('Authorization', 'Bearer token').send({ email: newUser.email })
+
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({
+        message: 'User was updated.',
+        code: ResCodes.UPDATE_USER,
+        payload: { user: { ...newUser, token: null, password: undefined } }
+      })
+    })
+
+    test('Should return validation error with status 422, because of email and password does not exist.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(newUser)
+
+      const response = await request(app)
+        .put('/api/user/update-user')
+        .set('Authorization', 'Bearer token')
+        .send({ email: '', password: '' })
+
+      expect(response.status).toBe(422)
+      expect(response.body).toEqual({
+        message: 'Update user validation failed.',
+        code: ResCodes.VALIDATION_ERROR,
+        validationErrors: [
+          {
+            msg: 'At least one of the fields is required: email, password',
+            type: 'alternative_grouped',
+            nestedErrors: [
+              [
+                {
+                  location: 'body',
+                  msg: 'Invalid value',
+                  path: 'email',
+                  type: 'field',
+                  value: ''
+                }
+              ],
+              [
+                {
+                  location: 'body',
+                  msg: 'Invalid value',
+                  path: 'password',
+                  type: 'field',
+                  value: ''
+                }
+              ]
+            ]
+          }
+        ]
+      })
+    })
+
+    test('Should return validation error with status 422, because of invalid email.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(newUser)
+
+      const response = await request(app).put('/api/user/update-user').set('Authorization', 'Bearer token').send({ email: 'invalid' })
+
+      expect(response.status).toBe(422)
+      expect(response.body).toEqual({
+        message: 'Update user validation failed.',
+        code: ResCodes.VALIDATION_ERROR,
+        validationErrors: [
+          {
+            location: 'body',
+            msg: 'Invalid value',
+            path: 'email',
+            type: 'field',
+            value: '@invalid'
+          }
+        ]
+      })
+    })
+
+    test('Should return validation error with status 422, because of invalid password.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(newUser)
+
+      const response = await request(app).put('/api/user/update-user').set('Authorization', 'Bearer token').send({ password: 'invalid' })
+
+      expect(response.status).toBe(422)
+      expect(response.body).toEqual({
+        message: 'Update user validation failed.',
+        code: ResCodes.VALIDATION_ERROR,
+        validationErrors: [
+          {
+            location: 'body',
+            msg: 'Invalid value',
+            path: 'password',
+            type: 'field',
+            value: 'invalid'
+          }
+        ]
+      })
+    })
+
+    test('Should return validation error with status 422, because of send two params but one is invalid.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(newUser)
+
+      const response = await request(app)
+        .put('/api/user/update-user')
+        .set('Authorization', 'Bearer token')
+        .send({ email: 'invalid', password: newUser.password })
+
+      expect(response.status).toBe(422)
+      expect(response.body).toEqual({
+        message: 'Update user validation failed.',
+        code: ResCodes.VALIDATION_ERROR,
+        validationErrors: [
+          {
+            location: 'body',
+            msg: 'Invalid value',
+            path: 'email',
+            type: 'field',
+            value: '@invalid'
+          }
+        ]
+      })
+    })
+
+    test('Should return error with status 500, because of DB error.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.save as Mock).mockRejectedValue(new Error('DB error'))
+
+      const response = await request(app)
+        .put('/api/user/update-user')
+        .set('Authorization', 'Bearer token')
+        .send({ email: newUser.email, password: newUser.password })
+
+      expect(response.status).toBe(500)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Failed to update user.', details: 'DB error' }
+      })
+    })
+  })
 })

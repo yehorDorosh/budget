@@ -5,9 +5,10 @@ import { User } from '../models/user'
 import { Category } from '../models/category'
 import { CategoryType } from '../types/enums'
 
-export const emailValidator = (fieldName: string = 'email', checkIsExisted: boolean = true) => {
+export const emailValidator = (fieldName: string = 'email', checkIsExisted: boolean = true, checkOnlyIfFieldHasValue = false) => {
   return body(fieldName)
     .trim()
+    .if((value) => !!value || !checkOnlyIfFieldHasValue)
     .normalizeEmail({ gmail_remove_dots: false })
     .isEmail()
     .custom((value) => {
@@ -20,8 +21,11 @@ export const emailValidator = (fieldName: string = 'email', checkIsExisted: bool
     })
 }
 
-export const passwordValidator = (fieldName: string = 'password') => {
-  return body(fieldName).trim().isStrongPassword({ minSymbols: 0 })
+export const passwordValidator = (fieldName: string = 'password', checkOnlyIfFieldHasValue = false) => {
+  return body(fieldName)
+    .trim()
+    .if((value) => !!value || !checkOnlyIfFieldHasValue)
+    .isStrongPassword({ minSymbols: 0 })
 }
 
 export const notEmptyValidator = (fieldName: string = 'password') => {

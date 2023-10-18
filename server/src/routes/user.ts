@@ -1,5 +1,4 @@
 import express from 'express'
-import { oneOf } from 'express-validator'
 
 import { emailValidator, notEmptyValidator, passwordValidator, atLeastOneNotEmptyValidator } from '../utils/validators'
 
@@ -36,7 +35,7 @@ router.get('/get-user', auth, getUserInfo)
 router.put(
   '/update-user',
   auth,
-  [atLeastOneNotEmptyValidator('email', 'password'), oneOf([emailValidator(), passwordValidator()])],
+  [atLeastOneNotEmptyValidator('email', 'password'), emailValidator('email', true, true), passwordValidator(undefined, true)],
   validationErrorsHandler('Update user validation failed.'),
   updateUser
 )
