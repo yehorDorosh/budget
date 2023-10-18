@@ -18,7 +18,12 @@ router.post(
   login
 )
 
-router.post('/restore-password', [notEmptyValidator('email')], sendRestorePasswordEmail)
+router.post(
+  '/restore-password',
+  [notEmptyValidator('email')],
+  validationErrorsHandler('Restore password validation failed.'),
+  sendRestorePasswordEmail
+)
 router.post(
   '/restore-password/:token',
   passwordValidator('password'),

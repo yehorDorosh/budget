@@ -4,8 +4,10 @@ import { ResCodes } from '../types/enums/index'
 import { BudgetDataSource } from '../db/data-source'
 import { Mock } from 'vitest'
 import bcrypt from 'bcryptjs'
+import { transport } from '../utils/email'
 
 describe('userAPI', () => {
+  const originalConsole = console
   const newUser = { id: 2, email: 'user@email.com', token: 'token', password: 'Zaq12wsx' }
 
   beforeAll(() => {
@@ -32,6 +34,17 @@ describe('userAPI', () => {
             ...actual.default,
             compare: vi.fn()
           }
+        }
+      }
+    })
+
+    vi.mock('../utils/email.ts', async () => {
+      const actual = await vi.importActual('../utils/email.ts')
+
+      return {
+        ...(actual as object),
+        transport: {
+          sendMail: vi.fn()
         }
       }
     })
@@ -98,7 +111,6 @@ describe('userAPI', () => {
     })
 
     test('Should return error with status 500, because of DB error.', async () => {
-      const originalConsole = console
       const mockConsole = { error: vi.fn() }
       Object.defineProperty(global, 'console', { value: mockConsole })
       ;(BudgetDataSource.manager.findOneBy as Mock).mockResolvedValue(null)
@@ -154,6 +166,8 @@ describe('userAPI', () => {
     })
 
     test('Should return error with status 401, because of invalid email.', async () => {
+      const mockConsole = { error: vi.fn() }
+      Object.defineProperty(global, 'console', { value: mockConsole })
       ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(null)
       const response = await request(app).post('/api/user/login').send({ email: 'no-user@email.com', password: newUser.password })
 
@@ -180,9 +194,6 @@ describe('userAPI', () => {
     })
 
     test('Should return error with status 500, because of DB error.', async () => {
-      const originalConsole = console
-      const mockConsole = { error: vi.fn() }
-      Object.defineProperty(global, 'console', { value: mockConsole })
       ;(BudgetDataSource.manager.findOne as Mock).mockRejectedValue(new Error('DB error'))
       const response = await request(app).post('/api/user/login').send({ email: newUser.email, password: newUser.password })
 
@@ -191,6 +202,72 @@ describe('userAPI', () => {
         message: 'Internal server error',
         code: ResCodes.ERROR,
         error: { cause: 'Failed to login.', details: 'DB error' }
+      })
+
+      Object.defineProperty(global, 'console', { value: originalConsole })
+    })
+  })
+
+  describe('sendRestorePasswordEmail', () => {
+    test('Should send email with status 200.', async () => {
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(transport.sendMail as Mock).mockResolvedValue(undefined)
+      const response = await request(app).post('/api/user/restore-password').send({ email: newUser.email })
+
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({
+        message: 'Restore password email was sent.',
+        code: ResCodes.SEND_RESTORE_PASSWORD_EMAIL
+      })
+    })
+
+    test('Should return validation error with status 422, because of invalid email.', async () => {
+      const response = await request(app).post('/api/user/restore-password').send({ email: '' })
+
+      expect(response.status).toBe(422)
+      expect(response.body).toEqual({
+        message: 'Restore password validation failed.',
+        code: ResCodes.VALIDATION_ERROR,
+        validationErrors: [{ location: 'body', msg: 'Invalid value', path: 'email', type: 'field', value: '' }]
+      })
+    })
+
+    test('Should return error with status 401, because of email does not exist.', async () => {
+      const mockConsole = { error: vi.fn() }
+      Object.defineProperty(global, 'console', { value: mockConsole })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(null)
+      const response = await request(app).post('/api/user/restore-password').send({ email: newUser.email })
+
+      expect(response.status).toBe(401)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Failed to send email to restore password. User not found.', details: '' }
+      })
+    })
+
+    test('Should return error with status 500, because of DB error.', async () => {
+      ;(BudgetDataSource.manager.findOne as Mock).mockRejectedValue(new Error('DB error'))
+      const response = await request(app).post('/api/user/restore-password').send({ email: newUser.email })
+
+      expect(response.status).toBe(500)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Failed to send email to restore password.', details: 'DB error' }
+      })
+    })
+
+    test('Should return error with status 500, because of email sending was failed.', async () => {
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(transport.sendMail as Mock).mockRejectedValue(new Error('Email error'))
+      const response = await request(app).post('/api/user/restore-password').send({ email: newUser.email })
+
+      expect(response.status).toBe(500)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Failed to send email to restore password.', details: 'Email error' }
       })
 
       Object.defineProperty(global, 'console', { value: originalConsole })
