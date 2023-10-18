@@ -360,4 +360,90 @@ describe('userAPI', () => {
       Object.defineProperty(global, 'console', { value: originalConsole })
     })
   })
+
+  describe('getUserInfo', () => {
+    test('Should return user info with status 200.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+
+      const response = await request(app).get('/api/user/get-user').set('Authorization', 'Bearer token')
+
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({
+        message: 'User info was sent successfully.',
+        code: ResCodes.SEND_USER,
+        payload: { user: { ...newUser, token: null, password: undefined } }
+      })
+    })
+
+    test('Should return error with status 401, because of no Authorization header.', async () => {
+      const mockConsole = { error: vi.fn() }
+      Object.defineProperty(global, 'console', { value: mockConsole })
+
+      const response = await request(app).get('/api/user/get-user')
+
+      expect(response.status).toBe(401)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Not authenticated. Invalid Authorization header.', details: '' }
+      })
+    })
+
+    test('Should return error with status 401, because of invalid token.', async () => {
+      ;(jose.jwtVerify as Mock).mockRejectedValue(new Error('Invalid token'))
+
+      const response = await request(app).get('/api/user/get-user').set('Authorization', 'Bearer token')
+
+      expect(response.status).toBe(401)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Not authenticated.  Invalid token.', details: 'Invalid token' }
+      })
+    })
+
+    test('Should return error with status 401, because of invalid decoded token data.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue(null)
+
+      const response = await request(app).get('/api/user/get-user').set('Authorization', 'Bearer token')
+
+      expect(response.status).toBe(401)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Failed to authenticate. Invalid token.', details: '' }
+      })
+    })
+
+    test('Should return error with status 403, because of user does not exist.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(null)
+
+      const response = await request(app).get('/api/user/get-user').set('Authorization', 'Bearer token')
+
+      expect(response.status).toBe(403)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Failed to authenticate. User not found.', details: '' }
+      })
+    })
+
+    test('Should return error with status 403, because of DB error.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockRejectedValue(new Error('DB error'))
+
+      const response = await request(app).get('/api/user/get-user').set('Authorization', 'Bearer token')
+
+      expect(response.status).toBe(403)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Failed to authenticate.', details: 'DB error' }
+      })
+
+      Object.defineProperty(global, 'console', { value: originalConsole })
+    })
+  })
 })
