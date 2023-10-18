@@ -5,6 +5,7 @@ import { BudgetDataSource } from '../db/data-source'
 import { Mock } from 'vitest'
 import bcrypt from 'bcryptjs'
 import { transport } from '../utils/email'
+import * as jose from 'jose'
 
 describe('userAPI', () => {
   const originalConsole = console
@@ -46,6 +47,15 @@ describe('userAPI', () => {
         transport: {
           sendMail: vi.fn()
         }
+      }
+    })
+
+    vi.mock('jose', async () => {
+      const actual = await vi.importActual('jose')
+
+      return {
+        ...(actual as object),
+        jwtVerify: vi.fn()
       }
     })
   })
@@ -268,6 +278,83 @@ describe('userAPI', () => {
         message: 'Internal server error',
         code: ResCodes.ERROR,
         error: { cause: 'Failed to send email to restore password.', details: 'Email error' }
+      })
+
+      Object.defineProperty(global, 'console', { value: originalConsole })
+    })
+  })
+
+  describe('restorePassword', () => {
+    test('Should restore password with status 200.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(newUser)
+
+      const response = await request(app).post('/api/user/restore-password/token').send({ password: newUser.password })
+
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({
+        message: 'Password was restored.',
+        code: ResCodes.RESET_PASSWORD
+      })
+    })
+
+    test('Should return validation error with status 422, because of invalid password.', async () => {
+      const response = await request(app).post('/api/user/restore-password/token').send({ password: 'invalid' })
+
+      expect(response.status).toBe(422)
+      expect(response.body).toEqual({
+        message: 'Restore password validation failed.',
+        code: ResCodes.VALIDATION_ERROR,
+        validationErrors: [
+          {
+            location: 'body',
+            msg: 'Invalid value',
+            path: 'password',
+            type: 'field',
+            value: 'invalid'
+          }
+        ]
+      })
+    })
+
+    test('Should return error with status 401, because of invalid token.', async () => {
+      const mockConsole = { error: vi.fn() }
+      Object.defineProperty(global, 'console', { value: mockConsole })
+      ;(jose.jwtVerify as Mock).mockResolvedValue(null)
+      const response = await request(app).post('/api/user/restore-password/token').send({ password: newUser.password })
+
+      expect(response.status).toBe(401)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Failed to restore password. Not authenticated.', details: 'Invalid token' }
+      })
+    })
+
+    test('Should return error with status 403, because of user does not exist.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(null)
+      const response = await request(app).post('/api/user/restore-password/token').send({ password: newUser.password })
+
+      expect(response.status).toBe(403)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Failed to restore password. User not found.', details: '' }
+      })
+    })
+
+    test('Should return error with status 401, because of DB error.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockRejectedValue(new Error('DB error'))
+      const response = await request(app).post('/api/user/restore-password/token').send({ password: newUser.password })
+
+      expect(response.status).toBe(401)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Failed to restore password.', details: 'DB error' }
       })
 
       Object.defineProperty(global, 'console', { value: originalConsole })
