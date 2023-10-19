@@ -9,7 +9,7 @@ import * as jose from 'jose'
 
 describe('userAPI', () => {
   const originalConsole = console
-  const newUser = { id: 2, email: 'user@email.com', token: 'token', password: 'Zaq12wsx' }
+  const mockUser = { id: 2, email: 'user@email.com', token: 'token', password: 'Zaq12wsx' }
 
   beforeAll(() => {
     vi.mock('typeorm', async () => {
@@ -63,24 +63,25 @@ describe('userAPI', () => {
 
   afterAll(() => {
     vi.clearAllMocks()
+    Object.defineProperty(global, 'console', { value: originalConsole })
   })
 
   describe('signup', () => {
     test('Should create and return new user with status 201.', async () => {
       ;(BudgetDataSource.manager.findOneBy as Mock).mockResolvedValue(null)
-      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(newUser)
-      const response = await request(app).post('/api/user/signup').send({ email: newUser.email, password: newUser.password })
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(mockUser)
+      const response = await request(app).post('/api/user/signup').send({ email: mockUser.email, password: mockUser.password })
 
       expect(response.status).toBe(201)
       expect(response.body).toEqual({
         message: 'Create new user.',
         code: ResCodes.CREATE_USER,
-        payload: { user: { ...newUser, token: expect.any(String), password: undefined } }
+        payload: { user: { ...mockUser, token: expect.any(String), password: undefined } }
       })
     })
 
     test('Should return validation error with status 422, because of invalid email.', async () => {
-      const response = await request(app).post('/api/user/signup').send({ email: 'invalid', password: newUser.password })
+      const response = await request(app).post('/api/user/signup').send({ email: 'invalid', password: mockUser.password })
 
       expect(response.status).toBe(422)
       expect(response.body).toEqual({
@@ -91,7 +92,7 @@ describe('userAPI', () => {
     })
 
     test('Should return validation error with status 422, because of invalid password.', async () => {
-      const response = await request(app).post('/api/user/signup').send({ email: newUser.email, password: 'invalid' })
+      const response = await request(app).post('/api/user/signup').send({ email: mockUser.email, password: 'invalid' })
 
       expect(response.status).toBe(422)
       expect(response.body).toEqual({
@@ -110,14 +111,14 @@ describe('userAPI', () => {
     })
 
     test('Should return validation error with status 422, because of email already exist.', async () => {
-      ;(BudgetDataSource.manager.findOneBy as Mock).mockResolvedValue(newUser)
-      const response = await request(app).post('/api/user/signup').send({ email: newUser.email, password: newUser.password })
+      ;(BudgetDataSource.manager.findOneBy as Mock).mockResolvedValue(mockUser)
+      const response = await request(app).post('/api/user/signup').send({ email: mockUser.email, password: mockUser.password })
 
       expect(response.status).toBe(422)
       expect(response.body).toEqual({
         message: 'SignUp validation failed.',
         code: ResCodes.VALIDATION_ERROR,
-        validationErrors: [{ location: 'body', msg: 'E-mail address already exists!', path: 'email', type: 'field', value: newUser.email }]
+        validationErrors: [{ location: 'body', msg: 'E-mail address already exists!', path: 'email', type: 'field', value: mockUser.email }]
       })
     })
 
@@ -126,7 +127,7 @@ describe('userAPI', () => {
       Object.defineProperty(global, 'console', { value: mockConsole })
       ;(BudgetDataSource.manager.findOneBy as Mock).mockResolvedValue(null)
       ;(BudgetDataSource.manager.save as Mock).mockRejectedValue(new Error('DB error'))
-      const response = await request(app).post('/api/user/signup').send({ email: newUser.email, password: newUser.password })
+      const response = await request(app).post('/api/user/signup').send({ email: mockUser.email, password: mockUser.password })
 
       expect(response.status).toBe(500)
       expect(response.body).toEqual({
@@ -141,21 +142,21 @@ describe('userAPI', () => {
 
   describe('login', () => {
     test('Should return user state with status 200.', async () => {
-      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
       ;(bcrypt.compare as Mock).mockResolvedValue(true)
 
-      const response = await request(app).post('/api/user/login').send({ email: newUser.email, password: newUser.password })
+      const response = await request(app).post('/api/user/login').send({ email: mockUser.email, password: mockUser.password })
 
       expect(response.status).toBe(200)
       expect(response.body).toEqual({
         message: 'Login success.',
         code: ResCodes.LOGIN,
-        payload: { user: { ...newUser, token: expect.any(String), password: undefined } }
+        payload: { user: { ...mockUser, token: expect.any(String), password: undefined } }
       })
     })
 
     test('Should return validation error with status 422, because of invalid email.', async () => {
-      const response = await request(app).post('/api/user/login').send({ password: newUser.password })
+      const response = await request(app).post('/api/user/login').send({ password: mockUser.password })
 
       expect(response.status).toBe(422)
       expect(response.body).toEqual({
@@ -166,7 +167,7 @@ describe('userAPI', () => {
     })
 
     test('Should return validation error with status 422, because of invalid password.', async () => {
-      const response = await request(app).post('/api/user/login').send({ email: newUser.email })
+      const response = await request(app).post('/api/user/login').send({ email: mockUser.email })
 
       expect(response.status).toBe(422)
       expect(response.body).toEqual({
@@ -180,7 +181,7 @@ describe('userAPI', () => {
       const mockConsole = { error: vi.fn() }
       Object.defineProperty(global, 'console', { value: mockConsole })
       ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(null)
-      const response = await request(app).post('/api/user/login').send({ email: 'no-user@email.com', password: newUser.password })
+      const response = await request(app).post('/api/user/login').send({ email: 'no-user@email.com', password: mockUser.password })
 
       expect(response.status).toBe(401)
       expect(response.body).toEqual({
@@ -191,10 +192,10 @@ describe('userAPI', () => {
     })
 
     test('Should return error with status 401, because of invalid password.', async () => {
-      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
       ;(bcrypt.compare as Mock).mockResolvedValue(false)
 
-      const response = await request(app).post('/api/user/login').send({ email: newUser.email, password: 'invalid' })
+      const response = await request(app).post('/api/user/login').send({ email: mockUser.email, password: 'invalid' })
 
       expect(response.status).toBe(401)
       expect(response.body).toEqual({
@@ -206,7 +207,7 @@ describe('userAPI', () => {
 
     test('Should return error with status 500, because of DB error.', async () => {
       ;(BudgetDataSource.manager.findOne as Mock).mockRejectedValue(new Error('DB error'))
-      const response = await request(app).post('/api/user/login').send({ email: newUser.email, password: newUser.password })
+      const response = await request(app).post('/api/user/login').send({ email: mockUser.email, password: mockUser.password })
 
       expect(response.status).toBe(500)
       expect(response.body).toEqual({
@@ -221,9 +222,9 @@ describe('userAPI', () => {
 
   describe('sendRestorePasswordEmail', () => {
     test('Should send email with status 200.', async () => {
-      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
       ;(transport.sendMail as Mock).mockResolvedValue(undefined)
-      const response = await request(app).post('/api/user/restore-password').send({ email: newUser.email })
+      const response = await request(app).post('/api/user/restore-password').send({ email: mockUser.email })
 
       expect(response.status).toBe(200)
       expect(response.body).toEqual({
@@ -247,7 +248,7 @@ describe('userAPI', () => {
       const mockConsole = { error: vi.fn() }
       Object.defineProperty(global, 'console', { value: mockConsole })
       ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(null)
-      const response = await request(app).post('/api/user/restore-password').send({ email: newUser.email })
+      const response = await request(app).post('/api/user/restore-password').send({ email: mockUser.email })
 
       expect(response.status).toBe(401)
       expect(response.body).toEqual({
@@ -259,7 +260,7 @@ describe('userAPI', () => {
 
     test('Should return error with status 500, because of DB error.', async () => {
       ;(BudgetDataSource.manager.findOne as Mock).mockRejectedValue(new Error('DB error'))
-      const response = await request(app).post('/api/user/restore-password').send({ email: newUser.email })
+      const response = await request(app).post('/api/user/restore-password').send({ email: mockUser.email })
 
       expect(response.status).toBe(500)
       expect(response.body).toEqual({
@@ -270,9 +271,9 @@ describe('userAPI', () => {
     })
 
     test('Should return error with status 500, because of email sending was failed.', async () => {
-      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
       ;(transport.sendMail as Mock).mockRejectedValue(new Error('Email error'))
-      const response = await request(app).post('/api/user/restore-password').send({ email: newUser.email })
+      const response = await request(app).post('/api/user/restore-password').send({ email: mockUser.email })
 
       expect(response.status).toBe(500)
       expect(response.body).toEqual({
@@ -287,11 +288,11 @@ describe('userAPI', () => {
 
   describe('restorePassword', () => {
     test('Should restore password with status 200.', async () => {
-      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
-      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
-      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(newUser)
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(mockUser)
 
-      const response = await request(app).post('/api/user/restore-password/token').send({ password: newUser.password })
+      const response = await request(app).post('/api/user/restore-password/token').send({ password: mockUser.password })
 
       expect(response.status).toBe(200)
       expect(response.body).toEqual({
@@ -323,7 +324,7 @@ describe('userAPI', () => {
       const mockConsole = { error: vi.fn() }
       Object.defineProperty(global, 'console', { value: mockConsole })
       ;(jose.jwtVerify as Mock).mockResolvedValue(null)
-      const response = await request(app).post('/api/user/restore-password/token').send({ password: newUser.password })
+      const response = await request(app).post('/api/user/restore-password/token').send({ password: mockUser.password })
 
       expect(response.status).toBe(401)
       expect(response.body).toEqual({
@@ -334,9 +335,9 @@ describe('userAPI', () => {
     })
 
     test('Should return error with status 403, because of user does not exist.', async () => {
-      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
       ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(null)
-      const response = await request(app).post('/api/user/restore-password/token').send({ password: newUser.password })
+      const response = await request(app).post('/api/user/restore-password/token').send({ password: mockUser.password })
 
       expect(response.status).toBe(403)
       expect(response.body).toEqual({
@@ -347,9 +348,9 @@ describe('userAPI', () => {
     })
 
     test('Should return error with status 401, because of DB error.', async () => {
-      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
       ;(BudgetDataSource.manager.findOne as Mock).mockRejectedValue(new Error('DB error'))
-      const response = await request(app).post('/api/user/restore-password/token').send({ password: newUser.password })
+      const response = await request(app).post('/api/user/restore-password/token').send({ password: mockUser.password })
 
       expect(response.status).toBe(401)
       expect(response.body).toEqual({
@@ -364,8 +365,8 @@ describe('userAPI', () => {
 
   describe('getUserInfo', () => {
     test('Should return user info with status 200.', async () => {
-      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
-      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
 
       const response = await request(app).get('/api/user/get-user').set('Authorization', 'Bearer token')
 
@@ -373,7 +374,7 @@ describe('userAPI', () => {
       expect(response.body).toEqual({
         message: 'User info was sent successfully.',
         code: ResCodes.SEND_USER,
-        payload: { user: { ...newUser, token: null, password: undefined } }
+        payload: { user: { ...mockUser, token: null, password: undefined } }
       })
     })
 
@@ -418,7 +419,7 @@ describe('userAPI', () => {
     })
 
     test('Should return error with status 403, because of user does not exist.', async () => {
-      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
       ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(null)
 
       const response = await request(app).get('/api/user/get-user').set('Authorization', 'Bearer token')
@@ -432,7 +433,7 @@ describe('userAPI', () => {
     })
 
     test('Should return error with status 403, because of DB error.', async () => {
-      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
       ;(BudgetDataSource.manager.findOne as Mock).mockRejectedValue(new Error('DB error'))
 
       const response = await request(app).get('/api/user/get-user').set('Authorization', 'Bearer token')
@@ -450,42 +451,42 @@ describe('userAPI', () => {
 
   describe('updateUser', () => {
     test('Should update user with status 200.', async () => {
-      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
-      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
-      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(newUser)
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(mockUser)
 
       const response = await request(app)
         .put('/api/user/update-user')
         .set('Authorization', 'Bearer token')
-        .send({ email: newUser.email, password: newUser.password })
+        .send({ email: mockUser.email, password: mockUser.password })
 
       expect(response.status).toBe(200)
       expect(response.body).toEqual({
         message: 'User was updated.',
         code: ResCodes.UPDATE_USER,
-        payload: { user: { ...newUser, token: null, password: undefined } }
+        payload: { user: { ...mockUser, token: null, password: undefined } }
       })
     })
 
     test('Should update user with status 200, because of send only email.', async () => {
-      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
-      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
-      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(newUser)
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(mockUser)
 
-      const response = await request(app).put('/api/user/update-user').set('Authorization', 'Bearer token').send({ email: newUser.email })
+      const response = await request(app).put('/api/user/update-user').set('Authorization', 'Bearer token').send({ email: mockUser.email })
 
       expect(response.status).toBe(200)
       expect(response.body).toEqual({
         message: 'User was updated.',
         code: ResCodes.UPDATE_USER,
-        payload: { user: { ...newUser, token: null, password: undefined } }
+        payload: { user: { ...mockUser, token: null, password: undefined } }
       })
     })
 
     test('Should return validation error with status 422, because of email and password does not exist.', async () => {
-      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
-      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
-      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(newUser)
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(mockUser)
 
       const response = await request(app)
         .put('/api/user/update-user')
@@ -526,9 +527,9 @@ describe('userAPI', () => {
     })
 
     test('Should return validation error with status 422, because of invalid email.', async () => {
-      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
-      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
-      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(newUser)
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(mockUser)
 
       const response = await request(app).put('/api/user/update-user').set('Authorization', 'Bearer token').send({ email: 'invalid' })
 
@@ -549,9 +550,9 @@ describe('userAPI', () => {
     })
 
     test('Should return validation error with status 422, because of invalid password.', async () => {
-      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
-      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
-      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(newUser)
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(mockUser)
 
       const response = await request(app).put('/api/user/update-user').set('Authorization', 'Bearer token').send({ password: 'invalid' })
 
@@ -572,14 +573,14 @@ describe('userAPI', () => {
     })
 
     test('Should return validation error with status 422, because of send two params but one is invalid.', async () => {
-      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
-      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
-      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(newUser)
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(mockUser)
 
       const response = await request(app)
         .put('/api/user/update-user')
         .set('Authorization', 'Bearer token')
-        .send({ email: 'invalid', password: newUser.password })
+        .send({ email: 'invalid', password: mockUser.password })
 
       expect(response.status).toBe(422)
       expect(response.body).toEqual({
@@ -600,14 +601,14 @@ describe('userAPI', () => {
     test('Should return error with status 500, because of DB error.', async () => {
       const mockConsole = { error: vi.fn() }
       Object.defineProperty(global, 'console', { value: mockConsole })
-      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
-      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
       ;(BudgetDataSource.manager.save as Mock).mockRejectedValue(new Error('DB error'))
 
       const response = await request(app)
         .put('/api/user/update-user')
         .set('Authorization', 'Bearer token')
-        .send({ email: newUser.email, password: newUser.password })
+        .send({ email: mockUser.email, password: mockUser.password })
 
       expect(response.status).toBe(500)
       expect(response.body).toEqual({
@@ -622,14 +623,14 @@ describe('userAPI', () => {
 
   describe('deleteUser', () => {
     test('Should delete user with status 200.', async () => {
-      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
       ;(bcrypt.compare as Mock).mockResolvedValue(true)
-      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
       ;(BudgetDataSource.manager.delete as Mock).mockResolvedValue({ affected: 1 })
       const response = await request(app)
         .patch('/api/user/delete-user')
         .set('Authorization', 'Bearer token')
-        .send({ password: newUser.password })
+        .send({ password: mockUser.password })
 
       expect(response.status).toBe(200)
       expect(response.body).toEqual({
@@ -660,13 +661,13 @@ describe('userAPI', () => {
     test('Should return error with status 401, because of wrong password.', async () => {
       const mockConsole = { error: vi.fn() }
       Object.defineProperty(global, 'console', { value: mockConsole })
-      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
-      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
       ;(bcrypt.compare as Mock).mockResolvedValue(false)
       const response = await request(app)
         .patch('/api/user/delete-user')
         .set('Authorization', 'Bearer token')
-        .send({ password: newUser.password })
+        .send({ password: mockUser.password })
 
       expect(response.status).toBe(401)
       expect(response.body).toEqual({
@@ -677,14 +678,14 @@ describe('userAPI', () => {
     })
 
     test('Should return 500 error, because of no user to delete.', async () => {
-      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
       ;(bcrypt.compare as Mock).mockResolvedValue(true)
-      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
       ;(BudgetDataSource.manager.delete as Mock).mockResolvedValue({ affected: 0 })
       const response = await request(app)
         .patch('/api/user/delete-user')
         .set('Authorization', 'Bearer token')
-        .send({ password: newUser.password })
+        .send({ password: mockUser.password })
 
       expect(response.status).toBe(500)
       expect(response.body).toEqual({
@@ -695,14 +696,14 @@ describe('userAPI', () => {
     })
 
     test('Should return error with status 500, because of DB error.', async () => {
-      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
       ;(bcrypt.compare as Mock).mockResolvedValue(true)
-      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
       ;(BudgetDataSource.manager.delete as Mock).mockRejectedValue(new Error('DB error'))
       const response = await request(app)
         .patch('/api/user/delete-user')
         .set('Authorization', 'Bearer token')
-        .send({ password: newUser.password })
+        .send({ password: mockUser.password })
 
       expect(response.status).toBe(500)
       expect(response.body).toEqual({
