@@ -262,4 +262,175 @@ describe('BudgetItemAPI', () => {
       })
     })
   })
+
+  describe('getBudgetItems', () => {
+    afterEach(() => {
+      vi.clearAllMocks()
+    })
+
+    test('Should return all budget items with status 200, because of query params are empty.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue(mockBudgetItems)
+
+      const response = await request(app).get('/api/budget/get-budget-item').set('Authorization', `Bearer ${mockUser.token}`)
+
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({
+        message: 'Budget items provided successfully.',
+        code: ResCodes.GET_BUDGET_ITEMS,
+        payload: { budgetItems: mockBudgetItems }
+      })
+      expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toBeCalledTimes(0)
+    })
+
+    test('Should create filter query only by ignore search param.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue(mockBudgetItems)
+
+      const response = await request(app)
+        .get('/api/budget/get-budget-item?ignore=true&month=2023-01')
+        .set('Authorization', `Bearer ${mockUser.token}`)
+
+      expect(response.status).toBe(200)
+      expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toBeCalledTimes(1)
+      expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toBeCalledWith('budget.ignore = :ignore', { ignore: true })
+    })
+
+    test('Should create filter query by month search param.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue(mockBudgetItems)
+
+      const response = await request(app)
+        .get('/api/budget/get-budget-item?active=2&month=2023-01')
+        .set('Authorization', `Bearer ${mockUser.token}`)
+
+      expect(response.status).toBe(200)
+      expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toBeCalledTimes(1)
+      expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toHaveBeenCalledWith(
+        "TO_CHAR(budget.userDate, 'YYYY-MM') = :month",
+        { month: '2023-01' }
+      )
+    })
+
+    test('Should create filter query by year search param.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue(mockBudgetItems)
+
+      const response = await request(app)
+        .get('/api/budget/get-budget-item?active=1&year=2023')
+        .set('Authorization', `Bearer ${mockUser.token}`)
+
+      expect(response.status).toBe(200)
+      expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toBeCalledTimes(1)
+      expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toHaveBeenCalledWith(
+        "TO_CHAR(budget.userDate, 'YYYY') = :year",
+        { year: '2023' }
+      )
+    })
+
+    test('Should create filter query by name search param.', async () => {
+      const name = 'fuel'
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue(mockBudgetItems)
+
+      const response = await request(app).get(`/api/budget/get-budget-item?name=${name}`).set('Authorization', `Bearer ${mockUser.token}`)
+
+      expect(response.status).toBe(200)
+      expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toBeCalledTimes(1)
+      expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toHaveBeenCalledWith('budget.name ILIKE :name', {
+        name: `%${name}%`
+      })
+    })
+
+    test('Should create filter query by category search param.', async () => {
+      const category = 1
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue(mockBudgetItems)
+
+      const response = await request(app)
+        .get(`/api/budget/get-budget-item?category=${category}`)
+        .set('Authorization', `Bearer ${mockUser.token}`)
+
+      expect(response.status).toBe(200)
+      expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toBeCalledTimes(1)
+      expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toHaveBeenCalledWith('category.id = :category', {
+        category
+      })
+    })
+
+    test('Should create filter query by categoryType search param.', async () => {
+      const categoryType = CategoryType.EXPENSE
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue(mockBudgetItems)
+
+      const response = await request(app)
+        .get(`/api/budget/get-budget-item?categoryType=${categoryType}`)
+        .set('Authorization', `Bearer ${mockUser.token}`)
+
+      expect(response.status).toBe(200)
+      expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toBeCalledTimes(1)
+      expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toHaveBeenCalledWith(
+        'category.categoryType = :categoryType',
+        {
+          categoryType
+        }
+      )
+    })
+
+    test('Should create filter query by all search param.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue(mockBudgetItems)
+
+      const response = await request(app)
+        .get(
+          `/api/budget/get-budget-item?categoryType=${CategoryType.EXPENSE}&category=${mockCategory.id}&name=${mockBudgetItem.name}&active=1&year=2023`
+        )
+        .set('Authorization', `Bearer ${mockUser.token}`)
+
+      expect(response.status).toBe(200)
+      expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toBeCalledTimes(4)
+    })
+
+    test('Should return status 200 if no results was found.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue(null)
+
+      const response = await request(app).get('/api/budget/get-budget-item').set('Authorization', `Bearer ${mockUser.token}`)
+
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({
+        message: 'Budget items provided successfully.',
+        code: ResCodes.GET_BUDGET_ITEMS,
+        payload: { budgetItems: [] }
+      })
+    })
+
+    test('Should return error with status 500, because of DB error.', async () => {
+      const error = new Error('DB error')
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockRejectedValue(error)
+
+      const response = await request(app).get('/api/budget/get-budget-item').set('Authorization', `Bearer ${mockUser.token}`)
+
+      expect(response.status).toBe(500)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: {
+          cause: 'Failed to get budget items',
+          details: error.message
+        }
+      })
+    })
+  })
 })

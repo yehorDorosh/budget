@@ -46,10 +46,6 @@ export class BudgetItemCRUD extends ModelCRUD<BudgetItem> {
       .addOrderBy('budget.id', 'DESC')
       .getMany()
 
-    if (!budgetItems) {
-      errorHandler({ message: 'No budget items for this user', statusCode: 400 }, next)
-      return null
-    }
     return budgetItems
   }
 }
