@@ -156,7 +156,7 @@ export const deleteUser: RequestHandler = async (req, res: AppRes, next) => {
     const result = await userCRUD.delete(user.id, next)
 
     if (result === true) {
-      res.status(200).json({ message: 'User was deleted', code: ResCodes.DELETE_USER })
+      res.status(200).json({ message: 'User was deleted.', code: ResCodes.DELETE_USER })
     } else {
       return errorHandler({ message: 'Failed to delete user. No one user was deleted.' }, next)
     }

@@ -19,7 +19,8 @@ describe('userAPI', () => {
       DataSource.prototype.manager = {
         findOneBy: vi.fn(),
         findOne: vi.fn(),
-        save: vi.fn()
+        save: vi.fn(),
+        delete: vi.fn()
       }
       DataSource.prototype.initialize = vi.fn()
 
@@ -597,6 +598,8 @@ describe('userAPI', () => {
     })
 
     test('Should return error with status 500, because of DB error.', async () => {
+      const mockConsole = { error: vi.fn() }
+      Object.defineProperty(global, 'console', { value: mockConsole })
       ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
       ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
       ;(BudgetDataSource.manager.save as Mock).mockRejectedValue(new Error('DB error'))
@@ -612,6 +615,103 @@ describe('userAPI', () => {
         code: ResCodes.ERROR,
         error: { cause: 'Failed to update user.', details: 'DB error' }
       })
+
+      Object.defineProperty(global, 'console', { value: originalConsole })
+    })
+  })
+
+  describe('deleteUser', () => {
+    test('Should delete user with status 200.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(bcrypt.compare as Mock).mockResolvedValue(true)
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.delete as Mock).mockResolvedValue({ affected: 1 })
+      const response = await request(app)
+        .patch('/api/user/delete-user')
+        .set('Authorization', 'Bearer token')
+        .send({ password: newUser.password })
+
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({
+        message: 'User was deleted.',
+        code: ResCodes.DELETE_USER
+      })
+    })
+
+    test('Should return validation error with status 422, because of invalid password.', async () => {
+      const response = await request(app).patch('/api/user/delete-user').set('Authorization', 'Bearer token').send({ password: '' })
+
+      expect(response.status).toBe(422)
+      expect(response.body).toEqual({
+        message: 'Delete user validation failed.',
+        code: ResCodes.VALIDATION_ERROR,
+        validationErrors: [
+          {
+            location: 'body',
+            msg: 'Invalid value',
+            path: 'password',
+            type: 'field',
+            value: ''
+          }
+        ]
+      })
+    })
+
+    test('Should return error with status 401, because of wrong password.', async () => {
+      const mockConsole = { error: vi.fn() }
+      Object.defineProperty(global, 'console', { value: mockConsole })
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(bcrypt.compare as Mock).mockResolvedValue(false)
+      const response = await request(app)
+        .patch('/api/user/delete-user')
+        .set('Authorization', 'Bearer token')
+        .send({ password: newUser.password })
+
+      expect(response.status).toBe(401)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Failed to delete user. Wrong password', details: '' }
+      })
+    })
+
+    test('Should return 500 error, because of no user to delete.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(bcrypt.compare as Mock).mockResolvedValue(true)
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.delete as Mock).mockResolvedValue({ affected: 0 })
+      const response = await request(app)
+        .patch('/api/user/delete-user')
+        .set('Authorization', 'Bearer token')
+        .send({ password: newUser.password })
+
+      expect(response.status).toBe(500)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Failed to delete user. No one user was deleted.', details: '' }
+      })
+    })
+
+    test('Should return error with status 500, because of DB error.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: newUser.id } })
+      ;(bcrypt.compare as Mock).mockResolvedValue(true)
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(newUser)
+      ;(BudgetDataSource.manager.delete as Mock).mockRejectedValue(new Error('DB error'))
+      const response = await request(app)
+        .patch('/api/user/delete-user')
+        .set('Authorization', 'Bearer token')
+        .send({ password: newUser.password })
+
+      expect(response.status).toBe(500)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Failed to delete user.', details: 'DB error' }
+      })
+
+      Object.defineProperty(global, 'console', { value: originalConsole })
     })
   })
 })
