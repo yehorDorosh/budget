@@ -1,4 +1,4 @@
-import { body, oneOf } from 'express-validator'
+import { body, oneOf, query } from 'express-validator'
 
 import { BudgetDataSource } from '../db/data-source'
 import { User } from '../models/user'
@@ -30,6 +30,10 @@ export const passwordValidator = (fieldName: string = 'password', checkOnlyIfFie
 
 export const notEmptyValidator = (fieldName: string = 'password') => {
   return body(fieldName).trim().notEmpty()
+}
+
+export const notEmptyQueryValidator = (fieldName: string = 'password') => {
+  return query(fieldName).trim().notEmpty()
 }
 
 export const atLeastOneNotEmptyValidator = (...fields: string[]) => {

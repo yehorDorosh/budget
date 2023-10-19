@@ -63,7 +63,7 @@ describe('BudgetItemAPI', () => {
       }
     })
 
-    console.error = vi.fn()
+    // console.error = vi.fn()
   })
 
   afterAll(() => {
@@ -428,6 +428,84 @@ describe('BudgetItemAPI', () => {
         code: ResCodes.ERROR,
         error: {
           cause: 'Failed to get budget items',
+          details: error.message
+        }
+      })
+    })
+  })
+
+  describe('deleteBudgetItem', () => {
+    test('Should delete budget item with status 200, because of budget item was deleted.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
+      ;(BudgetDataSource.manager.delete as Mock).mockResolvedValue({ affected: 1 })
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue(mockBudgetItems)
+
+      const response = await request(app)
+        .delete(`/api/budget/delete-budget-item?id=${mockBudgetItem.id}`)
+        .set('Authorization', `Bearer ${mockUser.token}`)
+
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({
+        message: 'Budget item deleted successfully.',
+        code: ResCodes.DELETE_BUDGET_ITEM,
+        payload: { budgetItems: mockBudgetItems }
+      })
+    })
+
+    test('Should return validation error with status 422, because of empty id query param.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
+
+      const response = await request(app).delete(`/api/budget/delete-budget-item?id=`).set('Authorization', `Bearer ${mockUser.token}`)
+
+      expect(response.status).toBe(422)
+      expect(response.body).toEqual({
+        message: 'Delete budget item validation failed.',
+        code: ResCodes.VALIDATION_ERROR,
+        validationErrors: [{ location: 'query', msg: 'Invalid value', path: 'id', type: 'field', value: '' }]
+      })
+    })
+
+    test('Should return error with status 500, because of budget item was not deleted.', async () => {
+      const error = new Error('DB error')
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
+      ;(BudgetDataSource.manager.delete as Mock).mockRejectedValue(error)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue(mockBudgetItems)
+
+      const response = await request(app)
+        .delete(`/api/budget/delete-budget-item?id=${mockBudgetItem.id}`)
+        .set('Authorization', `Bearer ${mockUser.token}`)
+
+      expect(response.status).toBe(500)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: {
+          cause: 'Failed to delete budget item.',
+          details: error.message
+        }
+      })
+    })
+
+    test('Should return error with status 500, because of DB error.', async () => {
+      const error = new Error('DB error')
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
+      ;(BudgetDataSource.manager.delete as Mock).mockResolvedValue({ affected: 1 })
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockRejectedValue(error)
+
+      const response = await request(app)
+        .delete(`/api/budget/delete-budget-item?id=${mockBudgetItem.id}`)
+        .set('Authorization', `Bearer ${mockUser.token}`)
+
+      expect(response.status).toBe(500)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: {
+          cause: 'Failed to delete budget item.',
           details: error.message
         }
       })

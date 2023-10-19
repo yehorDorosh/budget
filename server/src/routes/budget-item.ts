@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { notEmptyValidator } from '../utils/validators'
+import { notEmptyValidator, notEmptyQueryValidator } from '../utils/validators'
 
 import { addBudgetItem, getBudgetItems, deleteBudgetItem, updateBudgetItem } from '../controllers/budget-item'
 import auth from '../middleware/auth'
@@ -18,7 +18,13 @@ router.post(
 
 router.get('/get-budget-item', auth, getBudgetItems)
 
-router.delete('/delete-budget-item', auth, notEmptyValidator('id'), deleteBudgetItem)
+router.delete(
+  '/delete-budget-item',
+  auth,
+  notEmptyQueryValidator('id'),
+  validationErrorsHandler('Delete budget item validation failed.'),
+  deleteBudgetItem
+)
 
 router.put(
   '/update-budget-item',
