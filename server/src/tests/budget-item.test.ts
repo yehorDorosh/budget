@@ -10,7 +10,7 @@ describe('BudgetItemAPI', () => {
   const originalConsole = console
   const mockUser = { id: 2, email: 'user@email.com', token: 'token', password: 'Zaq12wsx' }
   const mockCategory = { id: 1, name: 'car', type: CategoryType.EXPENSE }
-  const mockBudgetItem = { id: 1, name: 'fuel', value: 100, userDate: new Date().toString(), ignore: false, category: mockCategory }
+  const mockBudgetItem = { id: 1, name: 'fuel', value: 100, userDate: '2023-01-01', ignore: false, category: mockCategory }
   const mockBudgetItems = [mockBudgetItem, (mockBudgetItem.id = 2), (mockBudgetItem.id = 3)]
 
   beforeAll(() => {
@@ -63,7 +63,7 @@ describe('BudgetItemAPI', () => {
       }
     })
 
-    // console.error = vi.fn()
+    console.error = vi.fn()
   })
 
   afterAll(() => {
@@ -506,6 +506,156 @@ describe('BudgetItemAPI', () => {
         code: ResCodes.ERROR,
         error: {
           cause: 'Failed to delete budget item.',
+          details: error.message
+        }
+      })
+    })
+  })
+
+  describe('updateBudgetItem', () => {
+    const body = {
+      id: mockBudgetItem.id,
+      categoryId: mockCategory.id,
+      name: mockBudgetItem.name,
+      value: mockBudgetItem.value,
+      userDate: mockBudgetItem.userDate,
+      ignore: mockBudgetItem.ignore
+    }
+    test('Should update budget item with status 200, because of budget item was updated.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock)
+        .mockResolvedValueOnce(mockUser)
+        .mockResolvedValueOnce(mockBudgetItem)
+        .mockResolvedValueOnce(mockCategory)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(mockBudgetItem)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue([])
+
+      const response = await request(app).put('/api/budget/update-budget-item').set('Authorization', `Bearer ${mockUser.token}`).send(body)
+
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({
+        message: 'Budget item was updated successfully.',
+        code: ResCodes.UPDATE_BUDGET_ITEM,
+        payload: { budgetItems: [] }
+      })
+    })
+
+    test('Should return validation error with status 422, because of empty all fields.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+
+      const response = await request(app).put('/api/budget/update-budget-item').set('Authorization', `Bearer ${mockUser.token}`).send({
+        id: '',
+        categoryId: '',
+        name: '',
+        value: '',
+        userDate: '',
+        ignore: ''
+      })
+
+      expect(response.status).toBe(422)
+      expect(response.body).toEqual({
+        message: 'Update budget item validation failed.',
+        code: ResCodes.VALIDATION_ERROR,
+        validationErrors: [
+          { location: 'body', msg: 'Invalid value', path: 'name', type: 'field', value: '' },
+          { location: 'body', msg: 'Invalid value', path: 'value', type: 'field', value: '' },
+          { location: 'body', msg: 'Invalid value', path: 'userDate', type: 'field', value: '' },
+          { location: 'body', msg: 'Invalid value', path: 'categoryId', type: 'field', value: '' },
+          { location: 'body', msg: 'Invalid value', path: 'id', type: 'field', value: '' },
+          { location: 'body', msg: 'Invalid value', path: 'ignore', type: 'field', value: '' }
+        ]
+      })
+    })
+
+    test('Should return status 500, because of budget item does not exist.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock)
+        .mockResolvedValueOnce(mockUser)
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(mockCategory)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(mockBudgetItem)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue([])
+
+      const response = await request(app).put('/api/budget/update-budget-item').set('Authorization', `Bearer ${mockUser.token}`).send(body)
+
+      expect(response.status).toBe(500)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: {
+          cause: 'Failed to update budget item. Item does not exist.',
+          details: ''
+        }
+      })
+    })
+
+    test('Should return status 500, because of category does not exist.', async () => {
+      ;(BudgetDataSource.manager.findOne as Mock).mockReset()
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock)
+        .mockResolvedValueOnce(mockUser)
+        .mockResolvedValueOnce(mockBudgetItem)
+        .mockResolvedValueOnce(null)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(mockBudgetItem)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue([])
+
+      const response = await request(app).put('/api/budget/update-budget-item').set('Authorization', `Bearer ${mockUser.token}`).send(body)
+
+      expect(response.status).toBe(500)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: {
+          cause: 'Failed to update budget item. Category for this budget item does not exist.',
+          details: ''
+        }
+      })
+    })
+
+    test('Should return status 500, because of budget item was not updated.', async () => {
+      const error = new Error('DB error')
+      ;(BudgetDataSource.manager.findOne as Mock).mockReset()
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock)
+        .mockResolvedValueOnce(mockUser)
+        .mockResolvedValueOnce(mockBudgetItem)
+        .mockResolvedValueOnce(mockCategory)
+      ;(BudgetDataSource.manager.save as Mock).mockRejectedValue(error)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue([])
+
+      const response = await request(app).put('/api/budget/update-budget-item').set('Authorization', `Bearer ${mockUser.token}`).send(body)
+
+      expect(response.status).toBe(500)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: {
+          cause: 'Failed to update budget item.',
+          details: error.message
+        }
+      })
+    })
+
+    test('Should return status 500, because of DB error.', async () => {
+      const error = new Error('DB error')
+      ;(BudgetDataSource.manager.findOne as Mock).mockReset()
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock)
+        .mockResolvedValueOnce(mockUser)
+        .mockResolvedValueOnce(mockBudgetItem)
+        .mockResolvedValueOnce(mockCategory)
+      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(mockBudgetItem)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockRejectedValue(error)
+
+      const response = await request(app).put('/api/budget/update-budget-item').set('Authorization', `Bearer ${mockUser.token}`).send(body)
+
+      expect(response.status).toBe(500)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: {
+          cause: 'Failed to update budget item.',
           details: error.message
         }
       })
