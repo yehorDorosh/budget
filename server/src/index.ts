@@ -5,7 +5,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import morgan from 'morgan'
 
-import { SERVER_PORT, SERVER_PORT_DEV, isDev } from './utils/config'
+import { SERVER_PORT, SERVER_PORT_DEV, isDev, NODE_ENV } from './utils/config'
 import { expressErrorHandler } from './utils/errors'
 import userRouter from './routes/user'
 import categoriesRouter from './routes/categories'
@@ -61,8 +61,13 @@ async function init() {
   try {
     await BudgetDataSource.initialize()
     console.log('Database initialized')
-    app.listen(isDev ? SERVER_PORT_DEV : SERVER_PORT, () => console.log(`Server started on port ${isDev ? SERVER_PORT_DEV : SERVER_PORT}`))
+    if (NODE_ENV !== 'test')
+      app.listen(isDev ? SERVER_PORT_DEV : SERVER_PORT, () =>
+        console.log(`Server started on port ${isDev ? SERVER_PORT_DEV : SERVER_PORT}`)
+      )
   } catch (err) {
     console.error('Database failed to initialize', err)
   }
 }
+
+export default app

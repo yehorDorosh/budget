@@ -32,7 +32,6 @@ export const getCategories: RequestHandler = async (req, res: AppRes<CategoriesP
       .status(200)
       .json({ message: 'Category list successfully provided.', code: ResCodes.GET_CATEGORIES, payload: { categories: categories || [] } })
   } catch (err) {
-    console.log(err)
     errorHandler({ message: 'Failed to get categories.', details: err }, next)
   }
 }
@@ -58,7 +57,6 @@ export const deleteCategory: RequestHandler = async (req, res: AppRes<Categories
       payload: { categories: categories || [] }
     })
   } catch (err) {
-    console.log(err)
     errorHandler({ message: 'Failed to delete category.', details: err }, next)
   }
 }
