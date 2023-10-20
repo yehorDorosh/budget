@@ -3,7 +3,6 @@ import app from '../index'
 import { CategoryType, ResCodes } from '../types/enums/index'
 import { BudgetDataSource } from '../db/data-source'
 import { Mock } from 'vitest'
-// import bcrypt from 'bcryptjs'
 import * as jose from 'jose'
 
 describe('BudgetItemAPI', () => {
