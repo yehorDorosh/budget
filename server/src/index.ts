@@ -17,15 +17,18 @@ import { Category } from './models/category'
 
 const app = express()
 
-const accessLogStream = fs.createWriteStream(path.join(__dirname, 'logs', 'server-error.log'), { flags: 'a' })
-app.use(
-  morgan('combined', {
-    stream: accessLogStream,
-    skip(req, res) {
-      return res.statusCode < 400
-    }
-  })
-)
+if (NODE_ENV !== 'test') {
+  if (!fs.existsSync(path.join(__dirname, 'logs'))) fs.mkdirSync(path.join(__dirname, 'logs'))
+  const accessLogStream = fs.createWriteStream(path.join(__dirname, 'logs', 'server-error.log'), { flags: 'a' })
+  app.use(
+    morgan('combined', {
+      stream: accessLogStream,
+      skip(req, res) {
+        return res.statusCode < 400
+      }
+    })
+  )
+}
 
 app.use(express.static(path.join(__dirname, 'public')))
 if (isDev) app.use(express.static(path.join(__dirname, '..', '..', 'client', 'build')))
