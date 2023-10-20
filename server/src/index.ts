@@ -66,7 +66,7 @@ async function init() {
     console.log('Database initialized')
     if (NODE_ENV !== 'test')
       app.listen(isDev ? SERVER_PORT_DEV : SERVER_PORT, () =>
-        console.log(`Server started on port ${isDev ? SERVER_PORT_DEV : SERVER_PORT}`)
+        console.log(`Server started on port ${isDev ? SERVER_PORT_DEV : SERVER_PORT}.`, 'Mode:', process.env.NODE_ENV)
       )
   } catch (err) {
     console.error('Database failed to initialize', err)

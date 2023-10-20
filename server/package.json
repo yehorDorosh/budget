@@ -4,7 +4,7 @@
   "description": "App for log yours expenses and income. Based TS, NodeJS, PostgreSQL.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "NODE_ENV=production node index.js",
     "dev": "NODE_ENV=development gulp dev",
     "build": "NODE_ENV=production gulp",
     "lint": "eslint --ext .js,.ts src/",

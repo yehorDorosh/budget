@@ -67,11 +67,13 @@ Commands execute from root of the project.
 ## Root scripts
 
 - `build:server` Build only server to server `build` dir
+- `test:server` Run unit tests for server
 - `build:client` Build only client to client `build` dir
+- `test:client` Run unit tests for client
 - `cp` Copy from server `build` dir to root `build` dir. After that copy client `build` dir to root `build/public` dir.
 - `cp:server` Copy only from server `build` dir to root `build` dir.
 - `server:install` Execute `npm i --production` in root `build` dir
-- `build` Build only server to server `build` dir and Build only client to client `build` dir
+- `build` Run all unit tests before. Build only server to server `build` dir and Build only client to client `build` dir
 - `build:fast` Build only server to server `build` dir and Copy only from server `build` dir to root `build` dir.
 - `gulp:deploy` Copy root `build` dir to server dir `/opt/bitnami/projects/budget/`. Install npm dependencies and restart nodeJS server.
 - `deploy` Build only server to server `build` dir and Build only client to client `build` dir. Copy from server `build` dir to root `build` dir. After that copy client `build` dir to root `build/public` dir. Copy root `build` dir to server dir `/opt/bitnami/projects/budget/`. Install npm dependencies and restart nodeJS server.
@@ -93,6 +95,7 @@ Commands execute from root of the project.
 - `format` Auto prettier all TS
 - `db:up` Up docker container with PostgreSQL DB
 - `db:down` Stop and remove docker container with PostgreSQL DB
+- `test:all` Run all tests. Use it before deploy.
 
 # ENV (./server/src/.env)
 
@@ -162,3 +165,67 @@ DROP TABLE IF EXISTS weather;
 ### Import prod DB to dev env.
 
 `pg_restore -v -d postgres://[user]:[password]@localhost:3432/budget ./dump/budgetdump.bak`
+
+# Logs
+
+- `journalctl -u budget_node_app.service -r -n 50` This how ypu can check logs on production. 50 - number of rows. r - load data from end of the file.
+
+# Production setup (Light Sail)
+
+## Light Sail
+
+[docs](https://docs.bitnami.com/general/infrastructure/nodejs/get-started/get-started/#step-3-serve-your-application-through-the-apache-web-server)
+
+- copy project to `/opt/bitnami/projects/budget`
+- `sudo chown $USER /opt/bitnami/projects/budget`
+
+### Daemonize app via System D
+
+- `sudo vim /etc/systemd/system/budget_node_app.service`
+
+```
+[Unit]
+Description=Budget NodeJS App
+After=multi-user.target
+
+[Service]
+ExecStart=/opt/bitnami/node/bin/node /opt/bitnami/projects/budget/index.js
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=budget-node-app
+User=bitnami
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
+```
+
+- `sudo systemctl start budget_node_app.service` - to start process
+- `sudo systemctl status budget_node_app.service` - to check that process is running
+- `journalctl -u budget_node_app.service -r -n 50` - if error to check logs
+- `sudo systemctl daemon-reload` - to restart daemon if service file was changed
+- `sudo systemctl restart budget_node_app.service` - restart process
+- `sudo systemctl enable budget_node_app.service` - to auto start process after server restart
+- `sudo cat /var/log/messages` - theoretical place of logs
+
+### Setup apache
+
+- `sudo cp /opt/bitnami/apache/conf/vhosts/sample-vhost.conf.disabled /opt/bitnami/apache/conf/vhosts/budget-vhost.conf`
+
+```
+<VirtualHost _default_:80>
+        ServerName budget.me
+        ServerAlias *
+        DocumentRoot "/opt/bitnami/projects/budget/public"
+        <Directory "/opt/bitnami/projects/budget/public">
+                Require all granted
+        </Directory>
+        ProxyPass / http://localhost:3000/
+        ProxyPassReverse / http://localhost:3000/
+</VirtualHost>
+```
+
+- `sudo mv 00_status-vhost.conf 00_status-vhost.conf.disable`
+- `sudo /opt/bitnami/ctlscript.sh restart apache`

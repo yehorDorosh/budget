@@ -48,7 +48,7 @@ function copyInstallRestartServer() {
     .on('end', () => {
       console.log('Installing dependencies...');
       ssh
-        .shell(['cd ' + remoteDir, 'npm install'], {
+        .shell(['cd ' + remoteDir, 'npm install --production'], {
           filePath: 'commands.log',
         })
         .pipe(gulp.dest('logs'))
@@ -62,7 +62,7 @@ function copyInstallRestartServer() {
 }
 
 function clearServer() {
-  return ssh.shell(['cd ' + remoteDir, 'rm -rf *'], {
+  return ssh.shell(['cd ' + remoteDir, 'rm -rf node_modules/'], {
     filePath: 'commands.log',
   });
 }
