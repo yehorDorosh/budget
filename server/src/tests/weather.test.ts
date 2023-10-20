@@ -67,7 +67,7 @@ describe('WeatherAPI', () => {
       }
     })
 
-    // console.error = vi.fn()
+    console.error = vi.fn()
   })
 
   afterAll(() => {
