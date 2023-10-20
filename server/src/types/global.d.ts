@@ -33,6 +33,8 @@ declare global {
     name?: string
     categoryType?: CategoryType
     category?: number
-    ignore?: bolean
+    ignore?: boolean
+    page?: number
+    perPage?: number
   }
 }

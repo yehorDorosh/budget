@@ -15,7 +15,9 @@ const parseFilterQuery = (req: Request): BudgetItemsFilters => {
   const categoryType = req.query.categoryType ? (req.query.categoryType as CategoryType) : undefined
   const category = req.query.category ? +req.query.category : undefined
   const ignore = req.query.ignore === 'true' ? true : req.query.ignore === 'false' ? false : undefined
-  return { month, year, active, name, categoryType, category, ignore }
+  const page = req.query.page ? +req.query.page : undefined
+  const perPage = req.query.perPage ? +req.query.perPage : undefined
+  return { month, year, active, name, categoryType, category, ignore, page, perPage }
 }
 
 export const addBudgetItem: RequestHandler = async (req, res: AppRes<BudgetItemsPayload>, next) => {

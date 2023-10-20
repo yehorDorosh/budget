@@ -40,11 +40,13 @@ export class BudgetItemCRUD extends ModelCRUD<BudgetItem> {
       }
     }
 
-    const budgetItems = await queryBuilder
-      .orderBy('budget.userDate', 'DESC')
-      .addOrderBy('budget.createdAt', 'DESC')
-      .addOrderBy('budget.id', 'DESC')
-      .getMany()
+    queryBuilder.orderBy('budget.userDate', 'DESC').addOrderBy('budget.createdAt', 'DESC').addOrderBy('budget.id', 'DESC')
+
+    if (filters.page && filters.perPage) {
+      queryBuilder.offset((filters.page - 1) * filters.perPage).limit(filters.perPage)
+    }
+
+    const budgetItems = await queryBuilder.getMany()
 
     return budgetItems
   }
