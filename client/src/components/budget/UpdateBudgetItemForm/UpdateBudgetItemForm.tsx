@@ -24,7 +24,6 @@ const UpdateBudgetItemForm: FC<Props> = ({ token, currentBudgetItem, onSave }) =
   const { fieldState: categoryTypeState, fieldDispatch: categoryTypeDispatch } = useField(currentBudgetItem.category.categoryType)
   const { fieldState: ignoreState, fieldDispatch: ignoreDispatch } = useField(currentBudgetItem.ignore.toString())
   const categories = useAppSelector((state) => state.categories.categories)
-  const filters = useAppSelector((state) => state.budgetItem.filters)
 
   const { formMarkup } = useForm(
     [
@@ -129,7 +128,6 @@ const UpdateBudgetItemForm: FC<Props> = ({ token, currentBudgetItem, onSave }) =
         value: +valueState.value,
         userDate: isDateValid(dateState.value) ? new Date(dateState.value).toISOString() : currentBudgetItem.userDate,
         categoryId: +categoryState.value,
-        filters: filters,
         ignore: ignoreState.value === 'true'
       }
     },

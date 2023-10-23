@@ -6,12 +6,11 @@ import { errorHandler } from '../../utils/errors'
 import objectToQueryString from '../../utils/query'
 import { ReducerType } from '../../types/enum'
 
-export const addBudgetItem: StoreAction<BudgetItemPayload> = ({ token, categoryId, name, value, userDate, filters }) => {
-  const query = filters ? '?' + objectToQueryString(filters) : ''
+export const addBudgetItem: StoreAction<BudgetItemPayload> = ({ token, categoryId, name, value, userDate }) => {
   return async (dispatch, getState) => {
     try {
       const { data, status } = await axios.post<JSONResponse<BudgetItemPayload>>(
-        `/api/budget/add-budget-item${query}`,
+        `/api/budget/add-budget-item`,
         { categoryId, name, value, userDate },
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -43,11 +42,10 @@ export const getBudgetItems: StoreAction<BudgetItemPayload> = ({ token, filters 
   }
 }
 
-export const deleteBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id, filters }) => {
-  const query = filters ? '&' + objectToQueryString(filters) : ''
+export const deleteBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id }) => {
   return async (dispatch, getState) => {
     try {
-      const { data, status } = await axios.delete<JSONResponse<BudgetItemPayload>>(`/api/budget/delete-budget-item?id=${id}${query}`, {
+      const { data, status } = await axios.delete<JSONResponse<BudgetItemPayload>>(`/api/budget/delete-budget-item?id=${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (data.payload && data.payload.budgetItems) {
@@ -60,12 +58,11 @@ export const deleteBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id, fi
   }
 }
 
-export const updateBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id, categoryId, name, value, userDate, filters, ignore }) => {
-  const query = filters ? '?' + objectToQueryString(filters) : ''
+export const updateBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id, categoryId, name, value, userDate, ignore }) => {
   return async (dispatch, getState) => {
     try {
       const { data, status } = await axios.put<JSONResponse<BudgetItemPayload>>(
-        `/api/budget/update-budget-item${query}`,
+        `/api/budget/update-budget-item`,
         { id, categoryId, name, value, userDate, ignore },
         { headers: { Authorization: `Bearer ${token}` } }
       )

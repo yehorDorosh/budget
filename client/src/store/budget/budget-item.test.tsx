@@ -161,9 +161,7 @@ describe('BudgetItem Store', () => {
 
     test('Should add budget item.', async () => {
       let payload: any
-      const res = await dispatch(
-        addBudgetItem({ token: 'token', categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01', filters: {} })
-      )
+      const res = await dispatch(addBudgetItem({ token: 'token', categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01' }))
 
       if (isActionPayload(res)) {
         payload = res.data.payload
@@ -183,9 +181,7 @@ describe('BudgetItem Store', () => {
     test('Should get axios error when adding budget item.', async () => {
       jest.spyOn(axios, 'post').mockRejectedValueOnce(new Error('test error'))
 
-      const res = await dispatch(
-        addBudgetItem({ token: 'token', categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01', filters: {} })
-      )
+      const res = await dispatch(addBudgetItem({ token: 'token', categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01' }))
 
       expect(res).toEqual({
         error: new Error('test error')
@@ -224,7 +220,7 @@ describe('BudgetItem Store', () => {
     })
 
     test('Should delete budget item.', async () => {
-      const res = await store.dispatch(deleteBudgetItem({ token: 'token', id: 1, filters: {} }))
+      const res = await store.dispatch(deleteBudgetItem({ token: 'token', id: 1 }))
 
       expect(store.getState().budgetItem.budgetItems.length).toEqual(4)
 
@@ -235,7 +231,7 @@ describe('BudgetItem Store', () => {
     test('Should get axios error when deleting budget item.', async () => {
       jest.spyOn(axios, 'delete').mockRejectedValueOnce(new Error('test error'))
 
-      const res = await store.dispatch(deleteBudgetItem({ token: 'token', id: 1, filters: {} }))
+      const res = await store.dispatch(deleteBudgetItem({ token: 'token', id: 1 }))
 
       expect(res).toEqual({
         error: new Error('test error')
@@ -246,7 +242,7 @@ describe('BudgetItem Store', () => {
 
     test('Should update budget item.', async () => {
       const res = await store.dispatch(
-        updateBudgetItem({ token: 'token', id: 1, categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01', filters: {} })
+        updateBudgetItem({ token: 'token', id: 1, categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01' })
       )
 
       expect(store.getState().budgetItem.budgetItems.length).toEqual(5)
@@ -268,7 +264,7 @@ describe('BudgetItem Store', () => {
       jest.spyOn(axios, 'put').mockRejectedValueOnce(new Error('test error'))
 
       const res = await store.dispatch(
-        updateBudgetItem({ token: 'token', id: 1, categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01', filters: {} })
+        updateBudgetItem({ token: 'token', id: 1, categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01' })
       )
 
       expect(res).toEqual({

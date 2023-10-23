@@ -87,8 +87,7 @@ describe('BudgetItemAPI', () => {
       expect(response.status).toBe(201)
       expect(response.body).toEqual({
         message: 'Create new budget item.',
-        code: ResCodes.CREATE_BUDGET_ITEM,
-        payload: { budgetItems: mockBudgetItems }
+        code: ResCodes.CREATE_BUDGET_ITEM
       })
     })
 
@@ -240,8 +239,7 @@ describe('BudgetItemAPI', () => {
     test('Should return error with status 500, because of DB error.', async () => {
       ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
       ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser).mockResolvedValueOnce(mockCategory)
-      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(mockBudgetItem)
-      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockRejectedValue(new Error('DB error'))
+      ;(BudgetDataSource.manager.save as Mock).mockRejectedValue(new Error('DB error'))
 
       const response = await request(app).post('/api/budget/add-budget-item').set('Authorization', `Bearer ${mockUser.token}`).send({
         categoryId: mockCategory.id,
@@ -447,8 +445,7 @@ describe('BudgetItemAPI', () => {
       expect(response.status).toBe(200)
       expect(response.body).toEqual({
         message: 'Budget item deleted successfully.',
-        code: ResCodes.DELETE_BUDGET_ITEM,
-        payload: { budgetItems: mockBudgetItems }
+        code: ResCodes.DELETE_BUDGET_ITEM
       })
     })
 
@@ -492,8 +489,7 @@ describe('BudgetItemAPI', () => {
       const error = new Error('DB error')
       ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
       ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
-      ;(BudgetDataSource.manager.delete as Mock).mockResolvedValue({ affected: 1 })
-      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockRejectedValue(error)
+      ;(BudgetDataSource.manager.delete as Mock).mockRejectedValue(error)
 
       const response = await request(app)
         .delete(`/api/budget/delete-budget-item?id=${mockBudgetItem.id}`)
@@ -534,8 +530,7 @@ describe('BudgetItemAPI', () => {
       expect(response.status).toBe(200)
       expect(response.body).toEqual({
         message: 'Budget item was updated successfully.',
-        code: ResCodes.UPDATE_BUDGET_ITEM,
-        payload: { budgetItems: [] }
+        code: ResCodes.UPDATE_BUDGET_ITEM
       })
     })
 
@@ -644,8 +639,7 @@ describe('BudgetItemAPI', () => {
         .mockResolvedValueOnce(mockUser)
         .mockResolvedValueOnce(mockBudgetItem)
         .mockResolvedValueOnce(mockCategory)
-      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(mockBudgetItem)
-      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockRejectedValue(error)
+      ;(BudgetDataSource.manager.save as Mock).mockRejectedValue(error)
 
       const response = await request(app).put('/api/budget/update-budget-item').set('Authorization', `Bearer ${mockUser.token}`).send(body)
 

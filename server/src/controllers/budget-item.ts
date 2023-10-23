@@ -20,7 +20,7 @@ const parseFilterQuery = (req: Request): BudgetItemsFilters => {
   return { month, year, active, name, categoryType, category, ignore, page, perPage }
 }
 
-export const addBudgetItem: RequestHandler = async (req, res: AppRes<BudgetItemsPayload>, next) => {
+export const addBudgetItem: RequestHandler = async (req, res: AppRes, next) => {
   const user = req.user!
   const categoryId: number = req.body.categoryId
   const name: string = req.body.name
@@ -34,11 +34,7 @@ export const addBudgetItem: RequestHandler = async (req, res: AppRes<BudgetItems
     const budgetItem = await budgetItemCRUD.add({ user, category, name, value, userDate }, next)
     if (!budgetItem) return errorHandler({ message: 'Failed to create budget item.' }, next)
 
-    const budgetItems = await budgetItemCRUD.findManyWithFilters(user.id, parseFilterQuery(req), next)
-
-    res
-      .status(201)
-      .json({ message: 'Create new budget item.', code: ResCodes.CREATE_BUDGET_ITEM, payload: { budgetItems: budgetItems || [] } })
+    res.status(201).json({ message: 'Create new budget item.', code: ResCodes.CREATE_BUDGET_ITEM })
   } catch (err) {
     errorHandler({ message: 'Failed to create budget item.', details: err }, next)
   }
@@ -60,28 +56,23 @@ export const getBudgetItems: RequestHandler = async (req, res: AppRes<BudgetItem
   }
 }
 
-export const deleteBudgetItem: RequestHandler = async (req, res: AppRes<BudgetItemsPayload>, next) => {
-  const user = req.user!
+export const deleteBudgetItem: RequestHandler = async (req, res: AppRes, next) => {
   const budgetItemId: number = +req.query.id!
 
   try {
     const result = await budgetItemCRUD.delete(budgetItemId, next)
     if (!result) return errorHandler({ message: 'Failed to delete budget item. No one items was deleted.' }, next)
 
-    const budgetItems = await budgetItemCRUD.findManyWithFilters(user.id, parseFilterQuery(req), next)
-
     res.status(200).json({
       message: 'Budget item deleted successfully.',
-      code: ResCodes.DELETE_BUDGET_ITEM,
-      payload: { budgetItems: budgetItems || [] }
+      code: ResCodes.DELETE_BUDGET_ITEM
     })
   } catch (err) {
     errorHandler({ message: 'Failed to delete budget item.', details: err }, next)
   }
 }
 
-export const updateBudgetItem: RequestHandler = async (req, res: AppRes<BudgetItemsPayload>, next) => {
-  const user = req.user!
+export const updateBudgetItem: RequestHandler = async (req, res: AppRes, next) => {
   const budgetItemId: number = +req.body.id
   const categoryId: number = +req.body.categoryId
   const name: string = req.body.name
@@ -99,12 +90,9 @@ export const updateBudgetItem: RequestHandler = async (req, res: AppRes<BudgetIt
     const updatedBudgetItem = await budgetItemCRUD.update(budgetItem, { name, value, userDate, category, ignore }, next)
     if (!updatedBudgetItem) return errorHandler({ message: 'Failed to update budget item.' }, next)
 
-    const budgetItems = await budgetItemCRUD.findManyWithFilters(user.id, parseFilterQuery(req), next)
-
     res.status(200).json({
       message: 'Budget item was updated successfully.',
-      code: ResCodes.UPDATE_BUDGET_ITEM,
-      payload: { budgetItems: budgetItems || [] }
+      code: ResCodes.UPDATE_BUDGET_ITEM
     })
   } catch (err) {
     errorHandler({ message: 'Failed to update budget item.', details: err }, next)

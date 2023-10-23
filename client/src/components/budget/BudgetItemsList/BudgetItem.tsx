@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../../hooks/useReduxTS'
 import BaseModal from '../../ui/BaseModal/BaseModal'
 import UpdateBudgetItemForm from '../UpdateBudgetItemForm/UpdateBudgetItemForm'
 import { BudgetItem } from '../../../store/budget/budget-item-slice'
-import { deleteBudgetItem } from '../../../store/budget/budget-item-actions'
+import { deleteBudgetItem, getBudgetItems } from '../../../store/budget/budget-item-actions'
 import { CategoryType } from '../../../types/enum'
 import BaseCard from '../../ui/BaseCard/BaseCard'
 
@@ -20,12 +20,18 @@ const ListItem: FC<Props> = ({ budgetItem, token }) => {
   const [openForm, setOpenForm] = useState(false)
   const filters = useAppSelector((state) => state.budgetItem.filters)
 
-  const deleteHandler = () => {
-    dispatch(deleteBudgetItem({ token, id: budgetItem.id, filters }))
+  const deleteHandler = async () => {
+    await dispatch(deleteBudgetItem({ token, id: budgetItem.id }))
+    await dispatch(getBudgetItems({ token, filters }))
   }
 
   const editBtnHandler = () => {
     setOpenForm(true)
+  }
+
+  const onEditHandler = () => {
+    setOpenForm(false)
+    dispatch(getBudgetItems({ token, filters }))
   }
 
   const itemStyle = () => {
@@ -37,7 +43,7 @@ const ListItem: FC<Props> = ({ budgetItem, token }) => {
   return (
     <Fragment>
       <BaseModal isOpen={openForm} onClose={() => setOpenForm(false)} title="Edit">
-        <UpdateBudgetItemForm token={token} currentBudgetItem={budgetItem} onSave={() => setOpenForm(false)} />
+        <UpdateBudgetItemForm token={token} currentBudgetItem={budgetItem} onSave={onEditHandler} />
       </BaseModal>
       <BaseCard className={`my-3 ${itemStyle()}`} data-testid="budget-item">
         <div className={classes.row}>
