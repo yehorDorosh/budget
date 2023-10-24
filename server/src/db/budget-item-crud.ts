@@ -79,6 +79,7 @@ export class BudgetItemCRUD extends ModelCRUD<BudgetItem> {
 
     return queryBuilder
       .select(['category.name AS name', 'SUM(budget.value)'])
+      .andWhere('category.categoryType = :categoryType', { categoryType: CategoryType.EXPENSE })
       .groupBy('category.id')
       .orderBy('sum', 'DESC')
       .getRawMany<CategoryRate>()
