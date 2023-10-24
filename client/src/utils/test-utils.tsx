@@ -352,6 +352,18 @@ export const handlers = [
     )
   }),
 
+  rest.get('/api/budget/get-statistics', async (req, res, ctx) => {
+    return res(
+      ctx.json({
+        message: 'Statistics provided successfully.',
+        code: ResCodes.GET_STATISTICS,
+        payload: { incomes: '1000', expenses: '1000', sum: '0.00', categoriesRates: [{ name: 'car', sum: '100' }] }
+      }),
+      ctx.status(200),
+      ctx.delay(100)
+    )
+  }),
+
   rest.put('/api/budget/update-budget-item', async (req, res, ctx) => {
     const newBudgetItems = [...mockedBudgetItems]
     const body = await req.json()

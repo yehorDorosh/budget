@@ -25,6 +25,18 @@ declare global {
   type BudgetItemPayload = BudgetItemState
   type WeatherPayload = WeatherState
 
+  interface CategoryRate {
+    name: string
+    sum: number
+  }
+
+  interface StatisticsPayload {
+    sum: string | null
+    expenses: string | null
+    incomes: string | null
+    categoriesRates: CategoryRate[]
+  }
+
   interface ValidationError {
     location: string
     msg: string

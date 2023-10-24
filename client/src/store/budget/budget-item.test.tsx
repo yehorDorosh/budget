@@ -1,8 +1,8 @@
 import store from '..'
 import { budgetItemActions } from './budget-item-slice'
 import { mockedBudgetItems } from '../../utils/test-utils'
-import { CategoryType, QueryFilter } from '../../types/enum'
-import { addBudgetItem, getBudgetItems, deleteBudgetItem, updateBudgetItem } from './budget-item-actions'
+import { CategoryType, QueryFilter, ResCodes } from '../../types/enum'
+import { addBudgetItem, getBudgetItems, deleteBudgetItem, updateBudgetItem, getStatistics } from './budget-item-actions'
 import { setupServer } from 'msw/node'
 import { handlers } from '../../utils/test-utils'
 import { isActionPayload } from '../../types/store-actions'
@@ -224,6 +224,36 @@ describe('BudgetItem Store', () => {
       jest.spyOn(axios, 'get').mockRejectedValueOnce(new Error('test error'))
 
       const res = await store.dispatch(getBudgetItems({ token: 'token' }))
+
+      expect(res).toEqual({
+        error: new Error('test error')
+      })
+
+      jest.spyOn(axios, 'get').mockRestore()
+    })
+
+    test('Should get statistics.', async () => {
+      const res = await store.dispatch(getStatistics({ token: 'token' }))
+
+      expect(res).toEqual({
+        data: {
+          code: ResCodes.GET_STATISTICS,
+          message: 'Statistics provided successfully.',
+          payload: {
+            incomes: '1000',
+            expenses: '1000',
+            sum: '0.00',
+            categoriesRates: [{ name: 'car', sum: '100' }]
+          }
+        },
+        status: 200
+      })
+    })
+
+    test('Should get axios error when getting statistics.', async () => {
+      jest.spyOn(axios, 'get').mockRejectedValueOnce(new Error('test error'))
+
+      const res = await store.dispatch(getStatistics({ token: 'token' }))
 
       expect(res).toEqual({
         error: new Error('test error')

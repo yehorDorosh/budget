@@ -43,6 +43,21 @@ export const getBudgetItems: StoreAction<BudgetItemPayload> = ({ token }, reduce
   }
 }
 
+export const getStatistics: StoreAction<StatisticsPayload> = ({ token }) => {
+  return async (dispatch, getState) => {
+    const filters = getState().budgetItem.filters
+    const query = filters ? '?' + objectToQueryString(filters, ['page', 'perPage', 'ignore', 'categoryType', 'category']) : ''
+    try {
+      const { data, status } = await axios.get<JSONResponse<StatisticsPayload>>(`/api/budget/get-statistics${query}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      return { data, status }
+    } catch (err) {
+      return errorHandler(err)
+    }
+  }
+}
+
 export const deleteBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id }) => {
   return async (dispatch, getState) => {
     try {

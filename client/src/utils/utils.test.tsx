@@ -43,6 +43,10 @@ describe('utils functions tests', () => {
     test('Should return correct query string', () => {
       expect(objectToQueryString({ a: '1', b: '2' })).toBe('a=1&b=2')
     })
+
+    test('Should filter out some keys', () => {
+      expect(objectToQueryString({ a: '1', b: '2', c: '3' }, ['a', 'b'])).toBe('c=3')
+    })
   })
 
   describe('errorHandler', () => {
