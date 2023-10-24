@@ -2,7 +2,14 @@ import express from 'express'
 
 import { notEmptyValidator, notEmptyQueryValidator } from '../utils/validators'
 
-import { addBudgetItem, getBudgetItems, deleteBudgetItem, updateBudgetItem, getStatistics } from '../controllers/budget-item'
+import {
+  addBudgetItem,
+  getBudgetItems,
+  deleteBudgetItem,
+  updateBudgetItem,
+  getStatistics,
+  getMonthlyTrend
+} from '../controllers/budget-item'
 import auth from '../middleware/auth'
 import { validationErrorsHandler } from '../utils/errors'
 
@@ -42,5 +49,7 @@ router.put(
 )
 
 router.get('/get-statistics', auth, getStatistics)
+
+router.get('/get-monthly-trend', auth, getMonthlyTrend)
 
 export default router

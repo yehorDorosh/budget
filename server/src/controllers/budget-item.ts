@@ -117,3 +117,28 @@ export const getStatistics: RequestHandler = async (req, res: AppRes<StatisticsP
     errorHandler({ message: 'Failed to get statistics.', details: err }, next)
   }
 }
+
+export const getMonthlyTrend: RequestHandler = async (req, res: AppRes<MonthlyTrendPayload>, next) => {
+  const user = req.user!
+
+  try {
+    const result = await budgetItemCRUD.getTrendData(user.id, parseFilterQuery(req), next)
+    if (!result) return errorHandler({ message: 'Failed to get monthly trend', details: 'Invalid user id.' }, next)
+
+    res.status(200).json({
+      message: 'Monthly trend provided successfully.',
+      code: ResCodes.GET_MONTHLY_TREND,
+      payload: {
+        aveExpenses: result.averageExpenses,
+        aveIncomes: result.averageIncomes,
+        aveSaved: result.averageSaved,
+        totalSaved: result.totalSaved,
+        monthlyExpenses: result.monthlyExpenses,
+        monthlyIncomes: result.monthlyIncomes,
+        maxTotal: result.maxTotal
+      }
+    })
+  } catch (err) {
+    errorHandler({ message: 'Failed to get monthly trend.', details: err }, next)
+  }
+}

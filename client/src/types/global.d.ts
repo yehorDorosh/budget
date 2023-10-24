@@ -37,6 +37,16 @@ declare global {
     categoriesRates: CategoryRate[]
   }
 
+  interface MonthlyTrendPayload {
+    aveExpenses: string | null
+    aveIncomes: string | null
+    aveSaved: string | null
+    totalSaved: string | null
+    monthlyExpenses: { month: string; total: string }[]
+    monthlyIncomes: { month: string; total: string }[]
+    maxTotal: string | null
+  }
+
   interface ValidationError {
     location: string
     msg: string

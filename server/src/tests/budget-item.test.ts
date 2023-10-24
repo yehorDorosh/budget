@@ -703,4 +703,60 @@ describe('BudgetItemAPI', () => {
       })
     })
   })
+
+  describe('getTrendData', () => {
+    afterEach(() => {
+      vi.clearAllMocks()
+    })
+
+    test('Should return status 200, because of statistics was provided.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getRawOne as Mock)
+        .mockResolvedValueOnce({ value: '1000' })
+        .mockResolvedValueOnce({ value: '1000' })
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getRawMany as Mock)
+        .mockResolvedValueOnce([{ month: '0', value: '100' }])
+        .mockResolvedValueOnce([{ month: '0', value: '150' }])
+
+      const response = await request(app)
+        .get('/api/budget/get-monthly-trend')
+        .set('Authorization', `Bearer ${mockUser.token}`)
+        .query({ year: '2023' })
+      console.log(response.body)
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({
+        message: 'Monthly trend provided successfully.',
+        code: ResCodes.GET_MONTHLY_TREND,
+        payload: {
+          aveExpenses: '100.00',
+          aveIncomes: '100.00',
+          aveSaved: '0.00',
+          totalSaved: '0.00',
+          monthlyExpenses: [{ month: '0', value: '100' }],
+          monthlyIncomes: [{ month: '0', value: '150' }],
+          maxTotal: '0.00'
+        }
+      })
+    })
+
+    test('Should return error with status 500, because of DB error.', async () => {
+      const error = new Error('DB error')
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getRawOne as Mock).mockRejectedValue(error)
+
+      const response = await request(app)
+        .get('/api/budget/get-monthly-trend')
+        .set('Authorization', `Bearer ${mockUser.token}`)
+        .query({ year: '2023' })
+
+      expect(response.status).toBe(500)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Failed to get monthly trend.', details: error.message }
+      })
+    })
+  })
 })
