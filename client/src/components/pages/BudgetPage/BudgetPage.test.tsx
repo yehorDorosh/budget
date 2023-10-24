@@ -21,9 +21,25 @@ describe('BudgetPage', () => {
     server.listen()
   })
 
+  beforeEach(() => {
+    Object.defineProperty(global, 'IntersectionObserver', {
+      value: jest.fn().mockImplementation((observeHandler) => {
+        return {
+          observe: jest.fn(),
+          unobserve: jest.fn(),
+          inViewPort: () => {
+            observeHandler([{ isIntersecting: true }])
+          }
+        }
+      }),
+      writable: true
+    })
+  })
+
   afterEach(() => {
     server.resetHandlers()
     cleanup()
+    jest.resetAllMocks()
   })
 
   afterAll(() => {

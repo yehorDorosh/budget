@@ -24,9 +24,10 @@ export const addBudgetItem: StoreAction<BudgetItemPayload> = ({ token, categoryI
   }
 }
 
-export const getBudgetItems: StoreAction<BudgetItemPayload> = ({ token, filters }, reducerType = ReducerType.budgetItemsList) => {
-  const query = filters ? '?' + objectToQueryString(filters) : ''
+export const getBudgetItems: StoreAction<BudgetItemPayload> = ({ token }, reducerType = ReducerType.budgetItemsList) => {
   return async (dispatch, getState) => {
+    const filters = getState().budgetItem.filters
+    const query = filters ? '?' + objectToQueryString(filters) : ''
     try {
       const { data, status } = await axios.get<JSONResponse<BudgetItemPayload>>(`/api/budget/get-budget-item${query}`, {
         headers: { Authorization: `Bearer ${token}` }

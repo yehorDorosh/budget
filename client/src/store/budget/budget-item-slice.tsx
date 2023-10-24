@@ -36,6 +36,8 @@ export interface BudgetItemsFilters {
   categoryType?: CategoryType
   category?: number
   ignore?: boolean
+  page?: number
+  perPage?: number
 }
 
 export interface BudgetItemState {
@@ -51,7 +53,9 @@ const initialState: BudgetItemState = {
     month: getCurrentYearMonth(),
     year: new Date().getFullYear().toString(),
     active: QueryFilter.MONTH,
-    ignore: false
+    ignore: false,
+    page: 1,
+    perPage: 10
   }
 }
 
@@ -109,6 +113,13 @@ const budgetItemSlice = createSlice({
     },
     setFilterIgnore(state, action: PayloadAction<boolean>) {
       state.filters.ignore = action.payload
+    },
+    incrementPage(state) {
+      if (!state.filters.page) return
+      state.filters.page++
+    },
+    resetPage(state) {
+      state.filters.page = 1
     }
   }
 })

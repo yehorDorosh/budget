@@ -132,6 +132,19 @@ describe('BudgetItem Store', () => {
 
       expect(store.getState().budgetItem.filters.ignore).toEqual(ignore)
     })
+
+    test('Should increment page.', () => {
+      store.dispatch(budgetItemActions.incrementPage())
+
+      expect(store.getState().budgetItem.filters.page).toEqual(2)
+    })
+
+    test('Should reset page.', () => {
+      store.dispatch(budgetItemActions.incrementPage())
+      store.dispatch(budgetItemActions.resetPage())
+
+      expect(store.getState().budgetItem.filters.page).toEqual(1)
+    })
   })
 
   describe('actions', () => {
