@@ -98,3 +98,22 @@ export const updateBudgetItem: RequestHandler = async (req, res: AppRes, next) =
     errorHandler({ message: 'Failed to update budget item.', details: err }, next)
   }
 }
+
+export const getStatistics: RequestHandler = async (req, res: AppRes<StatisticsPayload>, next) => {
+  const user = req.user!
+
+  try {
+    const result = await budgetItemCRUD.getStatistics(user.id, parseFilterQuery(req), next)
+    const categoriesRates = await budgetItemCRUD.getCategoriesRates(user.id, parseFilterQuery(req), next)
+
+    if (!result || !categoriesRates) return errorHandler({ message: 'Failed to get statistics', details: 'Invalid user id.' }, next)
+
+    res.status(200).json({
+      message: 'Statistics provided successfully.',
+      code: ResCodes.GET_STATISTICS,
+      payload: { sum: result.sum, expenses: result.expenses, incomes: result.incomes, categoriesRates }
+    })
+  } catch (err) {
+    errorHandler({ message: 'Failed to get statistics.', details: err }, next)
+  }
+}

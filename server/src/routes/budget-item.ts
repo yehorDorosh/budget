@@ -2,7 +2,7 @@ import express from 'express'
 
 import { notEmptyValidator, notEmptyQueryValidator } from '../utils/validators'
 
-import { addBudgetItem, getBudgetItems, deleteBudgetItem, updateBudgetItem } from '../controllers/budget-item'
+import { addBudgetItem, getBudgetItems, deleteBudgetItem, updateBudgetItem, getStatistics } from '../controllers/budget-item'
 import auth from '../middleware/auth'
 import { validationErrorsHandler } from '../utils/errors'
 
@@ -40,5 +40,7 @@ router.put(
   validationErrorsHandler('Update budget item validation failed.'),
   updateBudgetItem
 )
+
+router.get('/get-statistics', auth, getStatistics)
 
 export default router
