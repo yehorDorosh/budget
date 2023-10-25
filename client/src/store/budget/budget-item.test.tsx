@@ -2,7 +2,7 @@ import store from '..'
 import { budgetItemActions } from './budget-item-slice'
 import { mockedBudgetItems } from '../../utils/test-utils'
 import { CategoryType, QueryFilter, ResCodes } from '../../types/enum'
-import { addBudgetItem, getBudgetItems, deleteBudgetItem, updateBudgetItem, getStatistics } from './budget-item-actions'
+import { addBudgetItem, getBudgetItems, deleteBudgetItem, updateBudgetItem, getStatistics, getMonthlyTrend } from './budget-item-actions'
 import { setupServer } from 'msw/node'
 import { handlers } from '../../utils/test-utils'
 import { isActionPayload } from '../../types/store-actions'
@@ -144,6 +144,14 @@ describe('BudgetItem Store', () => {
       store.dispatch(budgetItemActions.resetPage())
 
       expect(store.getState().budgetItem.filters.page).toEqual(1)
+    })
+
+    test('Should toggle onChangeBudgetItems.', () => {
+      store.dispatch(budgetItemActions.onChangeBudgetItems())
+      expect(store.getState().budgetItem.onChangeBudgetItems).toEqual(true)
+
+      store.dispatch(budgetItemActions.onChangeBudgetItems())
+      expect(store.getState().budgetItem.onChangeBudgetItems).toEqual(false)
     })
   })
 
@@ -315,6 +323,38 @@ describe('BudgetItem Store', () => {
       })
 
       jest.spyOn(axios, 'put').mockRestore()
+    })
+
+    test('Should get monthly trend.', async () => {
+      const res = await store.dispatch(getMonthlyTrend({ token: 'token', year: 2023 }))
+
+      expect(res).toEqual({
+        data: {
+          code: ResCodes.GET_MONTHLY_TREND,
+          message: 'Monthly trend provided successfully.',
+          payload: {
+            aveExpenses: '1000.00',
+            aveIncomes: '1000.00',
+            aveSaved: '0.00',
+            totalSaved: '0.00',
+            monthlyExpenses: [{ month: '0', total: '1000.00' }],
+            monthlyIncomes: [{ month: '0', total: '1000.00' }]
+          }
+        },
+        status: 200
+      })
+    })
+
+    test('Should get axios error when getting monthly trend.', async () => {
+      jest.spyOn(axios, 'get').mockRejectedValueOnce(new Error('test error'))
+
+      const res = await store.dispatch(getMonthlyTrend({ token: 'token', year: 2023 }))
+
+      expect(res).toEqual({
+        error: new Error('test error')
+      })
+
+      jest.spyOn(axios, 'get').mockRestore()
     })
   })
 })
