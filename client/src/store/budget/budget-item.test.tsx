@@ -1,19 +1,15 @@
 import store from '..'
 import { budgetItemActions } from './budget-item-slice'
-import { mockedBudgetItems } from '../../utils/test-utils'
-import { CategoryType, QueryFilter } from '../../types/enum'
-import { addBudgetItem, getBudgetItems, deleteBudgetItem, updateBudgetItem } from './budget-item-actions'
+import { CategoryType, QueryFilter, ResCodes } from '../../types/enum'
+import { addBudgetItem, getBudgetItems, deleteBudgetItem, updateBudgetItem, getStatistics, getMonthlyTrend } from './budget-item-actions'
 import { setupServer } from 'msw/node'
 import { handlers } from '../../utils/test-utils'
-import { isActionPayload } from '../../types/store-actions'
+import { ActionPayload, isActionPayload } from '../../types/store-actions'
 import axios from 'axios'
-import { ReducerType } from '../../types/enum'
 
 describe('BudgetItem Store', () => {
   describe('reducers', () => {
     afterEach(() => {
-      store.dispatch(budgetItemActions.setBudgetItems([]))
-      store.dispatch(budgetItemActions.setTrendBudgetItems([]))
       store.dispatch(budgetItemActions.setFilterMonth(''))
       store.dispatch(budgetItemActions.setFilterYear(''))
       store.dispatch(budgetItemActions.setActiveFilter(QueryFilter.MONTH))
@@ -21,18 +17,6 @@ describe('BudgetItem Store', () => {
       store.dispatch(budgetItemActions.setFilterCategoryType(''))
       store.dispatch(budgetItemActions.setFilterCategory(''))
       store.dispatch(budgetItemActions.setFilterIgnore(false))
-    })
-
-    test('Should set budget items.', () => {
-      store.dispatch(budgetItemActions.setBudgetItems(mockedBudgetItems))
-
-      expect(store.getState().budgetItem.budgetItems).toEqual(mockedBudgetItems)
-    })
-
-    test('Should set trend budget items.', () => {
-      store.dispatch(budgetItemActions.setTrendBudgetItems(mockedBudgetItems))
-
-      expect(store.getState().budgetItem.trendBudgetItems).toEqual(mockedBudgetItems)
     })
 
     test('Should set filter month.', () => {
@@ -132,6 +116,27 @@ describe('BudgetItem Store', () => {
 
       expect(store.getState().budgetItem.filters.ignore).toEqual(ignore)
     })
+
+    test('Should increment page.', () => {
+      store.dispatch(budgetItemActions.incrementPage())
+
+      expect(store.getState().budgetItem.filters.page).toEqual(2)
+    })
+
+    test('Should reset page.', () => {
+      store.dispatch(budgetItemActions.incrementPage())
+      store.dispatch(budgetItemActions.resetPage())
+
+      expect(store.getState().budgetItem.filters.page).toEqual(1)
+    })
+
+    test('Should toggle onChangeBudgetItems.', () => {
+      store.dispatch(budgetItemActions.onChangeBudgetItems())
+      expect(store.getState().budgetItem.onChangeBudgetItems).toEqual(true)
+
+      store.dispatch(budgetItemActions.onChangeBudgetItems())
+      expect(store.getState().budgetItem.onChangeBudgetItems).toEqual(false)
+    })
   })
 
   describe('actions', () => {
@@ -140,8 +145,6 @@ describe('BudgetItem Store', () => {
 
     afterEach(() => {
       server.resetHandlers()
-      store.dispatch(budgetItemActions.setBudgetItems([]))
-      store.dispatch(budgetItemActions.setTrendBudgetItems([]))
       store.dispatch(budgetItemActions.setFilterMonth(''))
       store.dispatch(budgetItemActions.setFilterYear(''))
       store.dispatch(budgetItemActions.setActiveFilter(QueryFilter.MONTH))
@@ -161,15 +164,13 @@ describe('BudgetItem Store', () => {
 
     test('Should add budget item.', async () => {
       let payload: any
-      const res = await dispatch(
-        addBudgetItem({ token: 'token', categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01', filters: {} })
-      )
+      const res = await dispatch(addBudgetItem({ token: 'token', categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01' }))
 
       if (isActionPayload(res)) {
         payload = res.data.payload
       }
 
-      expect(store.getState().budgetItem.budgetItems.length).toEqual(6)
+      expect((res as ActionPayload<BudgetItemPayload>).data.payload?.budgetItems.length).toEqual(6)
       expect(payload.budgetItems[0]).toEqual({
         id: 6,
         category: { categoryType: 'expense', id: 21, name: 'education' },
@@ -183,9 +184,7 @@ describe('BudgetItem Store', () => {
     test('Should get axios error when adding budget item.', async () => {
       jest.spyOn(axios, 'post').mockRejectedValueOnce(new Error('test error'))
 
-      const res = await dispatch(
-        addBudgetItem({ token: 'token', categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01', filters: {} })
-      )
+      const res = await dispatch(addBudgetItem({ token: 'token', categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01' }))
 
       expect(res).toEqual({
         error: new Error('test error')
@@ -197,18 +196,11 @@ describe('BudgetItem Store', () => {
     test('Should get budget items.', async () => {
       const res = await store.dispatch(getBudgetItems({ token: 'token' }))
 
-      expect(store.getState().budgetItem.budgetItems.length).toEqual(5)
-      expect(store.getState().budgetItem.trendBudgetItems.length).toEqual(0)
+      expect(isActionPayload(res)).toEqual(true)
+      expect((res as ActionPayload<BudgetItemPayload>).data.payload?.budgetItems.length).toEqual(5)
 
       expect(res).toHaveProperty('data')
       expect(res).toHaveProperty('status')
-    })
-
-    test('Should get budget items for month trend.', async () => {
-      await store.dispatch(getBudgetItems({ token: 'token' }, ReducerType.BudgetItemsTrend))
-
-      expect(store.getState().budgetItem.budgetItems.length).toEqual(0)
-      expect(store.getState().budgetItem.trendBudgetItems.length).toEqual(5)
     })
 
     test('Should get axios error when getting budget items.', async () => {
@@ -223,10 +215,41 @@ describe('BudgetItem Store', () => {
       jest.spyOn(axios, 'get').mockRestore()
     })
 
-    test('Should delete budget item.', async () => {
-      const res = await store.dispatch(deleteBudgetItem({ token: 'token', id: 1, filters: {} }))
+    test('Should get statistics.', async () => {
+      const res = await store.dispatch(getStatistics({ token: 'token' }))
 
-      expect(store.getState().budgetItem.budgetItems.length).toEqual(4)
+      expect(res).toEqual({
+        data: {
+          code: ResCodes.GET_STATISTICS,
+          message: 'Statistics provided successfully.',
+          payload: {
+            incomes: '1000',
+            expenses: '1000',
+            sum: '0.00',
+            categoriesRates: [{ name: 'car', sum: '100' }]
+          }
+        },
+        status: 200
+      })
+    })
+
+    test('Should get axios error when getting statistics.', async () => {
+      jest.spyOn(axios, 'get').mockRejectedValueOnce(new Error('test error'))
+
+      const res = await store.dispatch(getStatistics({ token: 'token' }))
+
+      expect(res).toEqual({
+        error: new Error('test error')
+      })
+
+      jest.spyOn(axios, 'get').mockRestore()
+    })
+
+    test('Should delete budget item.', async () => {
+      const res = await store.dispatch(deleteBudgetItem({ token: 'token', id: 1 }))
+
+      expect(isActionPayload(res)).toEqual(true)
+      expect((res as ActionPayload<BudgetItemPayload>).data.payload?.budgetItems.length).toEqual(4)
 
       expect(res).toHaveProperty('data')
       expect(res).toHaveProperty('status')
@@ -235,7 +258,7 @@ describe('BudgetItem Store', () => {
     test('Should get axios error when deleting budget item.', async () => {
       jest.spyOn(axios, 'delete').mockRejectedValueOnce(new Error('test error'))
 
-      const res = await store.dispatch(deleteBudgetItem({ token: 'token', id: 1, filters: {} }))
+      const res = await store.dispatch(deleteBudgetItem({ token: 'token', id: 1 }))
 
       expect(res).toEqual({
         error: new Error('test error')
@@ -246,12 +269,12 @@ describe('BudgetItem Store', () => {
 
     test('Should update budget item.', async () => {
       const res = await store.dispatch(
-        updateBudgetItem({ token: 'token', id: 1, categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01', filters: {} })
+        updateBudgetItem({ token: 'token', id: 1, categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01' })
       )
+      expect(isActionPayload(res)).toEqual(true)
+      expect((res as ActionPayload<BudgetItemPayload>).data.payload?.budgetItems.length).toEqual(5)
 
-      expect(store.getState().budgetItem.budgetItems.length).toEqual(5)
-
-      expect(store.getState().budgetItem.budgetItems[0]).toEqual({
+      expect((res as ActionPayload<BudgetItemPayload>).data.payload?.budgetItems[0]).toEqual({
         id: 1,
         category: { categoryType: 'expense', id: 21, name: 'car' },
         name: 'test',
@@ -268,7 +291,7 @@ describe('BudgetItem Store', () => {
       jest.spyOn(axios, 'put').mockRejectedValueOnce(new Error('test error'))
 
       const res = await store.dispatch(
-        updateBudgetItem({ token: 'token', id: 1, categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01', filters: {} })
+        updateBudgetItem({ token: 'token', id: 1, categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01' })
       )
 
       expect(res).toEqual({
@@ -276,6 +299,38 @@ describe('BudgetItem Store', () => {
       })
 
       jest.spyOn(axios, 'put').mockRestore()
+    })
+
+    test('Should get monthly trend.', async () => {
+      const res = await store.dispatch(getMonthlyTrend({ token: 'token', year: 2023 }))
+
+      expect(res).toEqual({
+        data: {
+          code: ResCodes.GET_MONTHLY_TREND,
+          message: 'Monthly trend provided successfully.',
+          payload: {
+            aveExpenses: '1000.00',
+            aveIncomes: '1000.00',
+            aveSaved: '0.00',
+            totalSaved: '0.00',
+            monthlyExpenses: [{ month: '0', total: '1000.00' }],
+            monthlyIncomes: [{ month: '0', total: '1000.00' }]
+          }
+        },
+        status: 200
+      })
+    })
+
+    test('Should get axios error when getting monthly trend.', async () => {
+      jest.spyOn(axios, 'get').mockRejectedValueOnce(new Error('test error'))
+
+      const res = await store.dispatch(getMonthlyTrend({ token: 'token', year: 2023 }))
+
+      expect(res).toEqual({
+        error: new Error('test error')
+      })
+
+      jest.spyOn(axios, 'get').mockRestore()
     })
   })
 })

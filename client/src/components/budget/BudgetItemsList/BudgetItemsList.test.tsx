@@ -1,7 +1,7 @@
 import BudgetItemsList from './BudgetItemsList'
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
 import { setupServer } from 'msw/node'
+import { act } from 'react-dom/test-utils'
 import { RenderWithProviders, handlers } from '../../../utils/test-utils'
 import store from '../../../store'
 import { budgetItemActions } from '../../../store/budget/budget-item-slice'
@@ -16,10 +16,26 @@ describe('BudgetItemsList', () => {
     server.listen()
   })
 
+  beforeEach(() => {
+    Object.defineProperty(global, 'IntersectionObserver', {
+      value: jest.fn().mockImplementation((observeHandler) => {
+        return {
+          observe: jest.fn(),
+          unobserve: jest.fn(),
+          inViewPort: () => {
+            observeHandler([{ isIntersecting: true }])
+          }
+        }
+      }),
+      writable: true
+    })
+  })
+
   afterEach(() => {
     server.resetHandlers()
     cleanup()
     store.dispatch(budgetItemActions.setFilterName(''))
+    jest.resetAllMocks()
   })
 
   afterAll(() => {

@@ -7,6 +7,7 @@ import { RenderWithProviders, handlers, mockedBudgetItems } from '../../../utils
 import store from '../../../store'
 import { categoriesActions } from '../../../store/categories/categories-slice'
 import { CategoryType } from '../../../types/enum'
+import * as budgetItemActions from '../../../store/budget/budget-item-actions'
 
 describe('UpdateBudgetItemForm', () => {
   const server = setupServer(...handlers)
@@ -234,6 +235,8 @@ describe('UpdateBudgetItemForm', () => {
   })
 
   test('Check that data correctly send to the server.', async () => {
+    const updateBudgetItem = jest.spyOn(budgetItemActions, 'updateBudgetItem')
+
     render(
       <RenderWithProviders>
         <UpdateBudgetItemForm token={'token'} currentBudgetItem={mockedBudgetItems[0]} onSave={() => {}} />
@@ -261,10 +264,17 @@ describe('UpdateBudgetItemForm', () => {
     })
 
     await waitFor(() => {
-      expect(store.getState().budgetItem.budgetItems[0].name).toBe('book')
+      expect(updateBudgetItem).toBeCalledTimes(1)
     })
-    expect(store.getState().budgetItem.budgetItems[0].value).toBe(100)
-    expect(store.getState().budgetItem.budgetItems[0].userDate).toBe('2023-03-01')
-    expect(store.getState().budgetItem.budgetItems[0].category.id).toBe(3)
+
+    expect(updateBudgetItem).toBeCalledWith({
+      categoryId: 3,
+      id: 1,
+      ignore: false,
+      name: 'book',
+      token: 'token',
+      userDate: new Date('2023-03-01').toISOString(),
+      value: 100
+    })
   })
 })

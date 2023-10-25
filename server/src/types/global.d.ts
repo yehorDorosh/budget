@@ -14,6 +14,11 @@ declare global {
     isLogin?: boolean | null
   }
 
+  interface CategoryRate {
+    name: string
+    sum: number
+  }
+
   interface UserPayload {
     user: UserState
   }
@@ -24,6 +29,23 @@ declare global {
 
   interface BudgetItemsPayload {
     budgetItems: BudgetItem[]
+  }
+
+  interface StatisticsPayload {
+    sum: string | null
+    expenses: string | null
+    incomes: string | null
+    categoriesRates: CategoryRate[]
+  }
+
+  interface MonthlyTrendPayload {
+    aveExpenses: string | null
+    aveIncomes: string | null
+    aveSaved: string | null
+    totalSaved: string | null
+    monthlyExpenses: { month: string; total: string }[]
+    monthlyIncomes: { month: string; total: string }[]
+    maxTotal: string | null
   }
 
   interface BudgetItemsFilters {

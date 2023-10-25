@@ -1,19 +1,25 @@
 import BudgetResult from './BudgetResult'
 import { cleanup, render, screen, within } from '@testing-library/react'
-import { RenderWithProviders, mockedBudgetItems } from '../../../utils/test-utils'
+import { RenderWithProviders } from '../../../utils/test-utils'
 import store from '../../../store'
-import { budgetItemActions } from '../../../store/budget/budget-item-slice'
+import { userActions } from '../../../store/user/user-slice'
+import { setupServer } from 'msw/node'
+import { handlers } from '../../../utils/test-utils'
 
 describe('BudgetResult', () => {
+  const server = setupServer(...handlers)
   beforeAll(() => {
-    store.dispatch(budgetItemActions.setBudgetItems(mockedBudgetItems))
+    store.dispatch(userActions.setUserData({ id: 1, email: 'user@email.com', token: '123', autoLogoutTimer: null }))
+    server.listen()
   })
 
   beforeEach(() => {
+    server.resetHandlers()
     cleanup()
   })
 
   afterAll(() => {
+    server.close()
     cleanup()
   })
 
@@ -24,38 +30,38 @@ describe('BudgetResult', () => {
       </RenderWithProviders>
     )
 
-    expect(screen.getByText('Summary')).toBeInTheDocument()
+    expect(await screen.findByTestId('summary')).toBeInTheDocument()
     expect(screen.getByText('Most Expenses')).toBeInTheDocument()
   })
 
-  test('Total income should be 500.', async () => {
+  test('Total income should be 1000.', async () => {
     render(
       <RenderWithProviders>
         <BudgetResult />
       </RenderWithProviders>
     )
 
-    expect(screen.getByTestId('total-income')).toHaveTextContent('500.00')
+    expect(await screen.findByTestId('total-income')).toHaveTextContent('1000')
   })
 
-  test('Total expense should be 33.', async () => {
+  test('Total expense should be 1000.', async () => {
     render(
       <RenderWithProviders>
         <BudgetResult />
       </RenderWithProviders>
     )
 
-    expect(screen.getByTestId('total-expense')).toHaveTextContent('33.00')
+    expect(await screen.findByTestId('total-expense')).toHaveTextContent('1000')
   })
 
-  test('Total should be 467.', async () => {
+  test('Total should be 0.', async () => {
     render(
       <RenderWithProviders>
         <BudgetResult />
       </RenderWithProviders>
     )
 
-    expect(screen.getByTestId('total')).toHaveTextContent('467.00')
+    expect(await screen.findByTestId('total')).toHaveTextContent('0.00')
   })
 
   test('Render most expenses category table.', async () => {
@@ -65,22 +71,10 @@ describe('BudgetResult', () => {
       </RenderWithProviders>
     )
 
-    const rows = screen.getAllByTestId('expense-list-item')
-    const salary = within(rows[0]).getAllByRole('cell')
-    const car = within(rows[1]).getAllByRole('cell')
-    const alcohol = within(rows[2]).getAllByRole('cell')
-    const education = within(rows[3]).getAllByRole('cell')
-
-    expect(salary[0]).toHaveTextContent('salary')
-    expect(salary[1]).toHaveTextContent('500.00')
+    const rows = await screen.findAllByTestId('expense-list-item')
+    const car = within(rows[0]).getAllByRole('cell')
 
     expect(car[0]).toHaveTextContent('car')
-    expect(car[1]).toHaveTextContent('25.00')
-
-    expect(alcohol[0]).toHaveTextContent('alcohol')
-    expect(alcohol[1]).toHaveTextContent('5.00')
-
-    expect(education[0]).toHaveTextContent('education')
-    expect(education[1]).toHaveTextContent('3.00')
+    expect(car[1]).toHaveTextContent('100')
   })
 })

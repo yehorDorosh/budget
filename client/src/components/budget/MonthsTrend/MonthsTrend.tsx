@@ -3,11 +3,12 @@ import { useState } from 'react'
 import BaseForm from '../../ui/BaseForm/BaseForm'
 import BaseInput from '../../ui/BaseInput/BaseInput'
 import { useAppDispatch, useAppSelector } from '../../../hooks/useReduxTS'
-import { getBudgetItems } from '../../../store/budget/budget-item-actions'
-import { CategoryType, Months, QueryFilter, ReducerType } from '../../../types/enum'
+import { getMonthlyTrend } from '../../../store/budget/budget-item-actions'
+import { Months } from '../../../types/enum'
 
 import classes from './MonthsTrend.module.scss'
 import BaseCard from '../../ui/BaseCard/BaseCard'
+import { isActionPayload } from '../../../types/store-actions'
 
 interface Props {
   token: string
@@ -15,63 +16,57 @@ interface Props {
 
 const MonthsTrend: FC<Props> = ({ token }) => {
   const dispatch = useAppDispatch()
+  const onChangeBudgetItems = useAppSelector((state) => state.budgetItem.onChangeBudgetItems)
   const [year, setYear] = useState(new Date().getFullYear())
-  const budgetItemsTrend = useAppSelector((state) => state.budgetItem.trendBudgetItems).filter((item) => !item.ignore)
-  const budgetItemsList = useAppSelector((state) => state.budgetItem.budgetItems)
+  const [payload, setPayload] = useState<MonthlyTrendPayload>({
+    aveExpenses: null,
+    aveIncomes: null,
+    aveSaved: null,
+    totalSaved: null,
+    monthlyExpenses: [],
+    monthlyIncomes: [],
+    maxTotal: null
+  })
 
+  const { aveExpenses, aveIncomes, aveSaved, totalSaved, maxTotal, monthlyExpenses, monthlyIncomes } = payload
+  const max = maxTotal !== null ? +maxTotal : 0
+  const averageYearExpenses = aveExpenses !== null ? +aveExpenses : 0
+  const averageYearIncomes = aveIncomes !== null ? +aveIncomes : 0
   const expensesByMonth: number[] = Array.from({ length: 12 }, () => 0)
   const incomesByMonth: number[] = Array.from({ length: 12 }, () => 0)
 
-  budgetItemsTrend.forEach((item) => {
-    const month = new Date(item.userDate).getMonth()
-
-    if (item.category.categoryType === CategoryType.INCOME) {
-      incomesByMonth[month] += item.value
-    }
-
-    if (item.category.categoryType === CategoryType.EXPENSE) {
-      expensesByMonth[month] += item.value
-    }
+  monthlyExpenses.forEach((_) => {
+    expensesByMonth[+_.month] = +_.total
   })
 
-  const max = Math.max(...expensesByMonth, ...incomesByMonth)
-  const isCurrentYear = new Date().getFullYear() === +year
-  const monthsAmount = isCurrentYear ? new Date().getMonth() + 1 : 12
-
-  const sumExpenses = budgetItemsTrend.reduce((acc, budgetItem) => {
-    if (budgetItem.category.categoryType === CategoryType.EXPENSE) {
-      return acc + budgetItem.value
-    }
-    return acc
-  }, 0)
-
-  const sumIncomes = budgetItemsTrend.reduce((acc, budgetItem) => {
-    if (budgetItem.category.categoryType === CategoryType.INCOME) {
-      return acc + budgetItem.value
-    }
-    return acc
-  }, 0)
-
-  const averageYearExpenses = sumExpenses / monthsAmount
-  const averageYearIncomes = sumIncomes / monthsAmount
+  monthlyIncomes.forEach((_) => {
+    incomesByMonth[+_.month] = +_.total
+  })
 
   const yearHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setYear(Number(e.target.value))
   }
 
   useEffect(() => {
-    if (token) {
-      dispatch(getBudgetItems({ token, filters: { year: String(year), active: QueryFilter.YEAR } }, ReducerType.BudgetItemsTrend))
+    const fetchMonthlyTrend = async () => {
+      if (token) {
+        const res = await dispatch(getMonthlyTrend({ token, year }))
+
+        if (isActionPayload(res) && res.data.payload) {
+          setPayload(res.data.payload)
+        }
+      }
     }
-  }, [year, token, dispatch, budgetItemsList])
+    fetchMonthlyTrend()
+  }, [year, token, dispatch, onChangeBudgetItems])
 
   return (
     <BaseCard className="mb-4" data-testid="months-trend">
       <ul>
-        <li>Average Expenses: {averageYearExpenses.toFixed(2)}</li>
-        <li>Average Income: {averageYearIncomes.toFixed(2)}</li>
-        <li>Average Saved: {(averageYearIncomes - averageYearExpenses).toFixed(2)}</li>
-        <li>Total saved: {(sumIncomes - sumExpenses).toFixed(2)}</li>
+        <li>Average Expenses: {averageYearExpenses}</li>
+        <li>Average Income: {averageYearIncomes}</li>
+        <li>Average Saved: {aveSaved}</li>
+        <li>Total saved: {totalSaved}</li>
       </ul>
       <div className={classes.trendContainer}>
         {expensesByMonth.map((value, i) => (

@@ -2,19 +2,6 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { formatDateYearMonth, getCurrentYearMonth } from '../../utils/date'
 import { CategoryType, QueryFilter } from '../../types/enum'
 
-function parseBudgetItems(payload: BudgetItem[]) {
-  return payload.map(
-    (budgetItem): BudgetItem => ({
-      ...budgetItem,
-      value: +budgetItem.value,
-      category: {
-        ...budgetItem.category,
-        id: +budgetItem.category.id
-      }
-    })
-  )
-}
-
 export interface BudgetItem {
   id: number
   name: string
@@ -36,35 +23,31 @@ export interface BudgetItemsFilters {
   categoryType?: CategoryType
   category?: number
   ignore?: boolean
+  page?: number
+  perPage?: number
 }
 
 export interface BudgetItemState {
-  budgetItems: BudgetItem[]
   filters: BudgetItemsFilters
-  trendBudgetItems: BudgetItem[]
+  onChangeBudgetItems: boolean
 }
 
 const initialState: BudgetItemState = {
-  budgetItems: [],
-  trendBudgetItems: [],
   filters: {
     month: getCurrentYearMonth(),
     year: new Date().getFullYear().toString(),
     active: QueryFilter.MONTH,
-    ignore: false
-  }
+    ignore: false,
+    page: 1,
+    perPage: 10
+  },
+  onChangeBudgetItems: false
 }
 
 const budgetItemSlice = createSlice({
   name: 'budget items',
   initialState,
   reducers: {
-    setBudgetItems(state, action: PayloadAction<BudgetItem[]>) {
-      state.budgetItems = parseBudgetItems(action.payload)
-    },
-    setTrendBudgetItems(state, action: PayloadAction<BudgetItem[]>) {
-      state.trendBudgetItems = parseBudgetItems(action.payload)
-    },
     setFilterMonth(state, action: PayloadAction<string>) {
       state.filters.month = action.payload
     },
@@ -109,6 +92,16 @@ const budgetItemSlice = createSlice({
     },
     setFilterIgnore(state, action: PayloadAction<boolean>) {
       state.filters.ignore = action.payload
+    },
+    incrementPage(state) {
+      if (!state.filters.page) return
+      state.filters.page++
+    },
+    resetPage(state) {
+      state.filters.page = 1
+    },
+    onChangeBudgetItems(state) {
+      state.onChangeBudgetItems = !state.onChangeBudgetItems
     }
   }
 })

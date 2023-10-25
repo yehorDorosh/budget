@@ -21,9 +21,25 @@ describe('BudgetPage', () => {
     server.listen()
   })
 
+  beforeEach(() => {
+    Object.defineProperty(global, 'IntersectionObserver', {
+      value: jest.fn().mockImplementation((observeHandler) => {
+        return {
+          observe: jest.fn(),
+          unobserve: jest.fn(),
+          inViewPort: () => {
+            observeHandler([{ isIntersecting: true }])
+          }
+        }
+      }),
+      writable: true
+    })
+  })
+
   afterEach(() => {
     server.resetHandlers()
     cleanup()
+    jest.resetAllMocks()
   })
 
   afterAll(() => {
@@ -42,7 +58,7 @@ describe('BudgetPage', () => {
 
     expect(title).toBeInTheDocument()
     expect(screen.getByTestId('months-trend')).toBeInTheDocument()
-    expect(screen.getByTestId('budget-result')).toBeInTheDocument()
+    expect(await screen.findByTestId('budget-result')).toBeInTheDocument()
     expect(screen.getByTestId('filter-budget-list-form')).toBeInTheDocument()
     expect(screen.getByTestId('budget-item-list')).toBeInTheDocument()
 

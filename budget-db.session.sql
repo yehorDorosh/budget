@@ -26,3 +26,14 @@
 -- WHERE id='1' AND reg_date IN (SELECT MAX(reg_date) FROM weather WHERE id='1')
 -- OR id='2nd-floor' AND reg_date IN (SELECT MAX(reg_date) FROM weather WHERE id='2nd-floor')
 -- OR id='out-of-door' AND reg_date IN (SELECT MAX(reg_date) FROM weather WHERE id='out-of-door')
+
+-- SUM by category type
+-- SELECT SUM(value) FROM budget WHERE user_id = 1 AND (SELECT category_type FROM categories WHERE id = category_id) = 'expense';
+
+-- Aggregate query. Sum by each category
+-- SELECT c.name, SUM(value) AS total_value
+-- FROM budget AS b
+-- JOIN categories AS c ON b.category_id = c.id
+-- WHERE b.user_id = 1
+-- GROUP BY c.name
+-- ORDER BY total_value DESC;

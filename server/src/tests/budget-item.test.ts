@@ -33,7 +33,11 @@ describe('BudgetItemAPI', () => {
           andWhere: vi.fn().mockReturnThis(),
           orderBy: vi.fn().mockReturnThis(),
           addOrderBy: vi.fn().mockReturnThis(),
-          getMany: vi.fn()
+          select: vi.fn().mockReturnThis(),
+          groupBy: vi.fn().mockReturnThis(),
+          getMany: vi.fn(),
+          getRawOne: vi.fn(),
+          getRawMany: vi.fn()
         })
       })
 
@@ -87,8 +91,7 @@ describe('BudgetItemAPI', () => {
       expect(response.status).toBe(201)
       expect(response.body).toEqual({
         message: 'Create new budget item.',
-        code: ResCodes.CREATE_BUDGET_ITEM,
-        payload: { budgetItems: mockBudgetItems }
+        code: ResCodes.CREATE_BUDGET_ITEM
       })
     })
 
@@ -240,8 +243,7 @@ describe('BudgetItemAPI', () => {
     test('Should return error with status 500, because of DB error.', async () => {
       ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
       ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser).mockResolvedValueOnce(mockCategory)
-      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(mockBudgetItem)
-      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockRejectedValue(new Error('DB error'))
+      ;(BudgetDataSource.manager.save as Mock).mockRejectedValue(new Error('DB error'))
 
       const response = await request(app).post('/api/budget/add-budget-item').set('Authorization', `Bearer ${mockUser.token}`).send({
         categoryId: mockCategory.id,
@@ -447,8 +449,7 @@ describe('BudgetItemAPI', () => {
       expect(response.status).toBe(200)
       expect(response.body).toEqual({
         message: 'Budget item deleted successfully.',
-        code: ResCodes.DELETE_BUDGET_ITEM,
-        payload: { budgetItems: mockBudgetItems }
+        code: ResCodes.DELETE_BUDGET_ITEM
       })
     })
 
@@ -492,8 +493,7 @@ describe('BudgetItemAPI', () => {
       const error = new Error('DB error')
       ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
       ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValue(mockUser)
-      ;(BudgetDataSource.manager.delete as Mock).mockResolvedValue({ affected: 1 })
-      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockRejectedValue(error)
+      ;(BudgetDataSource.manager.delete as Mock).mockRejectedValue(error)
 
       const response = await request(app)
         .delete(`/api/budget/delete-budget-item?id=${mockBudgetItem.id}`)
@@ -534,8 +534,7 @@ describe('BudgetItemAPI', () => {
       expect(response.status).toBe(200)
       expect(response.body).toEqual({
         message: 'Budget item was updated successfully.',
-        code: ResCodes.UPDATE_BUDGET_ITEM,
-        payload: { budgetItems: [] }
+        code: ResCodes.UPDATE_BUDGET_ITEM
       })
     })
 
@@ -644,8 +643,7 @@ describe('BudgetItemAPI', () => {
         .mockResolvedValueOnce(mockUser)
         .mockResolvedValueOnce(mockBudgetItem)
         .mockResolvedValueOnce(mockCategory)
-      ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(mockBudgetItem)
-      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockRejectedValue(error)
+      ;(BudgetDataSource.manager.save as Mock).mockRejectedValue(error)
 
       const response = await request(app).put('/api/budget/update-budget-item').set('Authorization', `Bearer ${mockUser.token}`).send(body)
 
@@ -657,6 +655,107 @@ describe('BudgetItemAPI', () => {
           cause: 'Failed to update budget item.',
           details: error.message
         }
+      })
+    })
+  })
+
+  describe('getStatistics', async () => {
+    afterEach(() => {
+      vi.clearAllMocks()
+    })
+
+    test('Should return statistics with status 200, because of statistics was provided.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getRawOne as Mock)
+        .mockResolvedValueOnce({ value: '1000' })
+        .mockResolvedValueOnce({ value: '1000' })
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getRawMany as Mock).mockResolvedValue([{ name: 'fuel', value: '100' }])
+
+      const response = await request(app).get('/api/budget/get-statistics').set('Authorization', `Bearer ${mockUser.token}`)
+
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({
+        message: 'Statistics provided successfully.',
+        code: ResCodes.GET_STATISTICS,
+        payload: {
+          expenses: '1000',
+          incomes: '1000',
+          sum: '0.00',
+          categoriesRates: [{ name: 'fuel', value: '100' }]
+        }
+      })
+    })
+
+    test('Should return error with status 500, because of DB error.', async () => {
+      const error = new Error('DB error')
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getRawOne as Mock).mockRejectedValue(error)
+
+      const response = await request(app).get('/api/budget/get-statistics').set('Authorization', `Bearer ${mockUser.token}`)
+
+      expect(response.status).toBe(500)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Failed to get statistics.', details: error.message }
+      })
+    })
+  })
+
+  describe('getTrendData', () => {
+    afterEach(() => {
+      vi.clearAllMocks()
+    })
+
+    test('Should return status 200, because of statistics was provided.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getRawOne as Mock)
+        .mockResolvedValueOnce({ value: '1000' })
+        .mockResolvedValueOnce({ value: '1000' })
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getRawMany as Mock)
+        .mockResolvedValueOnce([{ month: '0', value: '100' }])
+        .mockResolvedValueOnce([{ month: '0', value: '150' }])
+
+      const response = await request(app)
+        .get('/api/budget/get-monthly-trend')
+        .set('Authorization', `Bearer ${mockUser.token}`)
+        .query({ year: '2023' })
+      console.log(response.body)
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({
+        message: 'Monthly trend provided successfully.',
+        code: ResCodes.GET_MONTHLY_TREND,
+        payload: {
+          aveExpenses: '100.00',
+          aveIncomes: '100.00',
+          aveSaved: '0.00',
+          totalSaved: '0.00',
+          monthlyExpenses: [{ month: '0', value: '100' }],
+          monthlyIncomes: [{ month: '0', value: '150' }],
+          maxTotal: '0.00'
+        }
+      })
+    })
+
+    test('Should return error with status 500, because of DB error.', async () => {
+      const error = new Error('DB error')
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getRawOne as Mock).mockRejectedValue(error)
+
+      const response = await request(app)
+        .get('/api/budget/get-monthly-trend')
+        .set('Authorization', `Bearer ${mockUser.token}`)
+        .query({ year: '2023' })
+
+      expect(response.status).toBe(500)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Failed to get monthly trend.', details: error.message }
       })
     })
   })

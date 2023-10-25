@@ -20,7 +20,6 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
   const { fieldState: categoryState, fieldDispatch: categoryDispatch } = useField(undefined, false)
   const { fieldState: categoryTypeState, fieldDispatch: categoryTypeDispatch } = useField(CategoryType.EXPENSE)
   const categories = useAppSelector((state) => state.categories.categories)
-  const filters = useAppSelector((state) => state.budgetItem.filters)
 
   const { formMarkup } = useForm(
     [
@@ -107,8 +106,7 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
         name: nameState.value,
         value: +valueState.value,
         userDate: new Date(dateState.value).toDateString(),
-        categoryId: +categoryState.value,
-        filters: filters
+        categoryId: +categoryState.value
       }
     }
   )

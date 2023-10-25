@@ -6,6 +6,7 @@ import { setupServer } from 'msw/node'
 import { RenderWithProviders, handlers } from '../../../utils/test-utils'
 import { CategoryType } from '../../../types/enum'
 import store from '../../../store'
+import * as budgetItemActions from '../../../store/budget/budget-item-actions'
 
 describe('BudgetItem', () => {
   const server = setupServer(...handlers)
@@ -39,7 +40,7 @@ describe('BudgetItem', () => {
   test('Should render BudgetItem component.', async () => {
     render(
       <RenderWithProviders>
-        <BudgetItem token="token" budgetItem={budgetItem} />
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} />
       </RenderWithProviders>
     )
 
@@ -52,7 +53,7 @@ describe('BudgetItem', () => {
   test('Should open modal window.', async () => {
     render(
       <RenderWithProviders>
-        <BudgetItem token="token" budgetItem={budgetItem} />
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} />
       </RenderWithProviders>
     )
 
@@ -68,7 +69,7 @@ describe('BudgetItem', () => {
   test('Should close modal window.', async () => {
     render(
       <RenderWithProviders>
-        <BudgetItem token="token" budgetItem={budgetItem} />
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} />
       </RenderWithProviders>
     )
 
@@ -92,7 +93,7 @@ describe('BudgetItem', () => {
   test('Should close modal window after submit', async () => {
     render(
       <RenderWithProviders>
-        <BudgetItem token="token" budgetItem={budgetItem} />
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} />
       </RenderWithProviders>
     )
 
@@ -115,12 +116,40 @@ describe('BudgetItem', () => {
     })
   })
 
+  test('Should call onChange function after submit', async () => {
+    const onChange = jest.fn()
+    render(
+      <RenderWithProviders>
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={onChange} />
+      </RenderWithProviders>
+    )
+
+    const editBtn = screen.getByText(/edit/i)
+
+    act(() => {
+      userEvent.click(editBtn)
+    })
+
+    expect(screen.getByTestId('update-budget-item-form')).toBeInTheDocument()
+
+    const closeBtn = screen.getByRole('button', { name: /save budget item/i })
+
+    await act(() => {
+      userEvent.click(closeBtn)
+    })
+
+    await waitFor(() => {
+      expect(onChange).toBeCalledTimes(1)
+    })
+  })
+
   test('Should delete item', async () => {
     const mockDispatch = jest.spyOn(store, 'dispatch')
+    const deleteBudgetItem = jest.spyOn(budgetItemActions, 'deleteBudgetItem')
 
     render(
       <RenderWithProviders>
-        <BudgetItem token="token" budgetItem={budgetItem} />
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} />
       </RenderWithProviders>
     )
 
@@ -135,8 +164,10 @@ describe('BudgetItem', () => {
     })
 
     await waitFor(() => {
-      expect(store.getState().budgetItem.budgetItems).toHaveLength(4)
+      expect(deleteBudgetItem).toBeCalledTimes(1)
     })
+
+    expect(deleteBudgetItem).toBeCalledWith({ token: 'token', id: 1 })
   })
 
   test('Should has class text-bg-secondary for ignore item', async () => {
@@ -152,6 +183,7 @@ describe('BudgetItem', () => {
             userDate: '2023-01-01',
             value: 10
           }}
+          onChange={() => {}}
         />
       </RenderWithProviders>
     )
@@ -172,6 +204,7 @@ describe('BudgetItem', () => {
             userDate: '2023-01-01',
             value: 10
           }}
+          onChange={() => {}}
         />
       </RenderWithProviders>
     )

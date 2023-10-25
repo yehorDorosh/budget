@@ -1,43 +1,52 @@
-import { useAppSelector } from '../../../hooks/useReduxTS'
-import { CategoryType } from '../../../types/enum'
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from 'react'
+import { useAppSelector, useAppDispatch } from '../../../hooks/useReduxTS'
 import BaseCard from '../../ui/BaseCard/BaseCard'
+import { getStatistics } from '../../../store/budget/budget-item-actions'
 
 import classes from './BudgetResult.module.scss'
+import { isActionPayload } from '../../../types/store-actions'
 
 const BudgetResult = () => {
-  const budgetItems = useAppSelector((state) => state.budgetItem.budgetItems)
+  const dispatch = useAppDispatch()
+  const onChangeBudgetItems = useAppSelector((state) => state.budgetItem.onChangeBudgetItems)
+  const token = useAppSelector((state) => state.user.token)
+  const filters = useAppSelector((state) => state.budgetItem.filters)
+  const [statistics, setStatistics] = useState<StatisticsPayload>()
+  const fetchStatistics = async (token: string) => {
+    const res = await dispatch(getStatistics({ token }))
 
-  const sumExpenses = budgetItems.reduce((acc, budgetItem) => {
-    if (budgetItem.category.categoryType === CategoryType.EXPENSE) {
-      return acc + budgetItem.value
+    if (isActionPayload(res) && res.data.payload && res.data.payload) {
+      setStatistics(res.data.payload)
     }
-    return acc
-  }, 0)
+  }
 
-  const sumIncomes = budgetItems.reduce((acc, budgetItem) => {
-    if (budgetItem.category.categoryType === CategoryType.INCOME) {
-      return acc + budgetItem.value
+  useEffect(() => {
+    if (token) {
+      fetchStatistics(token)
     }
-    return acc
-  }, 0)
+  }, [token, dispatch, filters.year, filters.active, filters.month, onChangeBudgetItems])
 
-  const total = sumIncomes - sumExpenses
-
-  const itemsByCategory: { [key: string]: number } = {}
-  budgetItems.forEach((budgetItem) => {
-    if (itemsByCategory[budgetItem.category.name]) {
-      itemsByCategory[budgetItem.category.name] += budgetItem.value
-    } else {
-      itemsByCategory[budgetItem.category.name] = budgetItem.value
+  useEffect(() => {
+    let timer: NodeJS.Timeout | undefined
+    if (token) {
+      timer = setTimeout(async () => {
+        fetchStatistics(token)
+      }, 1000)
     }
-  })
-  const expensesList = Object.entries(itemsByCategory).sort((a, b) => b[1] - a[1])
+
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [filters.name])
+
+  if (!statistics) return null
 
   return (
     <BaseCard className="mb-4" data-testid="budget-result">
       <div className={classes.resultContainer}>
         <div className={classes.column}>
-          <h3>Summary</h3>
+          <h3 data-testid="summary">Summary</h3>
           <table className="table table-primary">
             <thead>
               <tr>
@@ -48,15 +57,15 @@ const BudgetResult = () => {
             <tbody>
               <tr className="table-light">
                 <td>Income</td>
-                <td data-testid="total-income">{sumIncomes.toFixed(2)}</td>
+                <td data-testid="total-income">{statistics.incomes}</td>
               </tr>
               <tr className="table-light">
                 <td>Expenses</td>
-                <td data-testid="total-expense">{sumExpenses.toFixed(2)}</td>
+                <td data-testid="total-expense">{statistics.expenses}</td>
               </tr>
               <tr className="table-light">
                 <td>Total</td>
-                <td data-testid="total">{total.toFixed(2)}</td>
+                <td data-testid="total">{statistics.sum}</td>
               </tr>
             </tbody>
           </table>
@@ -71,11 +80,11 @@ const BudgetResult = () => {
               </tr>
             </thead>
             <tbody>
-              {expensesList.map((budgetItem) => {
+              {statistics.categoriesRates.map((category) => {
                 return (
-                  <tr key={budgetItem[0]} className="table-light" data-testid="expense-list-item">
-                    <td>{budgetItem[0]}</td>
-                    <td>{budgetItem[1].toFixed(2)}</td>
+                  <tr key={category.name} className="table-light" data-testid="expense-list-item">
+                    <td>{category.name}</td>
+                    <td>{category.sum}</td>
                   </tr>
                 )
               })}
