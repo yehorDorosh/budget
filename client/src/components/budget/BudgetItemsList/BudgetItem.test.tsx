@@ -39,7 +39,7 @@ describe('BudgetItem', () => {
   test('Should render BudgetItem component.', async () => {
     render(
       <RenderWithProviders>
-        <BudgetItem token="token" budgetItem={budgetItem} />
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} />
       </RenderWithProviders>
     )
 
@@ -52,7 +52,7 @@ describe('BudgetItem', () => {
   test('Should open modal window.', async () => {
     render(
       <RenderWithProviders>
-        <BudgetItem token="token" budgetItem={budgetItem} />
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} />
       </RenderWithProviders>
     )
 
@@ -68,7 +68,7 @@ describe('BudgetItem', () => {
   test('Should close modal window.', async () => {
     render(
       <RenderWithProviders>
-        <BudgetItem token="token" budgetItem={budgetItem} />
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} />
       </RenderWithProviders>
     )
 
@@ -92,7 +92,7 @@ describe('BudgetItem', () => {
   test('Should close modal window after submit', async () => {
     render(
       <RenderWithProviders>
-        <BudgetItem token="token" budgetItem={budgetItem} />
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} />
       </RenderWithProviders>
     )
 
@@ -120,7 +120,7 @@ describe('BudgetItem', () => {
 
     render(
       <RenderWithProviders>
-        <BudgetItem token="token" budgetItem={budgetItem} />
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} />
       </RenderWithProviders>
     )
 
@@ -152,6 +152,7 @@ describe('BudgetItem', () => {
             userDate: '2023-01-01',
             value: 10
           }}
+          onChange={() => {}}
         />
       </RenderWithProviders>
     )
@@ -172,6 +173,7 @@ describe('BudgetItem', () => {
             userDate: '2023-01-01',
             value: 10
           }}
+          onChange={() => {}}
         />
       </RenderWithProviders>
     )

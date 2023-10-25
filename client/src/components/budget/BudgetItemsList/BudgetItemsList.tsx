@@ -28,12 +28,17 @@ const BudgetItemsList: FC<Props> = ({ token }) => {
     }
   }
 
+  const updateList = () => {
+    dispatch(budgetItemActions.resetPage())
+    fetchBudgetItems(true)
+    dispatch(budgetItemActions.onChangeBudgetItems())
+  }
+
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined
     if (token) {
       timer = setTimeout(async () => {
-        dispatch(budgetItemActions.resetPage())
-        fetchBudgetItems(true)
+        updateList()
       }, 1000)
     }
 
@@ -44,8 +49,7 @@ const BudgetItemsList: FC<Props> = ({ token }) => {
 
   useEffect(() => {
     if (token) {
-      dispatch(budgetItemActions.resetPage())
-      fetchBudgetItems(true)
+      updateList()
     }
   }, [filters.year, filters.active, filters.month, filters.categoryType, filters.category, filters.ignore])
 
@@ -68,9 +72,11 @@ const BudgetItemsList: FC<Props> = ({ token }) => {
       }
     }
   }, [observerTarget, token])
+
   return (
     <BaseCard data-testid="budget-item-list">
-      {list.length !== 0 && list.map((budgetItem) => <BudgetItem key={budgetItem.id} token={token} budgetItem={budgetItem} />)}
+      {list.length !== 0 &&
+        list.map((budgetItem) => <BudgetItem key={budgetItem.id} token={token} budgetItem={budgetItem} onChange={updateList} />)}
       <div ref={observerTarget}></div>
     </BaseCard>
   )

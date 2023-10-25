@@ -9,6 +9,7 @@ import { isActionPayload } from '../../../types/store-actions'
 
 const BudgetResult = () => {
   const dispatch = useAppDispatch()
+  const onChangeBudgetItems = useAppSelector((state) => state.budgetItem.onChangeBudgetItems)
   const token = useAppSelector((state) => state.user.token)
   const filters = useAppSelector((state) => state.budgetItem.filters)
   const [statistics, setStatistics] = useState<StatisticsPayload>()
@@ -24,7 +25,7 @@ const BudgetResult = () => {
     if (token) {
       fetchStatistics(token)
     }
-  }, [token, dispatch, filters.year, filters.active, filters.month])
+  }, [token, dispatch, filters.year, filters.active, filters.month, onChangeBudgetItems])
 
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined

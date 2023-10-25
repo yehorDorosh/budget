@@ -58,6 +58,20 @@ export const getStatistics: StoreAction<StatisticsPayload> = ({ token }) => {
   }
 }
 
+export const getMonthlyTrend: StoreAction<MonthlyTrendPayload> = ({ token, year }) => {
+  return async (dispatch, getState) => {
+    const query = year ? '?' + objectToQueryString({ year }) : ''
+    try {
+      const { data, status } = await axios.get<JSONResponse<MonthlyTrendPayload>>(`/api/budget/get-monthly-trend${query}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      return { data, status }
+    } catch (err) {
+      return errorHandler(err)
+    }
+  }
+}
+
 export const deleteBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id }) => {
   return async (dispatch, getState) => {
     try {

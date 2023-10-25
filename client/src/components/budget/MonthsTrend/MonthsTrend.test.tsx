@@ -1,5 +1,5 @@
 import MonthsTrend from './MonthsTrend'
-import { cleanup, render, screen, fireEvent } from '@testing-library/react'
+import { cleanup, render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { act } from 'react-dom/test-utils'
 import { setupServer } from 'msw/node'
@@ -67,10 +67,12 @@ describe('MonthsTrend', () => {
     const input = screen.getByLabelText(/year/i)
     fireEvent.change(input, { target: { value: '2023' } })
 
-    expect(screen.getByText(/average expenses/i).textContent).toBe('Average Expenses: 3.30')
-    expect(screen.getByText(/average income/i).textContent).toBe('Average Income: 50.00')
-    expect(screen.getByText(/average saved/i).textContent).toBe('Average Saved: 46.70')
-    expect(screen.getByText(/total saved/i).textContent).toBe('Total saved: 467.00')
+    await waitFor(() => {
+      expect(screen.getByText(/average expenses/i).textContent).toBe('Average Expenses: 1000')
+    })
+    expect(screen.getByText(/average income/i).textContent).toBe('Average Income: 1000')
+    expect(screen.getByText(/average saved/i).textContent).toBe('Average Saved: 0.00')
+    expect(screen.getByText(/total saved/i).textContent).toBe('Total saved: 0.00')
   })
 
   test('Month statistics should be correct.', async () => {
@@ -86,11 +88,10 @@ describe('MonthsTrend', () => {
     const input = screen.getByLabelText(/year/i)
     fireEvent.change(input, { target: { value: '2023' } })
 
-    expect(screen.getByTestId('expense-0').textContent).toBe('10.00')
-    expect(screen.getByTestId('expense-1').textContent).toBe('23.00')
-    expect(screen.getByTestId('income-0').textContent).toBe('0.00')
-    expect(screen.getByTestId('income-1').textContent).toBe('500.00')
-    expect(screen.getByTestId('total-0').textContent).toBe('-10.00')
-    expect(screen.getByTestId('total-1').textContent).toBe('477.00')
+    await waitFor(() => {
+      expect(screen.getByTestId('expense-0').textContent).toBe('1000.00')
+    })
+    expect(screen.getByTestId('income-0').textContent).toBe('1000.00')
+    expect(screen.getByTestId('total-0').textContent).toBe('0.00')
   })
 })

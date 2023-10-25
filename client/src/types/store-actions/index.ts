@@ -59,6 +59,7 @@ export interface StoreActionData {
   dbId?: number
   dateFrom?: string
   dateTo?: string
+  year?: number
 }
 
 export type StoreAction<T = void> = (

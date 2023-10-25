@@ -44,6 +44,7 @@ export interface BudgetItemState {
   budgetItems: BudgetItem[]
   filters: BudgetItemsFilters
   trendBudgetItems: BudgetItem[]
+  onChangeBudgetItems: boolean
 }
 
 const initialState: BudgetItemState = {
@@ -56,7 +57,8 @@ const initialState: BudgetItemState = {
     ignore: false,
     page: 1,
     perPage: 10
-  }
+  },
+  onChangeBudgetItems: false
 }
 
 const budgetItemSlice = createSlice({
@@ -120,6 +122,9 @@ const budgetItemSlice = createSlice({
     },
     resetPage(state) {
       state.filters.page = 1
+    },
+    onChangeBudgetItems(state) {
+      state.onChangeBudgetItems = !state.onChangeBudgetItems
     }
   }
 })
