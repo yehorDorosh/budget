@@ -2,19 +2,6 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { formatDateYearMonth, getCurrentYearMonth } from '../../utils/date'
 import { CategoryType, QueryFilter } from '../../types/enum'
 
-function parseBudgetItems(payload: BudgetItem[]) {
-  return payload.map(
-    (budgetItem): BudgetItem => ({
-      ...budgetItem,
-      value: +budgetItem.value,
-      category: {
-        ...budgetItem.category,
-        id: +budgetItem.category.id
-      }
-    })
-  )
-}
-
 export interface BudgetItem {
   id: number
   name: string
@@ -41,15 +28,11 @@ export interface BudgetItemsFilters {
 }
 
 export interface BudgetItemState {
-  budgetItems: BudgetItem[]
   filters: BudgetItemsFilters
-  trendBudgetItems: BudgetItem[]
   onChangeBudgetItems: boolean
 }
 
 const initialState: BudgetItemState = {
-  budgetItems: [],
-  trendBudgetItems: [],
   filters: {
     month: getCurrentYearMonth(),
     year: new Date().getFullYear().toString(),
@@ -65,12 +48,6 @@ const budgetItemSlice = createSlice({
   name: 'budget items',
   initialState,
   reducers: {
-    setBudgetItems(state, action: PayloadAction<BudgetItem[]>) {
-      state.budgetItems = parseBudgetItems(action.payload)
-    },
-    setTrendBudgetItems(state, action: PayloadAction<BudgetItem[]>) {
-      state.trendBudgetItems = parseBudgetItems(action.payload)
-    },
     setFilterMonth(state, action: PayloadAction<string>) {
       state.filters.month = action.payload
     },

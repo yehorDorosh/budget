@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 import { StoreAction } from '../../types/store-actions'
-import { budgetItemActions } from './budget-item-slice'
 import { errorHandler } from '../../utils/errors'
 import objectToQueryString from '../../utils/query'
 import { ReducerType } from '../../types/enum'
@@ -14,9 +13,6 @@ export const addBudgetItem: StoreAction<BudgetItemPayload> = ({ token, categoryI
         { categoryId, name, value, userDate },
         { headers: { Authorization: `Bearer ${token}` } }
       )
-      if (data.payload && data.payload.budgetItems) {
-        dispatch(budgetItemActions.setBudgetItems(data.payload.budgetItems))
-      }
       return { data, status }
     } catch (err) {
       return errorHandler(err)
@@ -32,10 +28,6 @@ export const getBudgetItems: StoreAction<BudgetItemPayload> = ({ token }, reduce
       const { data, status } = await axios.get<JSONResponse<BudgetItemPayload>>(`/api/budget/get-budget-item${query}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
-      if (data.payload && data.payload.budgetItems) {
-        if (reducerType === ReducerType.budgetItemsList) dispatch(budgetItemActions.setBudgetItems(data.payload.budgetItems))
-        if (reducerType === ReducerType.BudgetItemsTrend) dispatch(budgetItemActions.setTrendBudgetItems(data.payload.budgetItems))
-      }
       return { data, status }
     } catch (err) {
       return errorHandler(err)
@@ -78,9 +70,6 @@ export const deleteBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id }) 
       const { data, status } = await axios.delete<JSONResponse<BudgetItemPayload>>(`/api/budget/delete-budget-item?id=${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
-      if (data.payload && data.payload.budgetItems) {
-        dispatch(budgetItemActions.setBudgetItems(data.payload.budgetItems))
-      }
       return { data, status }
     } catch (err) {
       return errorHandler(err)
@@ -96,9 +85,6 @@ export const updateBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id, ca
         { id, categoryId, name, value, userDate, ignore },
         { headers: { Authorization: `Bearer ${token}` } }
       )
-      if (data.payload && data.payload.budgetItems) {
-        dispatch(budgetItemActions.setBudgetItems(data.payload.budgetItems))
-      }
       return { data, status }
     } catch (err) {
       return errorHandler(err)

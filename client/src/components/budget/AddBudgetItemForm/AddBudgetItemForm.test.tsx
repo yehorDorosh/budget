@@ -5,9 +5,9 @@ import { act } from 'react-dom/test-utils'
 import { setupServer } from 'msw/node'
 import { RenderWithProviders, handlers } from '../../../utils/test-utils'
 import store from '../../../store'
-import { budgetItemActions } from '../../../store/budget/budget-item-slice'
 import { categoriesActions } from '../../../store/categories/categories-slice'
 import { CategoryType } from '../../../types/enum'
+import * as budgetItemActions from '../../../store/budget/budget-item-actions'
 
 describe('AddBudgetItemForm', () => {
   const server = setupServer(...handlers)
@@ -240,7 +240,7 @@ describe('AddBudgetItemForm', () => {
   })
 
   test('Check that data correctly send to the server.', async () => {
-    store.dispatch(budgetItemActions.setBudgetItems([]))
+    const addBudgetItem = jest.spyOn(budgetItemActions, 'addBudgetItem')
     render(
       <RenderWithProviders>
         <AddBudgetItemForm token={'token'} />
@@ -267,12 +267,15 @@ describe('AddBudgetItemForm', () => {
     })
 
     await waitFor(() => {
-      expect(store.getState().budgetItem.budgetItems).toHaveLength(6)
+      expect(addBudgetItem).toBeCalledTimes(1)
     })
 
-    expect(store.getState().budgetItem.budgetItems[0].name).toBe('book')
-    expect(store.getState().budgetItem.budgetItems[0].value).toBe(100)
-    expect(store.getState().budgetItem.budgetItems[0].category.id).toBe(3)
-    expect(store.getState().budgetItem.budgetItems[0].userDate).toBe('2023-03-01')
+    expect(addBudgetItem).toBeCalledWith({
+      categoryId: 3,
+      name: 'book',
+      token: 'token',
+      userDate: 'Wed Mar 01 2023',
+      value: 100
+    })
   })
 })

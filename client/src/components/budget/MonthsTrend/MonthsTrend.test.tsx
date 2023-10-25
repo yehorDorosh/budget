@@ -3,17 +3,13 @@ import { cleanup, render, screen, fireEvent, waitFor } from '@testing-library/re
 import userEvent from '@testing-library/user-event'
 import { act } from 'react-dom/test-utils'
 import { setupServer } from 'msw/node'
-import { RenderWithProviders, handlers, mockedBudgetItems } from '../../../utils/test-utils'
-import store from '../../../store'
-import { budgetItemActions } from '../../../store/budget/budget-item-slice'
+import { RenderWithProviders, handlers } from '../../../utils/test-utils'
 
 describe('MonthsTrend', () => {
   const server = setupServer(...handlers)
 
   beforeAll(() => {
     server.listen()
-    store.dispatch(budgetItemActions.setTrendBudgetItems(mockedBudgetItems))
-    store.dispatch(budgetItemActions.setBudgetItems(mockedBudgetItems))
   })
 
   afterEach(() => {

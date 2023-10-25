@@ -1,19 +1,15 @@
 import store from '..'
 import { budgetItemActions } from './budget-item-slice'
-import { mockedBudgetItems } from '../../utils/test-utils'
 import { CategoryType, QueryFilter, ResCodes } from '../../types/enum'
 import { addBudgetItem, getBudgetItems, deleteBudgetItem, updateBudgetItem, getStatistics, getMonthlyTrend } from './budget-item-actions'
 import { setupServer } from 'msw/node'
 import { handlers } from '../../utils/test-utils'
-import { isActionPayload } from '../../types/store-actions'
+import { ActionPayload, isActionPayload } from '../../types/store-actions'
 import axios from 'axios'
-import { ReducerType } from '../../types/enum'
 
 describe('BudgetItem Store', () => {
   describe('reducers', () => {
     afterEach(() => {
-      store.dispatch(budgetItemActions.setBudgetItems([]))
-      store.dispatch(budgetItemActions.setTrendBudgetItems([]))
       store.dispatch(budgetItemActions.setFilterMonth(''))
       store.dispatch(budgetItemActions.setFilterYear(''))
       store.dispatch(budgetItemActions.setActiveFilter(QueryFilter.MONTH))
@@ -21,18 +17,6 @@ describe('BudgetItem Store', () => {
       store.dispatch(budgetItemActions.setFilterCategoryType(''))
       store.dispatch(budgetItemActions.setFilterCategory(''))
       store.dispatch(budgetItemActions.setFilterIgnore(false))
-    })
-
-    test('Should set budget items.', () => {
-      store.dispatch(budgetItemActions.setBudgetItems(mockedBudgetItems))
-
-      expect(store.getState().budgetItem.budgetItems).toEqual(mockedBudgetItems)
-    })
-
-    test('Should set trend budget items.', () => {
-      store.dispatch(budgetItemActions.setTrendBudgetItems(mockedBudgetItems))
-
-      expect(store.getState().budgetItem.trendBudgetItems).toEqual(mockedBudgetItems)
     })
 
     test('Should set filter month.', () => {
@@ -161,8 +145,6 @@ describe('BudgetItem Store', () => {
 
     afterEach(() => {
       server.resetHandlers()
-      store.dispatch(budgetItemActions.setBudgetItems([]))
-      store.dispatch(budgetItemActions.setTrendBudgetItems([]))
       store.dispatch(budgetItemActions.setFilterMonth(''))
       store.dispatch(budgetItemActions.setFilterYear(''))
       store.dispatch(budgetItemActions.setActiveFilter(QueryFilter.MONTH))
@@ -188,7 +170,7 @@ describe('BudgetItem Store', () => {
         payload = res.data.payload
       }
 
-      expect(store.getState().budgetItem.budgetItems.length).toEqual(6)
+      expect((res as ActionPayload<BudgetItemPayload>).data.payload?.budgetItems.length).toEqual(6)
       expect(payload.budgetItems[0]).toEqual({
         id: 6,
         category: { categoryType: 'expense', id: 21, name: 'education' },
@@ -214,18 +196,11 @@ describe('BudgetItem Store', () => {
     test('Should get budget items.', async () => {
       const res = await store.dispatch(getBudgetItems({ token: 'token' }))
 
-      expect(store.getState().budgetItem.budgetItems.length).toEqual(5)
-      expect(store.getState().budgetItem.trendBudgetItems.length).toEqual(0)
+      expect(isActionPayload(res)).toEqual(true)
+      expect((res as ActionPayload<BudgetItemPayload>).data.payload?.budgetItems.length).toEqual(5)
 
       expect(res).toHaveProperty('data')
       expect(res).toHaveProperty('status')
-    })
-
-    test('Should get budget items for month trend.', async () => {
-      await store.dispatch(getBudgetItems({ token: 'token' }, ReducerType.BudgetItemsTrend))
-
-      expect(store.getState().budgetItem.budgetItems.length).toEqual(0)
-      expect(store.getState().budgetItem.trendBudgetItems.length).toEqual(5)
     })
 
     test('Should get axios error when getting budget items.', async () => {
@@ -273,7 +248,8 @@ describe('BudgetItem Store', () => {
     test('Should delete budget item.', async () => {
       const res = await store.dispatch(deleteBudgetItem({ token: 'token', id: 1 }))
 
-      expect(store.getState().budgetItem.budgetItems.length).toEqual(4)
+      expect(isActionPayload(res)).toEqual(true)
+      expect((res as ActionPayload<BudgetItemPayload>).data.payload?.budgetItems.length).toEqual(4)
 
       expect(res).toHaveProperty('data')
       expect(res).toHaveProperty('status')
@@ -295,10 +271,10 @@ describe('BudgetItem Store', () => {
       const res = await store.dispatch(
         updateBudgetItem({ token: 'token', id: 1, categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01' })
       )
+      expect(isActionPayload(res)).toEqual(true)
+      expect((res as ActionPayload<BudgetItemPayload>).data.payload?.budgetItems.length).toEqual(5)
 
-      expect(store.getState().budgetItem.budgetItems.length).toEqual(5)
-
-      expect(store.getState().budgetItem.budgetItems[0]).toEqual({
+      expect((res as ActionPayload<BudgetItemPayload>).data.payload?.budgetItems[0]).toEqual({
         id: 1,
         category: { categoryType: 'expense', id: 21, name: 'car' },
         name: 'test',

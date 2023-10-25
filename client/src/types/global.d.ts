@@ -1,6 +1,5 @@
 import { UserState } from '../store/user/user-slice'
 import { CategoriesState } from '../store/categories/categories-slice'
-import { BudgetItemState } from '../store/budget/budget-item-slice'
 import { WeatherState } from '../store/weather/weather-slice'
 
 export {}
@@ -22,7 +21,9 @@ declare global {
   }
 
   type CategoriesPayload = CategoriesState
-  type BudgetItemPayload = BudgetItemState
+  interface BudgetItemPayload {
+    budgetItems: BudgetItem[]
+  }
   type WeatherPayload = WeatherState
 
   interface CategoryRate {

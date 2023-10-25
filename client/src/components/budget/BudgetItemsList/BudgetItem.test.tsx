@@ -6,6 +6,7 @@ import { setupServer } from 'msw/node'
 import { RenderWithProviders, handlers } from '../../../utils/test-utils'
 import { CategoryType } from '../../../types/enum'
 import store from '../../../store'
+import * as budgetItemActions from '../../../store/budget/budget-item-actions'
 
 describe('BudgetItem', () => {
   const server = setupServer(...handlers)
@@ -117,6 +118,7 @@ describe('BudgetItem', () => {
 
   test('Should delete item', async () => {
     const mockDispatch = jest.spyOn(store, 'dispatch')
+    const deleteBudgetItem = jest.spyOn(budgetItemActions, 'deleteBudgetItem')
 
     render(
       <RenderWithProviders>
@@ -135,8 +137,10 @@ describe('BudgetItem', () => {
     })
 
     await waitFor(() => {
-      expect(store.getState().budgetItem.budgetItems).toHaveLength(4)
+      expect(deleteBudgetItem).toBeCalledTimes(1)
     })
+
+    expect(deleteBudgetItem).toBeCalledWith({ token: 'token', id: 1 })
   })
 
   test('Should has class text-bg-secondary for ignore item', async () => {
