@@ -116,6 +116,33 @@ describe('BudgetItem', () => {
     })
   })
 
+  test('Should call onChange function after submit', async () => {
+    const onChange = jest.fn()
+    render(
+      <RenderWithProviders>
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={onChange} />
+      </RenderWithProviders>
+    )
+
+    const editBtn = screen.getByText(/edit/i)
+
+    act(() => {
+      userEvent.click(editBtn)
+    })
+
+    expect(screen.getByTestId('update-budget-item-form')).toBeInTheDocument()
+
+    const closeBtn = screen.getByRole('button', { name: /save budget item/i })
+
+    await act(() => {
+      userEvent.click(closeBtn)
+    })
+
+    await waitFor(() => {
+      expect(onChange).toBeCalledTimes(1)
+    })
+  })
+
   test('Should delete item', async () => {
     const mockDispatch = jest.spyOn(store, 'dispatch')
     const deleteBudgetItem = jest.spyOn(budgetItemActions, 'deleteBudgetItem')
