@@ -91,3 +91,16 @@ export const updateBudgetItem: StoreAction<BudgetItemPayload> = ({ token, id, ca
     }
   }
 }
+
+export const searchNames: StoreAction<string[]> = ({ token, name }) => {
+  return async (dispatch, getState) => {
+    try {
+      const { data, status } = await axios.get<JSONResponse<string[]>>(`/api/budget/search-names?name=${name}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      return { data, status }
+    } catch (err) {
+      return errorHandler(err)
+    }
+  }
+}

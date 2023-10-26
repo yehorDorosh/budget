@@ -8,6 +8,7 @@ import { ResCodes } from '../../types/enum'
 import { FieldConfig } from '../useForm/useForm'
 import userEvent from '@testing-library/user-event'
 import { mockAction } from '../../utils/test-utils'
+import * as budgetItemActions from '../../store/budget/budget-item-actions'
 
 describe('useForm', () => {
   let fieldsConfig: FieldConfig[]
@@ -63,7 +64,7 @@ describe('useForm', () => {
     formConfig = {
       submitBtnText: 'Submit btn',
       submitAction: mockAction({ data: { message: 'hi', code: ResCodes.CREATE_BUDGET_ITEM, payload: 'hi' }, status: 200 }),
-      submitActionData: {}
+      submitActionData: { token: 'token' }
     }
   })
 
@@ -108,7 +109,7 @@ describe('useForm', () => {
       await screen.getByTestId('submitBtn').click()
     })
 
-    expect(formConfig.submitAction).toBeCalledWith({})
+    expect(formConfig.submitAction).toBeCalledWith({ token: 'token' })
   })
 
   test('Should dispatch fields actions', async () => {
@@ -228,5 +229,28 @@ describe('useForm', () => {
     await waitFor(() => {
       expect(onReject).not.toBeCalled()
     })
+  })
+
+  test('Should render field with data list', async () => {
+    fieldsConfig[2].dataList = true
+
+    const searchNames = jest.spyOn(budgetItemActions, 'searchNames').mockImplementation(() => {
+      return async (dispatch, getState) => {
+        return { data: { payload: ['hi'] }, status: 200 } as ActionPayload<string[]>
+      }
+    })
+
+    const { result } = renderHook(() => useForm(fieldsConfig, formConfig), { wrapper: RenderWithProviders })
+    render(result.current.formMarkup)
+
+    await act(async () => {
+      userEvent.type(screen.getByTestId('plainText'), 'h')
+    })
+
+    await waitFor(() => {
+      expect(searchNames).toBeCalledWith({ name: 'h', token: 'token' })
+    })
+
+    jest.restoreAllMocks()
   })
 })

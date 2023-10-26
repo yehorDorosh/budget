@@ -55,7 +55,8 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
         errMsg: 'Field is required.',
         validator: notEmpty,
         state: nameState,
-        dispatch: nameDispatch
+        dispatch: nameDispatch,
+        dataList: true
       },
       {
         id: 'value',

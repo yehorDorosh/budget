@@ -8,7 +8,8 @@ import {
   deleteBudgetItem,
   updateBudgetItem,
   getStatistics,
-  getMonthlyTrend
+  getMonthlyTrend,
+  searchNames
 } from '../controllers/budget-item'
 import auth from '../middleware/auth'
 import { validationErrorsHandler } from '../utils/errors'
@@ -51,5 +52,7 @@ router.put(
 router.get('/get-statistics', auth, getStatistics)
 
 router.get('/get-monthly-trend', auth, getMonthlyTrend)
+
+router.get('/search-names', auth, searchNames)
 
 export default router

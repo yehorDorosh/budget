@@ -1,13 +1,15 @@
 import React, { FC, useRef, useEffect } from 'react'
+import DataList from './DataList'
 
 interface BaseInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string
   label: string
   isValid?: boolean
   msg?: string
+  dataList?: string[]
 }
 
-const BaseInput: FC<BaseInputProps> = ({ id, label, isValid, msg, ...props }) => {
+const BaseInput: FC<BaseInputProps> = ({ id, label, isValid, msg, dataList, ...props }) => {
   const input = useRef<HTMLInputElement>(null)
   let attrs
 
@@ -29,12 +31,20 @@ const BaseInput: FC<BaseInputProps> = ({ id, label, isValid, msg, ...props }) =>
         {label}
       </label>
       <div className={`input-group ${isValid !== undefined ? 'has-validation' : ''}`} data-testid="input-formatter">
-        <input ref={input} id={id} className="form-control" data-testid="input" {...attrs} />
+        <input
+          ref={input}
+          id={id}
+          className="form-control"
+          data-testid="input"
+          list={dataList?.length ? `${id}-list` : undefined}
+          {...attrs}
+        />
         {!isValid && msg && (
           <div className="invalid-feedback" data-testid="invalid-msg">
             {msg}
           </div>
         )}
+        {dataList?.length && <DataList id={`${id}-list`} dataList={dataList} />}
       </div>
     </div>
   )

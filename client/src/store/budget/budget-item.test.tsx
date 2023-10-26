@@ -1,7 +1,15 @@
 import store from '..'
 import { budgetItemActions } from './budget-item-slice'
 import { CategoryType, QueryFilter, ResCodes } from '../../types/enum'
-import { addBudgetItem, getBudgetItems, deleteBudgetItem, updateBudgetItem, getStatistics, getMonthlyTrend } from './budget-item-actions'
+import {
+  addBudgetItem,
+  getBudgetItems,
+  deleteBudgetItem,
+  updateBudgetItem,
+  getStatistics,
+  getMonthlyTrend,
+  searchNames
+} from './budget-item-actions'
 import { setupServer } from 'msw/node'
 import { handlers } from '../../utils/test-utils'
 import { ActionPayload, isActionPayload } from '../../types/store-actions'
@@ -325,6 +333,31 @@ describe('BudgetItem Store', () => {
       jest.spyOn(axios, 'get').mockRejectedValueOnce(new Error('test error'))
 
       const res = await store.dispatch(getMonthlyTrend({ token: 'token', year: 2023 }))
+
+      expect(res).toEqual({
+        error: new Error('test error')
+      })
+
+      jest.spyOn(axios, 'get').mockRestore()
+    })
+
+    test('searchNames', async () => {
+      const res = await store.dispatch(searchNames({ token: 'token', name: 'test' }))
+
+      expect(res).toEqual({
+        data: {
+          code: ResCodes.GET_LIST_OF_MATCHES,
+          message: 'List of matches provided successfully.',
+          payload: ['fuel', 'beer', 'book']
+        },
+        status: 200
+      })
+    })
+
+    test('Should get axios error when searching names.', async () => {
+      jest.spyOn(axios, 'get').mockRejectedValueOnce(new Error('test error'))
+
+      const res = await store.dispatch(searchNames({ token: 'token', name: 'test' }))
 
       expect(res).toEqual({
         error: new Error('test error')

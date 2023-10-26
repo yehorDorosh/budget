@@ -278,4 +278,25 @@ describe('AddBudgetItemForm', () => {
       value: 100
     })
   })
+
+  test('Check data list.', async () => {
+    render(
+      <RenderWithProviders>
+        <AddBudgetItemForm token={'token'} />
+      </RenderWithProviders>
+    )
+
+    const inputName = screen.getByLabelText(/name/i)
+
+    act(() => {
+      userEvent.type(inputName, 'b')
+    })
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId('data-list-option')[0]).toHaveAttribute('value', 'fuel')
+    })
+
+    expect(screen.getAllByTestId('data-list-option')[1]).toHaveAttribute('value', 'beer')
+    expect(screen.getAllByTestId('data-list-option')[2]).toHaveAttribute('value', 'book')
+  })
 })

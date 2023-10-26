@@ -150,6 +150,22 @@ export class BudgetItemCRUD extends ModelCRUD<BudgetItem> {
     return { averageExpenses, averageIncomes, averageSaved, totalSaved, monthlyExpenses, monthlyIncomes, maxTotal: maxTotal.toFixed(2) }
   }
 
+  async getListOfMatches(userId: UserId, name: string, next: NextFunction) {
+    if (!userId) {
+      errorHandler({ message: 'Invalid search params for findManyWithFilters(CRUD)', statusCode: 500 }, next)
+      return null
+    }
+
+    const queryBuilder = this.dataSource.getRepository(BudgetItem).createQueryBuilder('budget')
+    queryBuilder
+      .select('budget.name AS name')
+      .distinct(true)
+      .where('budget.user = :userId', { userId })
+      .andWhere('budget.name ILIKE :name', { name: `%${name}%` })
+
+    return await queryBuilder.getRawMany<{ name: string }>()
+  }
+
   private applyFilters(queryBuilder: SelectQueryBuilder<BudgetItem>, filters: BudgetItemsFilters) {
     if (filters?.active === QueryFilter.MONTH && filters?.month) {
       queryBuilder.andWhere("TO_CHAR(budget.userDate, 'YYYY-MM') = :month", { month: filters.month })

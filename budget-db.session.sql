@@ -37,3 +37,7 @@
 -- WHERE b.user_id = 1
 -- GROUP BY c.name
 -- ORDER BY total_value DESC;
+
+-- SELECT DISTINCT name
+-- FROM budget
+-- WHERE user_id = 1 AND name ILIKE '%fu%'

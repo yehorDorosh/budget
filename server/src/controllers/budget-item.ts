@@ -142,3 +142,20 @@ export const getMonthlyTrend: RequestHandler = async (req, res: AppRes<MonthlyTr
     errorHandler({ message: 'Failed to get monthly trend.', details: err }, next)
   }
 }
+
+export const searchNames: RequestHandler = async (req, res: AppRes<string[]>, next) => {
+  const user = req.user!
+  const name = req.query.name ? req.query.name.toString() : ''
+
+  try {
+    const result = await budgetItemCRUD.getListOfMatches(user.id, name, next)
+
+    res.status(200).json({
+      message: 'List of matches provided successfully.',
+      code: ResCodes.GET_LIST_OF_MATCHES,
+      payload: result ? result.map((_) => _.name) : []
+    })
+  } catch (err) {
+    errorHandler({ message: 'Failed to get list of matches.', details: err }, next)
+  }
+}

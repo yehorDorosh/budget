@@ -2,7 +2,7 @@ import request from 'supertest'
 import app from '../index'
 import { CategoryType, ResCodes } from '../types/enums/index'
 import { BudgetDataSource } from '../db/data-source'
-import { Mock } from 'vitest'
+import { Mock, describe, beforeAll, vi, test, afterAll, afterEach, expect } from 'vitest'
 import * as jose from 'jose'
 
 describe('BudgetItemAPI', () => {
@@ -35,6 +35,7 @@ describe('BudgetItemAPI', () => {
           addOrderBy: vi.fn().mockReturnThis(),
           select: vi.fn().mockReturnThis(),
           groupBy: vi.fn().mockReturnThis(),
+          distinct: vi.fn().mockReturnThis(),
           getMany: vi.fn(),
           getRawOne: vi.fn(),
           getRawMany: vi.fn()
@@ -723,7 +724,7 @@ describe('BudgetItemAPI', () => {
         .get('/api/budget/get-monthly-trend')
         .set('Authorization', `Bearer ${mockUser.token}`)
         .query({ year: '2023' })
-      console.log(response.body)
+
       expect(response.status).toBe(200)
       expect(response.body).toEqual({
         message: 'Monthly trend provided successfully.',
@@ -756,6 +757,45 @@ describe('BudgetItemAPI', () => {
         message: 'Internal server error',
         code: ResCodes.ERROR,
         error: { cause: 'Failed to get monthly trend.', details: error.message }
+      })
+    })
+  })
+
+  describe('searchNames', () => {
+    test('Should return status 200, because of names was provided.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getRawMany as Mock).mockResolvedValue([{ name: 'fuel' }, { name: 'food' }])
+
+      const response = await request(app)
+        .get('/api/budget/search-names')
+        .set('Authorization', `Bearer ${mockUser.token}`)
+        .query({ name: 'f' })
+
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({
+        message: 'List of matches provided successfully.',
+        code: ResCodes.GET_LIST_OF_MATCHES,
+        payload: ['fuel', 'food']
+      })
+    })
+
+    test('Should return error with status 500, because of DB error.', async () => {
+      const error = new Error('DB error')
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getRawMany as Mock).mockRejectedValue(error)
+
+      const response = await request(app)
+        .get('/api/budget/search-names')
+        .set('Authorization', `Bearer ${mockUser.token}`)
+        .query({ name: 'f' })
+
+      expect(response.status).toBe(500)
+      expect(response.body).toEqual({
+        message: 'Internal server error',
+        code: ResCodes.ERROR,
+        error: { cause: 'Failed to get list of matches.', details: error.message }
       })
     })
   })

@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import BaseForm from '../../components/ui/BaseForm/BaseForm'
 import BaseInput from '../../components/ui/BaseInput/BaseInput'
 import SelectInput, { SelectOption } from '../../components/ui/SelectInput/SelectInput'
@@ -5,6 +6,8 @@ import { FieldState, Action as UseFieldAction } from '../useFiled/useField'
 import useSubmit from '../useFormSubmit/useFormSubmit'
 import { StoreAction, isActionPayload, isAxiosErrorPayload } from '../../types/store-actions'
 import { StoreActionData } from '../../types/store-actions'
+import { useAppDispatch } from '../useReduxTS'
+import { searchNames } from '../../store/budget/budget-item-actions'
 
 export interface FieldConfig {
   id?: string
@@ -18,6 +21,7 @@ export interface FieldConfig {
   dispatch: React.Dispatch<UseFieldAction>
   defaultValue?: string
   options?: SelectOption[]
+  dataList?: boolean
   attrs?: { [key: string]: string | boolean }
 }
 
@@ -35,9 +39,11 @@ interface FormEvents {
 }
 
 const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, formEvents: FormEvents = {}) => {
+  const dispatch = useAppDispatch()
   const { submit, isLoading, validationErrorsBE } = useSubmit()
+  const [dataList, setDataList] = useState<string[]>([])
 
-  const inputHandler = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  const inputHandler = async (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const fieldConfig = fieldsConfig.find((field) => {
       if (field.id) {
         return field.id === e.target.id
@@ -52,6 +58,14 @@ const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, for
       fieldConfig.dispatch({ type: 'set', payload: { value: String(e.target.checked), touched: true } })
     } else {
       fieldConfig.dispatch({ type: 'set', payload: { value: e.target.value, touched: true } })
+    }
+
+    if (fieldConfig.dataList) {
+      const res = await dispatch(searchNames({ token: formConfig.submitActionData.token, name: e.target.value }))
+
+      if (isActionPayload(res) && res.data.payload) {
+        setDataList(res.data.payload)
+      }
     }
   }
 
@@ -103,6 +117,7 @@ const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, for
             name={field.name}
             onChange={inputHandler}
             value={field.state.touched && field.type !== 'radio' ? field.state.value : field.defaultValue ? field.defaultValue : ''}
+            dataList={dataList}
             {...field.attrs}
           />
         )

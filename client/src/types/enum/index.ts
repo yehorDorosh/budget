@@ -18,7 +18,8 @@ export enum ResCodes {
   DELETE_BUDGET_ITEM,
   GENERAL_RESPONSE,
   GET_STATISTICS,
-  GET_MONTHLY_TREND
+  GET_MONTHLY_TREND,
+  GET_LIST_OF_MATCHES
 }
 
 export enum CategoryType {

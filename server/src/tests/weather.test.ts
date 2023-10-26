@@ -2,7 +2,7 @@ import request from 'supertest'
 import app from '../index'
 import { ResCodes } from '../types/enums/index'
 import { BudgetDataSource } from '../db/data-source'
-import { Mock } from 'vitest'
+import { Mock, describe, beforeAll, vi, test, afterAll, expect } from 'vitest'
 
 describe('WeatherAPI', () => {
   const originalConsole = console

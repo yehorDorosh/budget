@@ -383,6 +383,18 @@ export const handlers = [
     )
   }),
 
+  rest.get('/api/budget/search-names', async (req, res, ctx) => {
+    return res(
+      ctx.json({
+        message: 'List of matches provided successfully.',
+        code: ResCodes.GET_LIST_OF_MATCHES,
+        payload: ['fuel', 'beer', 'book']
+      }),
+      ctx.status(200),
+      ctx.delay(100)
+    )
+  }),
+
   rest.put('/api/budget/update-budget-item', async (req, res, ctx) => {
     const newBudgetItems = [...mockedBudgetItems]
     const body = await req.json()
