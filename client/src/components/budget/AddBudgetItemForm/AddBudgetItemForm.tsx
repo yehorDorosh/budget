@@ -70,18 +70,6 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
         attrs: { min: '0', step: '0.01', pattern: 'd+(.d{1,2})?' }
       },
       {
-        id: 'date',
-        name: 'date',
-        type: 'date',
-        label: 'Date',
-        placeholder: 'Date',
-        errMsg: 'Field is required.',
-        validator: notEmpty,
-        state: dateState,
-        dispatch: dateDispatch,
-        defaultValue: currentDate
-      },
-      {
         id: 'category',
         name: 'category',
         type: 'select',
@@ -96,6 +84,18 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
             .filter((category) => category.categoryType === categoryTypeState.value)
             .map((category) => ({ value: category.id.toString(), label: category.name }))
         ]
+      },
+      {
+        id: 'date',
+        name: 'date',
+        type: 'date',
+        label: 'Date',
+        placeholder: 'Date',
+        errMsg: 'Field is required.',
+        validator: notEmpty,
+        state: dateState,
+        dispatch: dateDispatch,
+        defaultValue: currentDate
       }
     ],
     {
