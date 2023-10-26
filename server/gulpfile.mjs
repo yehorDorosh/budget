@@ -17,10 +17,6 @@ function cleanDist(cb) {
   cb()
 }
 
-function copyEtc() {
-  return src('./src/logs/**/*').pipe(dest('build/logs'))
-}
-
 function copyPublic() {
   return src('./src/public', { allowEmpty: true }).pipe(dest('build'))
 }
@@ -55,7 +51,7 @@ function serverWatch(done) {
 }
 
 export function dev(done) {
-  series(cleanDist, copyEtc, copyPublic, copyToPublic, copyEnv, compileTS, serverWatch)(done)
+  series(cleanDist, copyPublic, copyToPublic, copyEnv, compileTS, serverWatch)(done)
 
   const tsWatcher = watch('./src/**/*.ts', compileTS)
   tsWatcher.on('unlink', (filepath) => {
@@ -78,6 +74,6 @@ export function dev(done) {
   }
 }
 
-const build = series(cleanDist, copyEtc, copyPublic, copyToPublic, copyEnv, compileTS)
+const build = series(cleanDist, copyPublic, copyToPublic, copyEnv, compileTS)
 
 export default build

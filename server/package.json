@@ -11,8 +11,8 @@
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
     "db:up": "docker-compose up -d",
     "db:down": "docker-compose down",
-    "test": "NODE_ENV=test vitest --config ./src/vitest.config.ts",
-    "test:all": "NODE_ENV=test vitest run --config ./src/vitest.config.ts"
+    "test": "NODE_ENV=test vitest",
+    "test:all": "NODE_ENV=test vitest run"
   },
   "repository": {
     "type": "git",
