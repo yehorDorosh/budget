@@ -44,7 +44,7 @@ const BaseInput: FC<BaseInputProps> = ({ id, label, isValid, msg, dataList, ...p
             {msg}
           </div>
         )}
-        {dataList?.length && <DataList id={`${id}-list`} dataList={dataList} />}
+        {dataList && dataList?.length > 0 && <DataList id={`${id}-list`} dataList={dataList} />}
       </div>
     </div>
   )
