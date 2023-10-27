@@ -77,7 +77,7 @@ const PriceCalculator: FC<Props> = ({ onPressEqual }) => {
     setResult(result)
     setInput(result.toString())
     onPressEqual(result)
-  }, [onPressEqual])
+  }, [onPressEqual, input])
 
   useEffect(() => {
     if (operators.some((operator) => input.includes(operator)) && !operators.includes(input.at(-1) + '')) {
