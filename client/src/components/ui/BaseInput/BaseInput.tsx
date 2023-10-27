@@ -7,9 +7,11 @@ interface BaseInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   isValid?: boolean
   msg?: string
   dataList?: string[]
+  secondLabel?: string
+  onClickLabel?: (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void
 }
 
-const BaseInput: FC<BaseInputProps> = ({ id, label, isValid, msg, dataList, ...props }) => {
+const BaseInput: FC<BaseInputProps> = ({ id, label, isValid, msg, dataList, secondLabel, onClickLabel, ...props }) => {
   const input = useRef<HTMLInputElement>(null)
   let attrs
 
@@ -25,20 +27,25 @@ const BaseInput: FC<BaseInputProps> = ({ id, label, isValid, msg, dataList, ...p
     attrs = props
   }
 
+  const inputElem = (
+    <input ref={input} id={id} className="form-control" data-testid="input" list={dataList?.length ? `${id}-list` : undefined} {...attrs} />
+  )
+
   const text = (
     <div className={`mb-3 ${isValid === false ? 'was-validated' : ''}`} data-testid="base-input">
       <label htmlFor={id} className="form-label">
         {label}
       </label>
       <div className={`input-group ${isValid !== undefined ? 'has-validation' : ''}`} data-testid="input-formatter">
-        <input
-          ref={input}
-          id={id}
-          className="form-control"
-          data-testid="input"
-          list={dataList?.length ? `${id}-list` : undefined}
-          {...attrs}
-        />
+        {secondLabel && (
+          <div className="input-group">
+            {inputElem}
+            <span id={`${id}-label`} className="input-group-text" onClick={onClickLabel} style={{ cursor: 'pointer' }}>
+              {secondLabel}
+            </span>
+          </div>
+        )}
+        {!secondLabel && inputElem}
         {!isValid && msg && (
           <div className="invalid-feedback" data-testid="invalid-msg">
             {msg}

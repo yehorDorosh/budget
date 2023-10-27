@@ -22,6 +22,8 @@ export interface FieldConfig {
   defaultValue?: string
   options?: SelectOption[]
   dataList?: boolean
+  secondLabel?: string
+  onClickLabel?: (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void
   attrs?: { [key: string]: string | boolean }
 }
 
@@ -118,6 +120,8 @@ const useForm = <T,>(fieldsConfig: FieldConfig[], formConfig: FormConfig<T>, for
             onChange={inputHandler}
             value={field.state.touched && field.type !== 'radio' ? field.state.value : field.defaultValue ? field.defaultValue : ''}
             dataList={dataList}
+            secondLabel={field.secondLabel}
+            onClickLabel={field.onClickLabel}
             {...field.attrs}
           />
         )

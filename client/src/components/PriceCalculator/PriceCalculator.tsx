@@ -1,4 +1,5 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { FC, useEffect, useMemo, useState, useCallback } from 'react'
 import BaseCard from '../ui/BaseCard/BaseCard'
 import CalculatorButton from './CalculatorButton'
 
@@ -12,68 +13,71 @@ const PriceCalculator: FC<Props> = ({ onPressEqual }) => {
   const [result, setResult] = useState(0)
   const [input, setInput] = useState('0')
 
-  const addableChars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', '*', '/']
+  const addableChars = useMemo(() => ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', '*', '/'], [])
   const operators = useMemo(() => ['+', '-', '*', '/'], [])
 
-  const buttonHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    const target = e.currentTarget.id.replace('calc-', '')
-    console.log(target)
+  const buttonHandler = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      const target = e.currentTarget.id.replace('calc-', '')
 
-    if (addableChars.includes(target)) {
-      setInput((prev) => {
-        if (prev === '0' && !operators.includes(target)) {
-          return target
-        }
-        if (operators.includes(target) && prev.at(-1) === target) return prev
-        return prev + target
-      })
-    }
+      if (addableChars.includes(target)) {
+        setInput((prev) => {
+          if (prev === '0' && !operators.includes(target)) {
+            return target
+          }
+          if (operators.includes(target) && prev.at(-1) === target) return prev
+          return prev + target
+        })
+      }
 
-    if (target === '.') {
-      setInput((prev) => {
-        if (prev.length === 0) {
-          return '0.'
-        }
-        if (prev.at(-1) === '.') {
-          return prev
-        }
-        return prev + '.'
-      })
-    }
+      if (target === '.') {
+        setInput((prev) => {
+          if (prev.length === 0) {
+            return '0.'
+          }
+          if (prev.at(-1) === '.') {
+            return prev
+          }
+          return prev + '.'
+        })
+      }
 
-    if (target === 'c') {
-      setInput('0')
-      setResult(0)
-    }
+      if (target === 'c') {
+        setInput('0')
+        setResult(0)
+      }
 
-    if (target === '<-') {
-      setInput((prev) => {
-        if (prev.length === 1) {
-          return '0'
-        }
-        return prev.slice(0, -1)
-      })
-    }
+      if (target === '<-') {
+        setInput((prev) => {
+          if (prev.length === 1) {
+            setResult(0)
+            return '0'
+          }
+          return prev.slice(0, -1)
+        })
+      }
 
-    if (target === '+/-' && input.length > 0) {
-      setInput((prev) => {
-        if (operators.some((operator) => prev.includes(operator))) {
-          const arg = prev.split(/[-+*/]/g)
-          console.log(arg)
-          return prev.replace(new RegExp(arg.at(-1) + '$'), `(-${arg.at(-1)})`)
-        }
-        return (+prev * -1).toString()
-      })
-    }
-  }
+      if (target === '+/-' && input.length > 0) {
+        setInput((prev) => {
+          if (operators.some((operator) => prev.includes(operator))) {
+            const arg = prev.split(/[-+*/]/g)
+            console.log(arg)
+            return prev.replace(new RegExp(arg.at(-1) + '$'), `(-${arg.at(-1)})`)
+          }
+          return (+prev * -1).toString()
+        })
+      }
+    },
+    [addableChars, operators]
+  )
 
-  const resultHandler = () => {
+  const resultHandler = useCallback(() => {
     // eslint-disable-next-line no-eval
     const result = eval(input)
     setResult(result)
     setInput(result.toString())
     onPressEqual(result)
-  }
+  }, [onPressEqual])
 
   useEffect(() => {
     if (operators.some((operator) => input.includes(operator)) && !operators.includes(input.at(-1) + '')) {

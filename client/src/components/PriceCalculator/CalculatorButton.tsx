@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, memo } from 'react'
 
 import classes from './CalculatorButton.module.scss'
 
@@ -16,4 +16,4 @@ const CalculatorButton: FC<Props> = ({ onClick, btnTxt, className }) => {
   )
 }
 
-export default CalculatorButton
+export default memo(CalculatorButton)

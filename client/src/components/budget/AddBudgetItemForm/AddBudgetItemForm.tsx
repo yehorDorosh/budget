@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, Fragment, useState, useCallback } from 'react'
 
 import useField from '../../../hooks/useFiled/useField'
 import useForm from '../../../hooks/useForm/useForm'
@@ -7,12 +7,16 @@ import { addBudgetItem } from '../../../store/budget/budget-item-actions'
 import { useAppSelector } from '../../../hooks/useReduxTS'
 import { CategoryType } from '../../../types/enum'
 import BaseCard from '../../ui/BaseCard/BaseCard'
+import BaseModal from '../../ui/BaseModal/BaseModal'
+import PriceCalculator from '../../PriceCalculator/PriceCalculator'
 
 interface Props {
   token: string
 }
 
 const AddBudgetItemForm: FC<Props> = ({ token }) => {
+  const [openCalc, setOpenCalc] = useState(false)
+  const [calcResult, setCalcResult] = useState<number | undefined>()
   const currentDate = new Date().toISOString().split('T')[0]
   const { fieldState: nameState, fieldDispatch: nameDispatch } = useField()
   const { fieldState: valueState, fieldDispatch: valueDispatch } = useField()
@@ -20,6 +24,15 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
   const { fieldState: categoryState, fieldDispatch: categoryDispatch } = useField(undefined, false)
   const { fieldState: categoryTypeState, fieldDispatch: categoryTypeDispatch } = useField(CategoryType.EXPENSE)
   const categories = useAppSelector((state) => state.categories.categories)
+
+  const calculatorHandler = useCallback(
+    (result: number) => {
+      setCalcResult(result)
+      setOpenCalc(false)
+      valueDispatch({ type: 'set&check', payload: { value: result.toString(), touched: true }, validation: notEmpty })
+    },
+    [valueDispatch]
+  )
 
   const { formMarkup } = useForm(
     [
@@ -68,6 +81,9 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
         validator: notEmpty,
         state: valueState,
         dispatch: valueDispatch,
+        secondLabel: 'Calc',
+        onClickLabel: () => setOpenCalc(true),
+        defaultValue: calcResult?.toString(),
         attrs: { min: '0', step: '0.01', pattern: 'd+(.d{1,2})?' }
       },
       {
@@ -111,7 +127,14 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
       }
     }
   )
-  return <BaseCard data-testid="add-budget-item-form">{formMarkup}</BaseCard>
+  return (
+    <Fragment>
+      <BaseModal isOpen={openCalc} onClose={() => setOpenCalc(false)} title="Set value">
+        <PriceCalculator onPressEqual={calculatorHandler} />
+      </BaseModal>
+      <BaseCard data-testid="add-budget-item-form">{formMarkup}</BaseCard>
+    </Fragment>
+  )
 }
 
 export default AddBudgetItemForm
