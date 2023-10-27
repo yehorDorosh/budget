@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { FC, useEffect, useMemo, useState, useCallback } from 'react'
 import BaseCard from '../ui/BaseCard/BaseCard'
 import CalculatorButton from './CalculatorButton'
@@ -20,6 +19,7 @@ const PriceCalculator: FC<Props> = ({ onPressEqual }) => {
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       const target = e.currentTarget.id.replace('calc-', '')
 
+      // Add char to query
       if (addableChars.includes(target)) {
         setInput((prev) => {
           if (prev === '0' && !operators.includes(target)) {
@@ -30,6 +30,7 @@ const PriceCalculator: FC<Props> = ({ onPressEqual }) => {
         })
       }
 
+      // Add dot to query
       if (target === '.') {
         setInput((prev) => {
           if (prev.length === 0) {
@@ -42,11 +43,13 @@ const PriceCalculator: FC<Props> = ({ onPressEqual }) => {
         })
       }
 
+      // Clear query
       if (target === 'c') {
         setInput('0')
         setResult(0)
       }
 
+      // Remove last char from query
       if (target === '<-') {
         setInput((prev) => {
           if (prev.length === 1) {
@@ -57,11 +60,15 @@ const PriceCalculator: FC<Props> = ({ onPressEqual }) => {
         })
       }
 
-      if (target === '+/-' && input.length > 0) {
+      if (target === '+/-') {
         setInput((prev) => {
-          if (operators.some((operator) => prev.includes(operator))) {
+          /**
+           * If query not empty and contains operators , then replace last arg with negative arg
+           */
+          if (operators.some((operator) => prev.includes(operator)) && prev.length > 0) {
+            // Split query by operators
             const arg = prev.split(/[-+*/]/g)
-            console.log(arg)
+            // Replace last arg with negative arg
             return prev.replace(new RegExp(arg.at(-1) + '$'), `(-${arg.at(-1)})`)
           }
           return (+prev * -1).toString()
@@ -79,6 +86,9 @@ const PriceCalculator: FC<Props> = ({ onPressEqual }) => {
     onPressEqual(result)
   }, [onPressEqual, input])
 
+  /**
+   * If query contains operators and last char is not operator, then calculate result for preview
+   */
   useEffect(() => {
     if (operators.some((operator) => input.includes(operator)) && !operators.includes(input.at(-1) + '')) {
       // eslint-disable-next-line no-eval
