@@ -14,6 +14,9 @@ describe('HomePage', () => {
 
   beforeAll(() => {
     server.listen()
+    const portalRoot = document.createElement('div')
+    portalRoot.setAttribute('id', 'modal-root')
+    document.body.appendChild(portalRoot)
   })
 
   afterEach(() => {

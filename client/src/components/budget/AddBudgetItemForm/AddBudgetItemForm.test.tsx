@@ -20,6 +20,9 @@ describe('AddBudgetItemForm', () => {
         { id: 3, name: 'education', categoryType: CategoryType.EXPENSE }
       ])
     )
+    const portalRoot = document.createElement('div')
+    portalRoot.setAttribute('id', 'modal-root')
+    document.body.appendChild(portalRoot)
   })
 
   afterEach(() => {
