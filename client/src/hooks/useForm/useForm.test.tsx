@@ -253,4 +253,18 @@ describe('useForm', () => {
 
     jest.restoreAllMocks()
   })
+
+  test('Should render second label and call event', async () => {
+    fieldsConfig[2].secondLabel = 'second label'
+    fieldsConfig[2].onClickLabel = jest.fn()
+
+    const { result } = renderHook(() => useForm(fieldsConfig, formConfig), { wrapper: RenderWithProviders })
+    render(result.current.formMarkup)
+
+    await act(async () => {
+      userEvent.click(screen.getByTestId('second-label'))
+    })
+
+    expect(fieldsConfig[2].onClickLabel).toBeCalled()
+  })
 })
