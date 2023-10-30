@@ -302,4 +302,104 @@ describe('AddBudgetItemForm', () => {
     expect(screen.getAllByTestId('data-list-option')[1]).toHaveAttribute('value', 'beer')
     expect(screen.getAllByTestId('data-list-option')[2]).toHaveAttribute('value', 'book')
   })
+
+  test('Should render Calc btn.', async () => {
+    render(
+      <RenderWithProviders>
+        <AddBudgetItemForm token={'token'} />
+      </RenderWithProviders>
+    )
+
+    expect(screen.getByText(/calc/i)).toBeInTheDocument()
+  })
+
+  test('Should open Calc modal.', async () => {
+    render(
+      <RenderWithProviders>
+        <AddBudgetItemForm token={'token'} />
+      </RenderWithProviders>
+    )
+
+    act(() => {
+      userEvent.click(screen.getByText(/calc/i))
+    })
+
+    expect(screen.getByTestId('modal')).toBeInTheDocument()
+    expect(screen.getByTestId('modal')).toHaveTextContent('Set value')
+    expect(screen.getByTestId('expression')).toHaveTextContent('0')
+    expect(screen.getByTestId('result')).toHaveTextContent('0')
+  })
+
+  test('Should close Calc modal.', async () => {
+    render(
+      <RenderWithProviders>
+        <AddBudgetItemForm token={'token'} />
+      </RenderWithProviders>
+    )
+
+    act(() => {
+      userEvent.click(screen.getByText(/calc/i))
+    })
+
+    expect(screen.getByTestId('modal')).toHaveTextContent('Set value')
+
+    act(() => {
+      userEvent.click(screen.getByTestId('close-btn'))
+    })
+
+    expect(screen.queryByTestId('modal')).not.toBeInTheDocument()
+  })
+
+  test('Should calculate expression.', async () => {
+    render(
+      <RenderWithProviders>
+        <AddBudgetItemForm token={'token'} />
+      </RenderWithProviders>
+    )
+
+    act(() => {
+      userEvent.click(screen.getByText(/calc/i))
+    })
+
+    expect(screen.getByTestId('modal')).toBeInTheDocument()
+
+    act(() => {
+      userEvent.click(screen.getByRole('button', { name: '2' }))
+      userEvent.click(screen.getByRole('button', { name: '+' }))
+      userEvent.click(screen.getByRole('button', { name: '2' }))
+    })
+
+    expect(screen.getByTestId('expression')).toHaveTextContent('2+2')
+    expect(screen.getByTestId('result')).toHaveTextContent('4')
+  })
+
+  test('Should dispatch calc result to value input and close modal.', async () => {
+    render(
+      <RenderWithProviders>
+        <AddBudgetItemForm token={'token'} />
+      </RenderWithProviders>
+    )
+
+    act(() => {
+      userEvent.click(screen.getByText(/calc/i))
+    })
+
+    expect(screen.getByTestId('modal')).toBeInTheDocument()
+
+    act(() => {
+      userEvent.click(screen.getByRole('button', { name: '2' }))
+      userEvent.click(screen.getByRole('button', { name: '+' }))
+      userEvent.click(screen.getByRole('button', { name: '2' }))
+    })
+
+    expect(screen.getByTestId('expression')).toHaveTextContent('2+2')
+    expect(screen.getByTestId('result')).toHaveTextContent('4')
+
+    act(() => {
+      userEvent.click(screen.getByRole('button', { name: '=' }))
+    })
+
+    expect(screen.queryByTestId('modal')).not.toBeInTheDocument()
+    expect(screen.getByLabelText(/value/i)).toHaveValue(4)
+  })
 })
