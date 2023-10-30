@@ -113,9 +113,13 @@ const PriceCalculator: FC<Props> = ({ onPressEqual }) => {
     <BaseCard>
       <div className={classes.calc}>
         <p>Calculator</p>
-        <div className="border px-3 py-2 mb-3 rounded text-end">{input}</div>
+        <div className="border px-3 py-2 mb-3 rounded text-end" data-testid="expression">
+          {input}
+        </div>
         <p>Preview</p>
-        <div className="border px-3 py-2 mb-3 rounded text-end">{result}</div>
+        <div className="border px-3 py-2 mb-3 rounded text-end" data-testid="result">
+          {result}
+        </div>
         <div className={classes.btns}>
           <CalculatorButton btnTxt="+/-" onClick={buttonHandler} className="btn-secondary" />
           <CalculatorButton btnTxt="c" onClick={buttonHandler} className="btn-secondary" />
