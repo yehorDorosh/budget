@@ -75,7 +75,7 @@ const PriceCalculator: FC<Props> = ({ onPressEqual }) => {
             // Split query by operators
             const arg = prev.split(/[-+*()]/g).filter((arg) => arg.length > 0)
             // If last arg is negative, then replace last arg with positive arg
-            if (new RegExp(`(-${arg.at(-1)})`).test(prev)) {
+            if (new RegExp(/\(-\d{1,}.\d{1,}\)|\(-\d{1,}\)$/g).test(prev)) {
               // look for (-lastArg)
               // replace (-d.dddd) or (-ddddd) with lastArg
               return prev.replace(new RegExp(/\(-\d{1,}.\d{1,}\)|\(-\d{1,}\)$/g), arg.at(-1) + '')
