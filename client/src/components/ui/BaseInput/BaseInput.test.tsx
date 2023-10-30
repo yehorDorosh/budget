@@ -98,4 +98,24 @@ describe('BaseInput', () => {
       expect(screen.getAllByTestId('data-list-option')[1]).toHaveAttribute('value', 'book')
     })
   })
+
+  describe('Second label.', () => {
+    test('Should render second label.', () => {
+      render(<BaseInput id="inputId" label="name" secondLabel="Calc" />)
+      const secondLabel = screen.getByTestId('second-label')
+
+      expect(secondLabel).toBeInTheDocument()
+      expect(secondLabel).toHaveTextContent('Calc')
+    })
+
+    test('Should call onClickLabel.', () => {
+      const onClickLabel = jest.fn()
+      render(<BaseInput id="inputId" label="name" secondLabel="Calc" onClickLabel={onClickLabel} />)
+      const secondLabel = screen.getByTestId('second-label')
+
+      userEvent.click(secondLabel)
+
+      expect(onClickLabel).toHaveBeenCalledTimes(1)
+    })
+  })
 })

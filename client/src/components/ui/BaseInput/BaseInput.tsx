@@ -40,7 +40,13 @@ const BaseInput: FC<BaseInputProps> = ({ id, label, isValid, msg, dataList, seco
         {secondLabel && (
           <div className="input-group">
             {inputElem}
-            <span id={`${id}-label`} className="input-group-text" onClick={onClickLabel} style={{ cursor: 'pointer' }}>
+            <span
+              id={`${id}-label`}
+              className="input-group-text"
+              onClick={onClickLabel}
+              style={{ cursor: 'pointer' }}
+              data-testid="second-label"
+            >
               {secondLabel}
             </span>
           </div>
