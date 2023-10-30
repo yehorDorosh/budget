@@ -8,6 +8,10 @@ interface Props {
   onPressEqual: (result: number) => void
 }
 
+function roundOff(num: number) {
+  return Math.round(num * 1e16) / 1e16
+}
+
 const PriceCalculator: FC<Props> = ({ onPressEqual }) => {
   const [result, setResult] = useState(0)
   const [input, setInput] = useState('0')
@@ -25,6 +29,8 @@ const PriceCalculator: FC<Props> = ({ onPressEqual }) => {
           if (prev === '0' && !operators.includes(target)) {
             return target
           }
+          if (prev === '0' && target === '-') return target
+          if (prev === '0' && target === '+') return prev
           if (operators.includes(target) && prev.at(-1) === target) return prev
           return prev + target
         })
@@ -67,7 +73,13 @@ const PriceCalculator: FC<Props> = ({ onPressEqual }) => {
            */
           if (operators.some((operator) => prev.includes(operator)) && prev.length > 0) {
             // Split query by operators
-            const arg = prev.split(/[-+*/]/g)
+            const arg = prev.split(/[-+*()]/g).filter((arg) => arg.length > 0)
+            // If last arg is negative, then replace last arg with positive arg
+            if (new RegExp(`(-${arg.at(-1)})`).test(prev)) {
+              // look for (-lastArg)
+              // replace (-d.dddd) or (-ddddd) with lastArg
+              return prev.replace(new RegExp(/\(-\d{1,}.\d{1,}\)|\(-\d{1,}\)$/g), arg.at(-1) + '')
+            }
             // Replace last arg with negative arg
             return prev.replace(new RegExp(arg.at(-1) + '$'), `(-${arg.at(-1)})`)
           }
@@ -80,7 +92,7 @@ const PriceCalculator: FC<Props> = ({ onPressEqual }) => {
 
   const resultHandler = useCallback(() => {
     // eslint-disable-next-line no-eval
-    const result = eval(input)
+    const result = roundOff(eval(input))
     setResult(result)
     setInput(result.toString())
     onPressEqual(result)
@@ -92,7 +104,7 @@ const PriceCalculator: FC<Props> = ({ onPressEqual }) => {
   useEffect(() => {
     if (operators.some((operator) => input.includes(operator)) && !operators.includes(input.at(-1) + '')) {
       // eslint-disable-next-line no-eval
-      const result = eval(input)
+      const result = roundOff(eval(input))
       setResult(result)
     }
   }, [input, operators])
