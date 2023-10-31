@@ -43,8 +43,8 @@ const MonthsTrend: FC<Props> = ({ token }) => {
     incomesByMonth[+_.month] = +_.total
   })
 
-  const totalExpenses = expensesByMonth.reduce((acc, curr) => acc + curr, 0)
-  const totalIncomes = incomesByMonth.reduce((acc, curr) => acc + curr, 0)
+  const totalExpenses = expensesByMonth.reduce((acc, curr) => acc + curr, 0).toFixed(2)
+  const totalIncomes = incomesByMonth.reduce((acc, curr) => acc + curr, 0).toFixed(2)
 
   const yearHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setYear(Number(e.target.value))
