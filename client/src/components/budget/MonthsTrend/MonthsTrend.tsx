@@ -43,6 +43,9 @@ const MonthsTrend: FC<Props> = ({ token }) => {
     incomesByMonth[+_.month] = +_.total
   })
 
+  const totalExpenses = expensesByMonth.reduce((acc, curr) => acc + curr, 0)
+  const totalIncomes = incomesByMonth.reduce((acc, curr) => acc + curr, 0)
+
   const yearHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setYear(Number(e.target.value))
   }
@@ -67,6 +70,8 @@ const MonthsTrend: FC<Props> = ({ token }) => {
         <li>Average Income: {averageYearIncomes}</li>
         <li>Average Saved: {aveSaved}</li>
         <li>Total saved: {totalSaved}</li>
+        <li>Total Expenses: {totalExpenses}</li>
+        <li>Total Income: {totalIncomes}</li>
       </ul>
       <div className={classes.trendContainer}>
         {expensesByMonth.map((value, i) => (
