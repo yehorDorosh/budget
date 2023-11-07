@@ -58,6 +58,11 @@ const PriceCalculator: FC<Props> = ({ onPressEqual }) => {
       // Remove last char from query
       if (target === '<-') {
         setInput((prev) => {
+          if (new RegExp(/\(-\d{1,}.\d{1,}\)|\(-\d{1,}\)$/g).test(prev)) {
+            // look for (-lastArg)
+            // delete last arg like (-d.dddd) or (-ddddd)
+            return prev.replace(new RegExp(/\(-\d{1,}.\d{1,}\)|\(-\d{1,}\)$/g), '')
+          }
           if (prev.length === 1) {
             setResult(0)
             return '0'

@@ -324,4 +324,23 @@ describe('PriceCalculator', () => {
     expect(onPressEqual).toBeCalledTimes(1)
     expect(onPressEqual).toBeCalledWith(3)
   })
+
+  test('Backspace btn should remove last argument with brackets and minus sign.', async () => {
+    render(
+      <RenderWithProviders>
+        <PriceCalculator onPressEqual={() => {}} />
+      </RenderWithProviders>
+    )
+
+    act(() => {
+      userEvent.click(screen.getByRole('button', { name: '2' }))
+      userEvent.click(screen.getByRole('button', { name: '+' }))
+      userEvent.click(screen.getByRole('button', { name: '2' }))
+      userEvent.click(screen.getByRole('button', { name: '+/-' }))
+      userEvent.click(screen.getByRole('button', { name: '<-' }))
+    })
+
+    expect(screen.getByTestId('expression')).toHaveTextContent('2+')
+    // expect(screen.getByTestId('result')).toHaveTextContent('4')
+  })
 })
