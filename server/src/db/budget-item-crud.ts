@@ -17,7 +17,9 @@ export class BudgetItemCRUD extends ModelCRUD<BudgetItem> {
       .addSelect(['category.id', 'category.name', 'category.categoryType'])
       .where('budget.user = :userId', { userId })
 
-    if (filters?.ignore !== undefined && filters.ignore) {
+    if (filters?.id !== undefined && filters.id) {
+      queryBuilder.andWhere('budget.id = :id', { id: filters.id })
+    } else if (filters?.ignore !== undefined && filters.ignore) {
       queryBuilder.andWhere('budget.ignore = :ignore', { ignore: filters.ignore })
     } else {
       this.applyFilters(queryBuilder, filters)
@@ -25,7 +27,7 @@ export class BudgetItemCRUD extends ModelCRUD<BudgetItem> {
 
     queryBuilder.orderBy('budget.userDate', 'DESC').addOrderBy('budget.createdAt', 'DESC').addOrderBy('budget.id', 'DESC')
 
-    if (filters.page && filters.perPage) {
+    if (filters.page && filters.perPage && !filters.id) {
       queryBuilder.offset((filters.page - 1) * filters.perPage).limit(filters.perPage)
     }
 

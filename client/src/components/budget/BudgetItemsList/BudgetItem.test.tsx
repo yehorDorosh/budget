@@ -40,7 +40,7 @@ describe('BudgetItem', () => {
   test('Should render BudgetItem component.', async () => {
     render(
       <RenderWithProviders>
-        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} />
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} onDelete={() => {}} />
       </RenderWithProviders>
     )
 
@@ -53,7 +53,7 @@ describe('BudgetItem', () => {
   test('Should open modal window.', async () => {
     render(
       <RenderWithProviders>
-        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} />
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} onDelete={() => {}} />
       </RenderWithProviders>
     )
 
@@ -69,7 +69,7 @@ describe('BudgetItem', () => {
   test('Should close modal window.', async () => {
     render(
       <RenderWithProviders>
-        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} />
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} onDelete={() => {}} />
       </RenderWithProviders>
     )
 
@@ -93,7 +93,7 @@ describe('BudgetItem', () => {
   test('Should close modal window after submit', async () => {
     render(
       <RenderWithProviders>
-        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} />
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} onDelete={() => {}} />
       </RenderWithProviders>
     )
 
@@ -120,7 +120,7 @@ describe('BudgetItem', () => {
     const onChange = jest.fn()
     render(
       <RenderWithProviders>
-        <BudgetItem token="token" budgetItem={budgetItem} onChange={onChange} />
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={onChange} onDelete={() => {}} />
       </RenderWithProviders>
     )
 
@@ -139,17 +139,18 @@ describe('BudgetItem', () => {
     })
 
     await waitFor(() => {
-      expect(onChange).toBeCalledTimes(1)
+      expect(onChange).toBeCalledWith(budgetItem)
     })
   })
 
   test('Should delete item', async () => {
     const mockDispatch = jest.spyOn(store, 'dispatch')
     const deleteBudgetItem = jest.spyOn(budgetItemActions, 'deleteBudgetItem')
+    const onDelete = jest.fn()
 
     render(
       <RenderWithProviders>
-        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} />
+        <BudgetItem token="token" budgetItem={budgetItem} onChange={() => {}} onDelete={onDelete} />
       </RenderWithProviders>
     )
 
@@ -168,6 +169,10 @@ describe('BudgetItem', () => {
     })
 
     expect(deleteBudgetItem).toBeCalledWith({ token: 'token', id: 1 })
+
+    await waitFor(() => {
+      expect(onDelete).toBeCalledWith(1)
+    })
   })
 
   test('Should has class text-bg-secondary for ignore item', async () => {
@@ -184,6 +189,7 @@ describe('BudgetItem', () => {
             value: 10
           }}
           onChange={() => {}}
+          onDelete={() => {}}
         />
       </RenderWithProviders>
     )
@@ -205,6 +211,7 @@ describe('BudgetItem', () => {
             value: 10
           }}
           onChange={() => {}}
+          onDelete={() => {}}
         />
       </RenderWithProviders>
     )

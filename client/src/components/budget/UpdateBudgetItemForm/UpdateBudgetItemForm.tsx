@@ -13,7 +13,7 @@ import { isDateValid } from '../../../utils/date'
 interface Props {
   token: string
   currentBudgetItem: BudgetItem
-  onSave: () => void
+  onSave: (item: BudgetItem) => void
 }
 
 const UpdateBudgetItemForm: FC<Props> = ({ token, currentBudgetItem, onSave }) => {
@@ -132,7 +132,11 @@ const UpdateBudgetItemForm: FC<Props> = ({ token, currentBudgetItem, onSave }) =
       }
     },
     {
-      onGetResponse: () => onSave()
+      onGetResponse: (res) => {
+        if (res && res.data.payload.budgetItem) {
+          onSave(res.data.payload.budgetItem)
+        }
+      }
     }
   )
   return <BaseCard data-testid="update-budget-item-form">{formMarkup}</BaseCard>

@@ -107,7 +107,7 @@ describe('utils functions tests', () => {
       const month = date.getMonth() + 1
       const day = date.getDate()
 
-      expect(formatDateYearMonthDay(date)).toEqual(`${year}-${month}-${day}`)
+      expect(formatDateYearMonthDay(date)).toEqual(`${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`)
     })
   })
 })

@@ -21,9 +21,12 @@ declare global {
   }
 
   type CategoriesPayload = CategoriesState
+
   interface BudgetItemPayload {
     budgetItems: BudgetItem[]
+    budgetItem?: BudgetItem
   }
+
   type WeatherPayload = WeatherState
 
   interface CategoryRate {

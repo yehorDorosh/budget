@@ -300,6 +300,20 @@ describe('BudgetItemAPI', () => {
       expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toBeCalledWith('budget.ignore = :ignore', { ignore: true })
     })
 
+    test('Should return only one budget item if search param id is provided.', async () => {
+      ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
+      ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue(mockBudgetItems)
+
+      const response = await request(app)
+        .get('/api/budget/get-budget-item?id=1&month=2023-01')
+        .set('Authorization', `Bearer ${mockUser.token}`)
+
+      expect(response.status).toBe(200)
+      expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toBeCalledTimes(1)
+      expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toBeCalledWith('budget.id = :id', { id: 1 })
+    })
+
     test('Should create filter query by month search param.', async () => {
       ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
       ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
@@ -528,14 +542,15 @@ describe('BudgetItemAPI', () => {
         .mockResolvedValueOnce(mockBudgetItem)
         .mockResolvedValueOnce(mockCategory)
       ;(BudgetDataSource.manager.save as Mock).mockResolvedValue(mockBudgetItem)
-      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue([])
+      ;(BudgetDataSource.getRepository('').createQueryBuilder().getMany as Mock).mockResolvedValue([{ name: 'fuel', value: '100' }])
 
       const response = await request(app).put('/api/budget/update-budget-item').set('Authorization', `Bearer ${mockUser.token}`).send(body)
 
       expect(response.status).toBe(200)
       expect(response.body).toEqual({
         message: 'Budget item was updated successfully.',
-        code: ResCodes.UPDATE_BUDGET_ITEM
+        code: ResCodes.UPDATE_BUDGET_ITEM,
+        payload: { budgetItem: { name: 'fuel', value: '100' } }
       })
     })
 
@@ -711,6 +726,8 @@ describe('BudgetItemAPI', () => {
     })
 
     test('Should return status 200, because of statistics was provided.', async () => {
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2023-10-01'))
       ;(jose.jwtVerify as Mock).mockResolvedValue({ payload: { userId: mockUser.id } })
       ;(BudgetDataSource.manager.findOne as Mock).mockResolvedValueOnce(mockUser)
       ;(BudgetDataSource.getRepository('').createQueryBuilder().getRawOne as Mock)
@@ -739,6 +756,8 @@ describe('BudgetItemAPI', () => {
           maxTotal: '0.00'
         }
       })
+
+      vi.useRealTimers()
     })
 
     test('Should return error with status 500, because of DB error.', async () => {

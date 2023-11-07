@@ -58,5 +58,6 @@ declare global {
     ignore?: boolean
     page?: number
     perPage?: number
+    id?: number
   }
 }

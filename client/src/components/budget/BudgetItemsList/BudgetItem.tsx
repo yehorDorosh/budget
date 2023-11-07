@@ -5,33 +5,38 @@ import BaseModal from '../../ui/BaseModal/BaseModal'
 import UpdateBudgetItemForm from '../UpdateBudgetItemForm/UpdateBudgetItemForm'
 import { BudgetItem } from '../../../store/budget/budget-item-slice'
 import { deleteBudgetItem } from '../../../store/budget/budget-item-actions'
-import { CategoryType } from '../../../types/enum'
+import { CategoryType, ResCodes } from '../../../types/enum'
 import BaseCard from '../../ui/BaseCard/BaseCard'
 
 import classes from './BudgetItem.module.scss'
+import { isActionPayload } from '../../../types/store-actions'
 
 interface Props {
   token: string
   budgetItem: BudgetItem
-  onChange: () => void
+  onChange: (budgetItem: BudgetItem) => void
+  onDelete: (id: number) => void
 }
 
-const ListItem: FC<Props> = ({ budgetItem, token, onChange }) => {
+const ListItem: FC<Props> = ({ budgetItem, token, onChange, onDelete }) => {
   const dispatch = useAppDispatch()
   const [openForm, setOpenForm] = useState(false)
 
   const deleteHandler = async () => {
-    await dispatch(deleteBudgetItem({ token, id: budgetItem.id }))
-    onChange()
+    const res = await dispatch(deleteBudgetItem({ token, id: budgetItem.id }))
+
+    if (isActionPayload(res) && res.data.code === ResCodes.DELETE_BUDGET_ITEM) {
+      onDelete(budgetItem.id)
+    }
   }
 
   const editBtnHandler = () => {
     setOpenForm(true)
   }
 
-  const onEditHandler = () => {
+  const onEditHandler = (budgetItem: BudgetItem) => {
     setOpenForm(false)
-    onChange()
+    onChange(budgetItem)
   }
 
   const itemStyle = () => {

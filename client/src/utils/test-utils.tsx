@@ -406,7 +406,7 @@ export const handlers = [
       ctx.json({
         message: 'Budget item was updated successfully.',
         code: ResCodes.UPDATE_BUDGET_ITEM,
-        payload: { budgetItems: newBudgetItems }
+        payload: { budgetItem: newBudgetItems[0] }
       }),
       ctx.status(200),
       ctx.delay(100)

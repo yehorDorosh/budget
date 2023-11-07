@@ -232,6 +232,8 @@ describe('UpdateBudgetItemForm', () => {
     await waitFor(() => {
       expect(eventHandler).toBeCalledTimes(1)
     })
+
+    expect(eventHandler).toBeCalledWith(mockedBudgetItems[0])
   })
 
   test('Check that data correctly send to the server.', async () => {

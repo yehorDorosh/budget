@@ -25,6 +25,7 @@ export interface BudgetItemsFilters {
   ignore?: boolean
   page?: number
   perPage?: number
+  id?: number
 }
 
 export interface BudgetItemState {
@@ -100,8 +101,14 @@ const budgetItemSlice = createSlice({
     resetPage(state) {
       state.filters.page = 1
     },
+    setPage(state, action: PayloadAction<number>) {
+      state.filters.page = action.payload
+    },
     onChangeBudgetItems(state) {
       state.onChangeBudgetItems = !state.onChangeBudgetItems
+    },
+    setFilterId(state, action: PayloadAction<number | undefined>) {
+      state.filters.id = action.payload
     }
   }
 })

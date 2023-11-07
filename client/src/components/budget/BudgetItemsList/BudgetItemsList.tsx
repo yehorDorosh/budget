@@ -28,6 +28,50 @@ const BudgetItemsList: FC<Props> = ({ token }) => {
     }
   }
 
+  const listChangesHandler = async (budgetItem: BudgetItemInterface) => {
+    if (budgetItem) {
+      setList((prev) => {
+        const index = prev.findIndex((i) => i.id === budgetItem.id)
+        const newList = [...prev]
+        newList[index] = budgetItem
+        return newList
+      })
+      dispatch(budgetItemActions.onChangeBudgetItems())
+    }
+  }
+
+  const deleteListItemHandler = async (id: number) => {
+    /** Override page where element was deleted and shift all elements on next pages. Final clear last empty elements */
+    const prevPage = filters.page || 1
+    const index = list.findIndex((item) => item.id === id)
+    const itemPage = Math.ceil((index + 1) / filters.perPage!)
+
+    dispatch(budgetItemActions.setPage(itemPage))
+
+    const res = await dispatch(getBudgetItems({ token }))
+
+    if (isActionPayload(res) && res.data.payload && res.data.payload.budgetItems) {
+      const chunk = res.data.payload.budgetItems
+      const start = itemPage * filters.perPage! - filters.perPage!
+      const prevList = [...list]
+
+      for (let i = 0; i < prevList.length; i++) {
+        if (i >= start && i < start + chunk.length) {
+          prevList[i] = chunk[i - start]
+        }
+
+        if (i >= start + chunk.length) {
+          prevList[i] = prevList[i + 1]
+        }
+      }
+
+      setList(prevList.filter((_) => !!_))
+    }
+
+    dispatch(budgetItemActions.setPage(prevPage))
+    dispatch(budgetItemActions.onChangeBudgetItems())
+  }
+
   const updateList = () => {
     dispatch(budgetItemActions.resetPage())
     fetchBudgetItems(true)
@@ -76,7 +120,15 @@ const BudgetItemsList: FC<Props> = ({ token }) => {
   return (
     <BaseCard data-testid="budget-item-list">
       {list.length !== 0 &&
-        list.map((budgetItem) => <BudgetItem key={budgetItem.id} token={token} budgetItem={budgetItem} onChange={updateList} />)}
+        list.map((budgetItem) => (
+          <BudgetItem
+            key={budgetItem.id}
+            token={token}
+            budgetItem={budgetItem}
+            onChange={listChangesHandler}
+            onDelete={deleteListItemHandler}
+          />
+        ))}
       <div ref={observerTarget}></div>
     </BaseCard>
   )

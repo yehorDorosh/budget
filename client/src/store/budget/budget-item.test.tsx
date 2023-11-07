@@ -145,6 +145,16 @@ describe('BudgetItem Store', () => {
       store.dispatch(budgetItemActions.onChangeBudgetItems())
       expect(store.getState().budgetItem.onChangeBudgetItems).toEqual(false)
     })
+
+    test('Should set page.', () => {
+      store.dispatch(budgetItemActions.setPage(5))
+      expect(store.getState().budgetItem.filters.page).toEqual(5)
+    })
+
+    test('Should set filter id.', () => {
+      store.dispatch(budgetItemActions.setFilterId(5))
+      expect(store.getState().budgetItem.filters.id).toEqual(5)
+    })
   })
 
   describe('actions', () => {
@@ -280,9 +290,8 @@ describe('BudgetItem Store', () => {
         updateBudgetItem({ token: 'token', id: 1, categoryId: 21, name: 'test', value: 111, userDate: '2021-01-01' })
       )
       expect(isActionPayload(res)).toEqual(true)
-      expect((res as ActionPayload<BudgetItemPayload>).data.payload?.budgetItems.length).toEqual(5)
 
-      expect((res as ActionPayload<BudgetItemPayload>).data.payload?.budgetItems[0]).toEqual({
+      expect((res as ActionPayload<BudgetItemPayload>).data.payload?.budgetItem).toEqual({
         id: 1,
         category: { categoryType: 'expense', id: 21, name: 'car' },
         name: 'test',
