@@ -125,7 +125,8 @@ const AddBudgetItemForm: FC<Props> = ({ token }) => {
         userDate: new Date(dateState.value).toDateString(),
         categoryId: +categoryState.value
       }
-    }
+    },
+    { onGetResponse: () => setCalcResult(undefined) }
   )
   return (
     <Fragment>

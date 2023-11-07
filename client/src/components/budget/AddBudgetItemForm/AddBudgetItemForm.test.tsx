@@ -27,6 +27,7 @@ describe('AddBudgetItemForm', () => {
 
   afterEach(() => {
     server.resetHandlers()
+    jest.restoreAllMocks()
     cleanup()
   })
 
@@ -401,5 +402,54 @@ describe('AddBudgetItemForm', () => {
 
     expect(screen.queryByTestId('modal')).not.toBeInTheDocument()
     expect(screen.getByLabelText(/value/i)).toHaveValue(4)
+  })
+
+  test('When used calc Name and value fields should be empty after submit.', async () => {
+    render(
+      <RenderWithProviders>
+        <AddBudgetItemForm token={'token'} />
+      </RenderWithProviders>
+    )
+
+    const submitBtn = screen.getByRole('button', { name: /Create budget item/i })
+    const inputName = screen.getByLabelText(/name/i)
+    const inputValue = screen.getByLabelText(/value/i)
+    const inputDate = screen.getByLabelText(/date/i)
+    const inputCategory = screen.getByLabelText(/category/i)
+
+    act(() => {
+      userEvent.click(screen.getByText(/calc/i))
+    })
+
+    act(() => {
+      userEvent.click(screen.getByRole('button', { name: '2' }))
+      userEvent.click(screen.getByRole('button', { name: '+' }))
+      userEvent.click(screen.getByRole('button', { name: '2' }))
+    })
+
+    act(() => {
+      userEvent.click(screen.getByRole('button', { name: '=' }))
+    })
+
+    expect(screen.queryByTestId('modal')).not.toBeInTheDocument()
+    expect(screen.getByLabelText(/value/i)).toHaveValue(4)
+
+    act(() => {
+      userEvent.type(inputName, 'fuel')
+      userEvent.selectOptions(inputCategory, 'car')
+      userEvent.type(inputDate, '2023-01-01')
+    })
+
+    await act(() => {
+      userEvent.click(submitBtn)
+    })
+
+    await waitFor(() => {
+      expect(inputName).toHaveValue('')
+    })
+
+    expect(inputValue).toHaveValue(null)
+    expect(inputDate).toHaveValue('2023-01-01')
+    expect(inputCategory).toHaveValue('1')
   })
 })

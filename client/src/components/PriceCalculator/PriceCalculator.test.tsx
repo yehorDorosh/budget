@@ -341,6 +341,5 @@ describe('PriceCalculator', () => {
     })
 
     expect(screen.getByTestId('expression')).toHaveTextContent('2+')
-    // expect(screen.getByTestId('result')).toHaveTextContent('4')
   })
 })
