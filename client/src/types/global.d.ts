@@ -24,6 +24,7 @@ declare global {
 
   interface BudgetItemPayload {
     budgetItems: BudgetItem[]
+    total: number | null
     budgetItem?: BudgetItem
   }
 

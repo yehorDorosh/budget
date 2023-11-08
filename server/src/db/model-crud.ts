@@ -18,6 +18,7 @@ interface CRUD<T> {
   ): Promise<null | T[]>
   update: <K extends keyof T>(entity: T, data: Record<K, T[K]>, next: NextFunction) => Promise<null | T>
   delete: (id: number, next: NextFunction) => Promise<null | boolean>
+  getCount: (searchParams: { where: FindManyOptions<T>['where'] }, next: NextFunction) => Promise<null | number>
 }
 
 export class ModelCRUD<T extends Models> implements CRUD<T> {
@@ -110,5 +111,15 @@ export class ModelCRUD<T extends Models> implements CRUD<T> {
 
     const result = await this.dataSource.manager.delete(this.Model, id)
     return !!result.affected
+  }
+
+  async getCount(searchParams: { where: FindManyOptions<T>['where'] }, next: NextFunction): Promise<null | number> {
+    if (!this.checkParams(searchParams)) {
+      errorHandler({ message: 'CRUD: Invalid search params' }, next)
+      return null
+    }
+
+    const result = await this.dataSource.manager.count(this.Model, searchParams)
+    return result
   }
 }

@@ -38,7 +38,8 @@ describe('BudgetItemAPI', () => {
           distinct: vi.fn().mockReturnThis(),
           getMany: vi.fn(),
           getRawOne: vi.fn(),
-          getRawMany: vi.fn()
+          getRawMany: vi.fn(),
+          getCount: vi.fn().mockResolvedValue(10)
         })
       })
 
@@ -281,7 +282,7 @@ describe('BudgetItemAPI', () => {
       expect(response.body).toEqual({
         message: 'Budget items provided successfully.',
         code: ResCodes.GET_BUDGET_ITEMS,
-        payload: { budgetItems: mockBudgetItems }
+        payload: { budgetItems: mockBudgetItems, total: 10 }
       })
       expect(BudgetDataSource.getRepository('').createQueryBuilder().andWhere).toBeCalledTimes(0)
     })
@@ -426,7 +427,7 @@ describe('BudgetItemAPI', () => {
       expect(response.body).toEqual({
         message: 'Budget items provided successfully.',
         code: ResCodes.GET_BUDGET_ITEMS,
-        payload: { budgetItems: [] }
+        payload: { budgetItems: [], total: 10 }
       })
     })
 

@@ -29,6 +29,7 @@ declare global {
 
   interface BudgetItemsPayload {
     budgetItems: BudgetItem[]
+    total: number | null
   }
 
   interface StatisticsPayload {

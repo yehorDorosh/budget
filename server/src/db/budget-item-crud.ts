@@ -9,7 +9,7 @@ export class BudgetItemCRUD extends ModelCRUD<BudgetItem> {
   async findManyWithFilters(userId: UserId, filters: BudgetItemsFilters, next: NextFunction) {
     if (!userId) {
       errorHandler({ message: 'Invalid search params for findManyWithFilters(CRUD)', statusCode: 500 }, next)
-      return null
+      return { budgetItems: null, total: null }
     }
     const queryBuilder = this.dataSource.getRepository(BudgetItem).createQueryBuilder('budget')
     queryBuilder
@@ -27,13 +27,15 @@ export class BudgetItemCRUD extends ModelCRUD<BudgetItem> {
 
     queryBuilder.orderBy('budget.userDate', 'DESC').addOrderBy('budget.createdAt', 'DESC').addOrderBy('budget.id', 'DESC')
 
+    const total = await queryBuilder.getCount()
+
     if (filters.page && filters.perPage && !filters.id) {
       queryBuilder.offset((filters.page - 1) * filters.perPage).limit(filters.perPage)
     }
 
     const budgetItems = await queryBuilder.getMany()
 
-    return budgetItems
+    return { budgetItems, total }
   }
 
   async getStatistics(userId: UserId, filters: BudgetItemsFilters, next: NextFunction) {

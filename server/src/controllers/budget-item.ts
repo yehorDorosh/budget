@@ -46,12 +46,13 @@ export const getBudgetItems: RequestHandler = async (req, res: AppRes<BudgetItem
   const user = req.user!
 
   try {
-    const budgetItems = await budgetItemCRUD.findManyWithFilters(user.id, parseFilterQuery(req), next)
+    const { budgetItems, total } = await budgetItemCRUD.findManyWithFilters(user.id, parseFilterQuery(req), next)
+    // const total = await budgetItemCRUD.getCount({ where: { user: { id: user.id } } }, next) // example how to use getCount
 
     res.status(200).json({
       message: 'Budget items provided successfully.',
       code: ResCodes.GET_BUDGET_ITEMS,
-      payload: { budgetItems: budgetItems || [] }
+      payload: { budgetItems: budgetItems || [], total }
     })
   } catch (err) {
     errorHandler({ message: 'Failed to get budget items', details: err }, next)
@@ -93,14 +94,13 @@ export const updateBudgetItem: RequestHandler = async (req, res: AppRes<{ budget
     const newBudgetItem = await budgetItemCRUD.update(budgetItem, { name, value, userDate, category, ignore }, next)
     if (!newBudgetItem) return errorHandler({ message: 'Failed to update budget item.' }, next)
 
-    const updatedBudgetItem = await budgetItemCRUD.findManyWithFilters(user.id, { id: budgetItemId }, next)
-    if (!updatedBudgetItem || !updatedBudgetItem[0])
-      return errorHandler({ message: 'Failed to update budget item. Item does not exist.' }, next)
+    const { budgetItems } = await budgetItemCRUD.findManyWithFilters(user.id, { id: budgetItemId }, next)
+    if (!budgetItems || !budgetItems[0]) return errorHandler({ message: 'Failed to update budget item. Item does not exist.' }, next)
 
     res.status(200).json({
       message: 'Budget item was updated successfully.',
       code: ResCodes.UPDATE_BUDGET_ITEM,
-      payload: { budgetItem: updatedBudgetItem[0] }
+      payload: { budgetItem: budgetItems[0] }
     })
   } catch (err) {
     errorHandler({ message: 'Failed to update budget item.', details: err }, next)
