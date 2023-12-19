@@ -9,7 +9,7 @@ interface Props {
 }
 
 function roundOff(num: number) {
-  return Math.round(num * 1e16) / 1e16
+  return Math.round(num * 1e2) / 1e2
 }
 
 const PriceCalculator: FC<Props> = ({ onPressEqual }) => {

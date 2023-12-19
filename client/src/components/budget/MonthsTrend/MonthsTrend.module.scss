@@ -7,19 +7,28 @@
   align-items: flex-end;
   overflow-x: auto;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
+
+  @include d {
+    flex-wrap: nowrap;
+  }
 }
 
 .column {
-  width: calc(100% / 12);
+  width: calc(100% / 4);
   padding: 0.25rem;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  min-width: 80px;
+  height: 200px;
+
+  @include t {
+    width: calc(100% / 6);
+  }
 
   @include d {
+    width: calc(100% / 12);
     padding: 0.5rem;
-    height: 200px;
     min-width: auto;
   }
 }
@@ -28,11 +37,7 @@
   position: relative;
   border: solid 1px;
   flex-grow: 1;
-  display: none;
-
-  @include d {
-    display: flex;
-  }
+  display: flex;
 }
 
 .fill {
@@ -64,12 +69,18 @@
   font-size: 0.7rem;
   margin-bottom: 0;
   margin-top: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .value {
   font-size: 0.8rem;
   margin-bottom: 0.25rem;
   margin-top: 0rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .expense {
